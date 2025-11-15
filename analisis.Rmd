@@ -31,7 +31,7 @@ setwd("~/Jobs/Camarones/Jenner")
 datos_obj1_raw <- read_excel("data.xlsx", sheet = "dataob1") |> 
   clean_names()
 
-datos_obj2_raw <- read_excel("data.xlsx", sheet = "dataobs2") |> 
+datos_obj2_raw <- read_excel("data.xlsx", sheet = "dataob2") |> 
   clean_names()
 
 ```
