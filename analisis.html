@@ -12,7 +12,7 @@
 <meta name="author" content="Jenner Picado" />
 
 
-<title>Análisis de % de vacíos – Objetivo 1</title>
+<title>Tesis sobre las mezclas asfálticas.</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -349,7 +349,7 @@ display: none;
 
 
 
-<h1 class="title toc-ignore">Análisis de % de vacíos – Objetivo 1</h1>
+<h1 class="title toc-ignore">Tesis sobre las mezclas asfálticas.</h1>
 <h4 class="author">Jenner Picado</h4>
 
 </div>
@@ -359,10 +359,28 @@ display: none;
 <li><a href="#section" id="toc-section"></a>
 <ul>
 <li><a href="#intro." id="toc-intro.">1. Intro.</a></li>
-<li><a href="#datos.-del-r-studio" id="toc-datos.-del-r-studio">Datos.
-del R-Studio</a></li>
-<li><a href="#objetivo-1." id="toc-objetivo-1.">Objetivo 1.</a></li>
-<li><a href="#objetivo-2." id="toc-objetivo-2.">Objetivo 2.</a></li>
+<li><a href="#datos.-del-r-studio" id="toc-datos.-del-r-studio">2.
+Datos. del R-Studio</a>
+<ul>
+<li><a href="#datos-de-origen." id="toc-datos-de-origen.">Datos de
+origen.</a></li>
+<li><a href="#limpieza-de-datos" id="toc-limpieza-de-datos">Limpieza de
+datos</a></li>
+<li><a href="#tablas-finales" id="toc-tablas-finales">Tablas
+finales</a></li>
+</ul></li>
+<li><a href="#objetivo-1." id="toc-objetivo-1.">3. Objetivo 1.</a>
+<ul>
+<li><a href="#section-1" id="toc-section-1"></a></li>
+<li><a href="#section-2" id="toc-section-2"></a></li>
+</ul></li>
+<li><a href="#objetivo-2." id="toc-objetivo-2.">4. Objetivo 2.</a>
+<ul>
+<li><a href="#section-3" id="toc-section-3"></a></li>
+<li><a href="#section-4" id="toc-section-4"></a></li>
+</ul></li>
+<li><a href="#conclusiones." id="toc-conclusiones.">5.
+Conclusiones.</a></li>
 <li><a href="#ref" id="toc-ref">REF</a></li>
 </ul></li>
 </ul>
@@ -395,30 +413,85 @@ Ir arriba
 </button>
 <div id="section" class="section level1 tabset tabset-fade tabset-pills">
 <h1 class="tabset tabset-fade tabset-pills"></h1>
-<p>El presente tema buscar introducir a las personas tanto en el
-lenguaje de programación R y su ide (integrated development environment)
-o programa de interfaz R-Studio. Se abordarán los puntos:</p>
-<ul>
-<li>Interface del R-Studio.</li>
-<li>Las paquetes y librerías en R.</li>
-<li>Tipos de variables.</li>
-<li>Operaciones.</li>
-<li>Objetos de análisis.</li>
-</ul>
-<p>Al finalizar la sesión, se tendrá una idea clara del R Studio, su
-funcionamiento, y la forma en que la información se suele restituir para
-el procesamiento, análisis y presentación de la misma.</p>
+<p><strong>Tesis final de graduación.</strong></p>
 <div id="intro." class="section level2 tabset tabset-fade tabset-pills">
 <h2 class="tabset tabset-fade tabset-pills">1. Intro.</h2>
+<p>Las mezclas asfálticas utilizadas en pavimentos deben cumplir
+simultáneamente dos condiciones fundamentales: poseer un contenido
+adecuado de vacíos de aire y desarrollar una resistencia suficiente a la
+fatiga frente a cargas repetidas. Un porcentaje de vacíos demasiado bajo
+favorece el ahuellamiento y la pérdida de estabilidad; un porcentaje
+demasiado alto acelera la penetración de agua y aire, y por tanto el
+deterioro de la mezcla. De forma complementaria, la respuesta a fatiga
+condiciona la vida útil del pavimento ante miles o millones de
+aplicaciones de carga.</p>
+<p>En este trabajo se estudian mezclas compactadas con el Compactador de
+Cortante ASC bajo la norma ASTM D7981, a partir de las cuales se
+obtienen bloques prismáticos que luego se cortan para producir vigas de
+ensayo. Tanto los bloques como las vigas se someten a la prueba de
+gravedad aparente del agregado grueso (Gbs), a partir de la cual se
+calcula la gravedad específica de la mezcla (Gmb) y finalmente el
+porcentaje de vacíos de aire (% vacíos). Posteriormente, las vigas se
+ensayan en flexo-tracción dinámica según AASHTO T321, obteniendo el
+número de ciclos a falla para diferentes niveles de deformación y
+tamaños máximos nominales (TMN).</p>
+<p>El análisis estadístico se organiza en dos objetivos complementarios:
+• Objetivo 1. Analizar la distribución de los % de vacíos de aire en los
+bloques prismáticos compactados y en las vigas obtenidas del ASC,
+identificando qué parte de la variabilidad se asocia al diseño de
+mezcla, al proceso de compactación del bloque y al corte/operario de las
+vigas. Para ello se planteará un ANOVA jerárquico / modelo mixto, y
+posteriormente se ajustará un modelo de regresión que relacione los % de
+vacíos con las propiedades volumétricas de la mezcla, buscando una
+primera ecuación que describa su comportamiento. • Objetivo 2.
+Identificar las propiedades más significativas de la mezcla asfáltica
+que inciden en los ciclos de fatiga obtenidos mediante el ensayo de
+flexo-tracción dinámica AASHTO T321, considerando los niveles de
+deformación de 400 y 600 microdeformaciones y los TMN de 12,5 mm y 19
+mm. Se ajustarán modelos de regresión para cuatro casos (combinaciones
+TMN–deformación) con el fin de obtener una primera versión de un modelo
+predictivo de ciclos de fatiga en función de las propiedades
+volumétricas, incluyendo el análisis de rigidez inicial, rigidez final y
+número de ciclos a falla.</p>
+<p>Con este enfoque, el trabajo no solo cuantifica la variabilidad de
+los vacíos de aire en las distintas etapas del proceso
+(mezcla–bloque–viga), sino que también propone ecuaciones iniciales para
+relacionar las propiedades volumétricas con el desempeño mecánico a
+fatiga, aportando criterios objetivos para el diseño y control de
+mezclas asfálticas.</p>
 </div>
 <div id="datos.-del-r-studio" class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">Datos. del R-Studio</h2>
+<h2 class="tabset tabset-fade tabset-pills">2. Datos. del R-Studio</h2>
+<div id="datos-de-origen." class="section level3">
+<h3>Datos de origen.</h3>
+</div>
+<div id="limpieza-de-datos" class="section level3">
+<h3>Limpieza de datos</h3>
+</div>
+<div id="tablas-finales" class="section level3">
+<h3>Tablas finales</h3>
+</div>
 </div>
 <div id="objetivo-1." class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">Objetivo 1.</h2>
+<h2 class="tabset tabset-fade tabset-pills">3. Objetivo 1.</h2>
+<div id="section-1" class="section level3">
+<h3></h3>
+</div>
+<div id="section-2" class="section level3">
+<h3></h3>
+</div>
 </div>
 <div id="objetivo-2." class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">Objetivo 2.</h2>
+<h2 class="tabset tabset-fade tabset-pills">4. Objetivo 2.</h2>
+<div id="section-3" class="section level3">
+<h3></h3>
+</div>
+<div id="section-4" class="section level3">
+<h3></h3>
+</div>
+</div>
+<div id="conclusiones." class="section level2 tabset tabset-fade tabset-pills">
+<h2 class="tabset tabset-fade tabset-pills">5. Conclusiones.</h2>
 </div>
 <div id="ref" class="section level2 tabset tabset-fade tabset-pills">
 <h2 class="tabset tabset-fade tabset-pills">REF</h2>
