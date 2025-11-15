@@ -73,13 +73,53 @@ se suele restituir para el procesamiento, análisis y presentación de la misma.
 
 ## 1. Intro.  {.tabset .tabset-fade .tabset-pills}
 
+Contexto del problema (compactador ASC, ASTM D7981, AASHTO T321).
+Qué es % de vacíos y por qué es importante.
+Qué son los ciclos de fatiga y por qué interesan.
+Enunciar Objetivo 1 y Objetivo 2 en palabras sencillas.
+
+## 2. Datos.  del R-Studio {.tabset .tabset-fade .tabset-pills}
 
 
-## Datos.  del R-Studio {.tabset .tabset-fade .tabset-pills}
+
+### Datos de orgien
+
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+
+### Limpieza de datos
+
+
+
+
+### Tablas finales
+
+
+
+## 3.  Objetivo 1. {.tabset .tabset-fade .tabset-pills}
+
+
+###
+
+```{r}
+
+```
+
+```{r}
+
+```
+
 
 ### 
 
-
 ```{r}
 
 ```
@@ -89,37 +129,7 @@ se suele restituir para el procesamiento, análisis y presentación de la misma.
 ```
 
 
-
-###
-
-
-
-## Objetivo 1. {.tabset .tabset-fade .tabset-pills}
-
-
-###
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-
-### 
-
-```{r}
-
-```
-
-```{r}
-
-```
-
-
-## Objetivo 2.  {.tabset .tabset-fade .tabset-pills}
+## 4. Objetivo 2.  {.tabset .tabset-fade .tabset-pills}
 
 ###
 
@@ -142,6 +152,8 @@ se suele restituir para el procesamiento, análisis y presentación de la misma.
 
 ```
 
+
+## 5. Conclusiones.  {.tabset .tabset-fade .tabset-pills}
 
 
 ## REF {.tabset .tabset-fade .tabset-pills}
