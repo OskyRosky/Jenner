@@ -26,6 +26,8 @@ library(car)
 library(knitr)
 library(kableExtra)
 
+setwd("~/Jobs/Camarones/Jenner")
+
 ```
 
 <style>
