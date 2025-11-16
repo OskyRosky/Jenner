@@ -314,6 +314,16 @@ datos_obj1_raw |>
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 
+El análisis descriptivo del conjunto de datos correspondiente al Objetivo 1 muestra un diseño completamente balanceado, tanto en las mezclas como en los bloques. Cada una de las 24 mezclas presenta exactamente diez observaciones, lo cual facilita los análisis posteriores y garantiza que los resultados no se vean afectados por desbalances estructurales. Asimismo, los 48 bloques (dos por mezcla) también cuentan con cinco vigas cada uno, confirmando que la estructura jerárquica Mezcla → Bloque → Viga está representada de manera uniforme.
+
+En términos de las variables numéricas, la inspección de sus estadísticas descriptivas revela que los rangos son coherentes con valores físicamente posibles para mezclas asfálticas. El porcentaje de vacíos (%Vacíos) se concentra en torno al 7 %, sin valores extremos que sugieran errores de medición o digitación. Las variables Gmm y Gmb también muestran rangos estrechos, compatibles con materiales de densidad adecuada. No se observan valores atípicos severos en estas variables principales.
+
+El análisis de correlación evidencia relaciones fuertes entre varias propiedades volumétricas. Esto es esperable, ya que parámetros como VMA, VFA, Polvo-Asfalto y % pasando tamices forman parte de la misma estructura físico-granulométrica. Esta correlación elevada anticipa un riesgo de multicolinealidad en los modelos de regresión del Objetivo 1, lo que será importante manejar mediante selección cuidadosa de variables o diagnósticos adicionales (como el VIF). No obstante, estas correlaciones no afectan el análisis del ANOVA jerárquico, ya que dicho modelo evalúa fuentes de variación y no relaciones entre predictores.
+
+Finalmente, los boxplots muestran distribuciones razonables sin presencia de valores aberrantes. Algunas variables granulométricas presentan baja variabilidad, coherente con diseños de mezcla controlados, mientras que otras, como las propiedades derivadas de Gbs, exhiben una variación moderada pero esperada según el proceso de compactación y corte.
+
+En conjunto, los datos del Objetivo 1 presentan una calidad suficiente para continuar con los modelos jerárquicos y de regresión planificados. No se evidencian problemas de valores faltantes, inconsistencias jerárquicas o rangos físicos anómalos que comprometan los análisis posteriores.
+
 
 #### dataob2
 
@@ -350,6 +360,14 @@ datos_obj2_raw |>
   theme_bw() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
+
+El análisis descriptivo del conjunto de datos correspondiente al Objetivo 2 muestra primero que la estructura jerárquica del diseño (mezcla–bloque) se mantiene exactamente igual que en el Objetivo 1: las 24 mezclas tienen diez observaciones cada una, y cada mezcla contiene dos bloques A/B con cinco vigas cada uno. Esto confirma que el diseño experimental está completamente balanceado, lo cual es una condición favorable para los modelos de regresión comparativa que se ajustarán más adelante.
+
+Desde un punto de vista numérico, los parámetros de compactación y propiedades volumétricas mantienen rangos prácticamente idénticos a los observados en el Objetivo 1, tal como se esperaba porque ambos objetivos provienen de los mismos bloques y vigas. La gran diferencia aparece en las variables propias del ensayo de fatiga bajo AASHTO T321: deformación unitaria, rigidez inicial, rigidez final, energía disipada y número de ciclos. Estas variables presentan una distribución mucho más dispersa y, en particular, el número de ciclos exhibe valores muy elevados (hasta niveles de cientos de miles o más), lo cual se refleja en el primer boxplot donde su magnitud domina la escala y oculta el comportamiento del resto de variables. Por esta razón fue necesario generar un segundo boxplot excluyendo esta variable, lo que permite observar con claridad la variabilidad general del resto de parámetros de fatiga.
+
+Los gráficos de correlación ofrecen una primera visión interesante: las variables de fatiga están moderadamente asociadas entre sí, lo que es coherente desde el punto de vista mecánico (por ejemplo, mezclas con mayor rigidez tienden a presentar un comportamiento distinto ante ciclos de carga). Sin embargo, estas correlaciones no alcanzan niveles suficientemente altos como para anticipar problemas inmediatos de multicolinealidad severa. En contraste, las propiedades volumétricas —especialmente VMA, VFA, vacíos y asfalto efectivo— muestran nuevamente la estructura de dependencia interna típica de cualquier mezcla asfáltica, lo que es esperable debido a la relación matemática entre estas propiedades. Esta dependencia será importante al momento de ajustar los modelos de regresión: no impide el ajuste, pero sí requiere una selección cuidadosa de variables para evitar redundancias.
+
+En términos generales, el dataset se comporta de manera coherente y estable, no se detectan valores extremos fuera de rangos físicamente posibles y no existen problemas de balance o estructura que limiten los análisis posteriores. La única variable que requiere tratamiento visual especial es el número de ciclos, debido a su escala muy superior al resto. Por lo demás, la información está en condiciones adecuadas para avanzar hacia la construcción de modelos predictivos diferenciados por TMN y nivel de deformación, tal como requiere el Objetivo 2.
 
 ## 3.  Objetivo 1. {.tabset .tabset-fade .tabset-pills}
 
