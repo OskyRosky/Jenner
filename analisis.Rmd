@@ -575,26 +575,88 @@ c_{k(ij)} = \text{efecto aleatorio de la viga } k \text{ dentro del bloque } j \
 \]
 
 En términos prácticos, el objetivo de este modelo es obtener, por un lado, la **prueba de significancia del efecto fijo de la mezcla** (mediante la tabla ANOVA del modelo), y por otro, los **componentes de varianza** asociados a bloques, vigas y residuo, expresados también como porcentaje de la variación total. Finalmente, se evaluarán los supuestos del modelo mediante gráficos de diagnóstico (residuos frente a valores ajustados y gráfico Q–Q de los residuos), para verificar que la aproximación lineal mixta resulta razonable para estos datos.
-Reportar:
 
 
-	•	Tabla ANOVA del efecto fijo (Mezcla)
-	•	Componentes de varianza (porcentaje de contribución)
-	•	Gráficos de diagnóstico:
-	•	residuos vs ajustados
-	•	normalidad de residuos
-
-
-(Esto responde la pregunta central: ¿dónde se origina la variación del % de vacíos?).
-
+**Tabla ANOVA del efecto fijo (Mezcla)**
 
 ```{r}
+### Ajuste del modelo mixto jerárquico
 
+# Asegurarnos de que los factores estén bien definidos
+datos_obj1_raw <- datos_obj1_raw |>
+  mutate(
+    mezcla_n  = factor(mezcla_n),
+    bloque_n  = factor(bloque_n),
+    gbs_n_viga = factor(gbs_n_viga)
+  )
 ```
 
 ```{r}
+# Modelo mixto:
+# Vacíos ~ Mezcla (fijo) + Bloque y Viga anidados como aleatorios
+mod_vacios <- lmer(
+  gbs_percent_vacios_7_1 ~ mezcla_n +
+    (1 | mezcla_n / bloque_n / gbs_n_viga),
+  data = datos_obj1_raw
+)
+```
+
+
+```{r}
+anova_mod <- anova(mod_vacios, type = 3)
+anova_mod
+```
+
+
+**Componentes de varianza (porcentaje de contribución)**
+
+```{r}
+vc <- as.data.frame(VarCorr(mod_vacios))
+vc
+
+# calcular aporte porcentual de cada componente
+vc <- vc |>
+  mutate(
+    fuente = grp,
+    prop   = vcov / sum(vcov) * 100
+  )
+
+vc[, c("fuente", "vcov", "prop")]
+```
+
+
+**Gráficos de diagnóstico: residuos vs ajustados**
+
+```{r}
+## 3.1 Residuos vs valores ajustados
+diag_df <- datos_obj1_raw |>
+  mutate(
+    ajustados = fitted(mod_vacios),
+    residuos  = resid(mod_vacios)
+  )
+
+ggplot(diag_df, aes(x = ajustados, y = residuos)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme_bw() +
+  labs(x = "Valores ajustados", y = "Residuos",
+       title = "Residuos vs valores ajustados")
 
 ```
+
+
+
+**Gráficos de diagnóstico: Normalidad de residuos**
+
+```{r}
+ggplot(diag_df, aes(sample = residuos)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  theme_bw() +
+  labs(x = "Cuantiles teóricos", y = "Cuantiles muestrales",
+       title = "Q–Q plot de los residuos del modelo mixto")
+```
+
 
 
 ### 3.3 Regresión del % de vacíos vs propiedades volumétricas
