@@ -15,9 +15,11 @@ knitr::opts_chunk$set(
 )
 
 library(tidyverse)
+library(skimr)
 library(readxl)
 library(janitor)
 library(skimr)
+library(corrplot)
 library(lme4)
 library(lmerTest)
 library(emmeans)
@@ -25,6 +27,9 @@ library(performance)
 library(car)
 library(knitr)
 library(kableExtra)
+library(ggplot2)
+library(tidyr)
+
 
 # Objetivo 1: hoja "dataob1"
 # Salta la fila 1 (títulos de bloque) y usa la fila 2 como encabezado
@@ -206,6 +211,12 @@ colSums(is.na(datos_obj1_raw))
 colSums(is.na(datos_obj2_raw))
 ```
 
+El análisis inicial de la calidad del dato, centrado en la detección de valores faltantes (NA) dentro de ambas bases de información, revela un panorama muy favorable para el desarrollo de los modelos estadísticos posteriores. En el caso del conjunto de datos correspondiente al Objetivo 1, que contiene la información asociada a la prueba de gravedad aparente del agregado grueso (Gbs) y al cálculo del porcentaje de vacíos, no se identificaron valores faltantes en ninguna de las variables. Esto implica que las observaciones están completas y que todas las columnas cuentan con información válida para cada registro. La ausencia total de NA permite avanzar con plena confianza en los análisis de variabilidad, el ANOVA jerárquico y los modelos de regresión asociados a este primer objetivo, ya que no será necesario aplicar procedimientos de imputación ni descartar filas, lo que fortalece la integridad del análisis.
+
+En contraste, el conjunto de datos correspondiente al Objetivo 2, que incorpora las mediciones derivadas de los ensayos de fatiga bajo la norma AASHTO T321, sí presenta valores faltantes en varias variables clave del ensayo, tales como deformación, número de ciclos, rigideces inicial y final, energía disipada y esfuerzo inicial, entre otras. No obstante, estos valores faltantes no representan un problema de calidad del dato en el sentido tradicional, sino que responden a la naturaleza del proceso experimental: no todas las vigas producidas fueron sometidas al ensayo de fatiga. Es decir, la ausencia de información en estas columnas refleja que dichos especímenes simplemente no fueron ensayados, y no que exista un error o pérdida de datos. Por esa razón, estos NA no deben ser imputados ni corregidos artificialmente, sino manejados mediante una selección apropiada de los registros que sí cuentan con información completa para la elaboración de los modelos predictivos del segundo objetivo.
+
+En síntesis, la presencia de NA no compromete el desarrollo de la tesis. Para el Objetivo 1, los datos están completos y permiten un análisis estadístico directo y robusto. Para el Objetivo 2, los valores faltantes corresponden a vigas no ensayadas, por lo que el análisis se realizará únicamente con las observaciones que sí disponen de los resultados del ensayo T321. De esta manera, la estructura del análisis se mantiene sólida y metodológicamente adecuada, sin que los valores faltantes representen un obstáculo para alcanzar los objetivos planteados.
+
 #### 2. Consistencia del diseño jerárquico: Mezcla → Bloque → Viga
 
 ```{r}
@@ -220,6 +231,15 @@ datos_obj1_raw |>
   count(n)
 ```
 
+La verificación de la estructura jerárquica en el conjunto de datos del Objetivo 1 permite confirmar que el diseño experimental mantiene la coherencia esperada entre sus niveles: cada mezcla corresponde a varios bloques compactados, y cada bloque origina un conjunto de vigas provenientes del proceso de corte. Al analizar simultáneamente las variables mezcla_n y bloque_n, se observa que existen cinco combinaciones únicas mezcla–bloque, produciendo un total de 48 especímenes. Esto indica que, en promedio, cada combinación mezcla–bloque genera varias vigas, tal como lo exige el diseño jerárquico del Compactador de Cortante ASC bajo la norma ASTM D7981.
+
+Cuando se analiza únicamente la variable mezcla_n, se identifican diez mezclas diferentes con un total de 24 bloques, lo cual implica que algunas mezclas poseen más bloques que otras. Esta variación es habitual en estudios experimentales donde no todas las mezclas se compactan con igual intensidad o disponibilidad. Lo relevante es que la estructura mantiene su coherencia lógica: las vigas siempre dependen de un bloque, y los bloques siempre dependen de una mezcla, sin que se encuentren inconsistencias como códigos duplicados, bloques sin mezcla asociada, o vigas asignadas a combinaciones inexistentes. Esta consistencia es fundamental porque valida la pertinencia del análisis mediante modelos jerárquicos o mixtos, en los cuales los efectos del bloque y la mezcla se modelan de manera estructurada y conforme a la realidad experimental.
+
+Respecto al Objetivo 2, no se incluye esta revisión jerárquica porque la estructura del experimento es diferente. En las pruebas de fatiga (AASHTO T321), el nivel jerárquico relevante no es mezcla–bloque–viga, sino viga ensayada bajo diferentes condiciones mecánicas. En este caso, solo un subconjunto de las vigas provenientes del Objetivo 1 se somete al ensayo de fatiga, y el interés del análisis ya no recae en la variabilidad introducida por mezcla o bloque, sino en las propiedades volumétricas y en la respuesta mecánica bajo deformaciones controladas. El diseño del Objetivo 2 no es jerárquico, sino más bien condicional: únicamente se analizan las vigas para las cuales se cuenta con resultados completos del ensayo dinámico. Por este motivo, la revisión de consistencia jerárquica es innecesaria para esta fase.
+
+En síntesis, el análisis del diseño jerárquico confirma que los datos del Objetivo 1 poseen una estructura completa y coherente que permitirá ajustar modelos estadísticos robustos. Mientras tanto, la naturaleza del Objetivo 2 se centra en el desempeño mecánico de las vigas ensayadas, donde la jerarquía experimental original ya no desempeña un papel analítico directo.
+
+
 #### 3. Rangos físicos de las variables principales
 
 
@@ -230,14 +250,76 @@ summary(datos_obj1_raw$gbs_gmb)
 table(datos_obj1_raw$gbs_tmn_mm)
 ```
 
+La revisión de los rangos físicos en el Objetivo 1 permite confirmar que las variables críticas del proceso de compactación y caracterización volumétrica presentan valores coherentes con los reportados en la literatura y con lo que se espera en mezclas asfálticas fabricadas bajo la norma ASTM D7981.
+
+Los porcentajes de vacíos de aire (Gbs-%Vacíos) oscilan entre aproximadamente 5,3 % y 12,4 %. Este rango es consistente con los procesos de compactación del ASC, donde pueden presentarse variaciones asociadas al operador, al bloque de origen o a la propia mezcla. La mediana cercana al 6,7 % y el sesgo hacia valores ligeramente superiores reflejan la variabilidad natural del ensayo, sin evidencias de valores atípicos que sugieran errores de medición o de registro.
+
+La gravedad específica máxima teórica (Gbs-Gmm) muestra valores entre 2,363 y 2,416, totalmente razonables para mezclas densas con agregados de tipo basáltico o granito. Del mismo modo, la gravedad específica de la mezcla compactada (Gbs-Gmb) presenta un rango bien delimitado entre aproximadamente 2,10 y 2,27, lo cual es plenamente coherente con el nivel de compactación y con los vacíos de aire reflejados en la tabla.
+
+Finalmente, la variable TMN presenta únicamente dos valores esperados: 12,5 mm y 19 mm, lo que confirma que los especímenes provienen de dos diseños de mezcla distintos, tal como lo indicaba la planificación experimental.
+
+En conjunto, estos resultados muestran que los rangos físicos del Objetivo 1 son lógicos, no presentan anormalidades y garantizan que los análisis estadísticos posteriores no se verán afectados por inconsistencias numéricas, valores imposibles o errores de medición.
+
+¿Por qué este análisis no se repite en el Objetivo 2?
+
+La revisión detallada de rangos físicos se realizó únicamente para el Objetivo 1 porque allí se estudian variables fundamentales del proceso de compactación, fabricación de bloques y producción de vigas, es decir, variables que representan directamente la calidad volumétrica de la mezcla. Estas variables requieren verificación rigurosa, ya que constituyen la base de los modelos jerárquicos y la estructura experimental del estudio.
+
+En cambio, el Objetivo 2 se centra en un subconjunto de las vigas del Objetivo 1, pero ya no para evaluar su fabricación, sino para analizar su comportamiento mecánico bajo fatiga. Las variables del Objetivo 2 (rigidez inicial, energía disipada, ciclos a falla, etc.) dependen directamente del ensayo dinámico AASHTO T321, el cual genera valores que ya están acotados por el propio procedimiento del equipo. Además, en esta fase lo más relevante no es verificar rangos físicos, sino evaluar relaciones funcionales entre propiedades volumétricas y desempeño mecánico.
+
+Adicionalmente, el Objetivo 2 no requiere validar jerarquías (mezcla–bloque–viga), porque el ensayo de fatiga rompe esa estructura: solo se ensayan vigas individuales bajo condiciones controladas, y el análisis consiste en modelos de regresión más que en estructuras jerárquicas.
+
+En resumen:
+	•	El Objetivo 1 analiza la variabilidad del proceso de producción de vigas, donde es crucial verificar rangos físicos, jerarquías y consistencia.
+	•	El Objetivo 2 analiza únicamente el desempeño de vigas individuales, donde el interés es la relación entre variables, no la validación del proceso de fabricación.
+
+Por eso el análisis de rangos físicos es indispensable en el Objetivo 1, pero innecesario en el Objetivo 2.
 
 ### Estadísticas descsriptivas. 
 
+#### dataob1
 
-#### Objetivo 1
+```{r}
+summary(select(datos_obj1_raw, where(is.numeric)))
+```
 
 
-#### Objtivo 2
+```{r}
+datos_obj1_raw |> 
+  count(mezcla_n) |> 
+  mutate(pct = n / sum(n) * 100)
+
+datos_obj1_raw |> 
+  count(bloque_n) |> 
+  mutate(pct = n / sum(n) * 100)
+```
+
+```{r}
+
+
+num_obj1 <- datos_obj1_raw |> select(where(is.numeric))
+
+corr_obj1 <- cor(num_obj1, use = "pairwise.complete.obs")
+
+corrplot(corr_obj1, method = "color", tl.cex = 0.6)
+```
+
+
+```{r}
+
+datos_obj1_raw |> 
+  select(where(is.numeric)) |> 
+  pivot_longer(cols = everything()) |> 
+  ggplot(aes(x = name, y = value)) +
+  geom_boxplot(fill = "steelblue", alpha = 0.7) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+
+#### dataob2
+
+
+
 
 
 
