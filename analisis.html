@@ -583,8 +583,7 @@ display: none;
 <li><a href="#section" id="toc-section"></a>
 <ul>
 <li><a href="#intro." id="toc-intro.">1. Intro.</a></li>
-<li><a href="#datos.-del-r-studio" id="toc-datos.-del-r-studio">2.
-Datos. del R-Studio</a>
+<li><a href="#datos." id="toc-datos.">2. Datos.</a>
 <ul>
 <li><a href="#ingesta-de-datos." id="toc-ingesta-de-datos.">Ingesta de
 datos.</a></li>
@@ -686,13 +685,41 @@ relacionar las propiedades volumétricas con el desempeño mecánico a
 fatiga, aportando criterios objetivos para el diseño y control de
 mezclas asfálticas.</p>
 </div>
-<div id="datos.-del-r-studio" class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">2. Datos. del R-Studio</h2>
+<div id="datos." class="section level2 tabset tabset-fade tabset-pills">
+<h2 class="tabset tabset-fade tabset-pills">2. Datos.</h2>
 <div id="ingesta-de-datos." class="section level3">
 <h3>Ingesta de datos.</h3>
+<p>La base de datos utilizada en este estudio proviene de un archivo
+único en formato Excel (data.xlsx) que contiene dos hojas de
+trabajo:</p>
+<pre><code>•   dataob1: información correspondiente al Objetivo 1, donde se registran los resultados de la prueba de Gbs, el cálculo de % de vacíos y las propiedades volumétricas de cada mezcla.
+
+•   dataob2: información del Objetivo 2, que incluye los resultados del ensayo de fatiga AASHTO T321, además de las mismas propiedades volumétricas utilizadas para el análisis.</code></pre>
+<p>En ambas hojas, la primera fila contiene encabezados generales (por
+ejemplo: PRUEBA DE Gbs Y %Vacíos, PROPIEDADES VOLUMÉTRICAS MAC). Por
+esta razón, la ingesta se realiza omitiendo esa fila inicial para que R
+utilice como encabezado la segunda fila, donde se encuentran los nombres
+reales de las variables.</p>
+<p>Los nombres de columnas se estandarizan mediante clean_names() para
+facilitar la manipulación posterior en el análisis estadístico.</p>
 </div>
 <div id="datos-de-origen." class="section level3">
 <h3>Datos de origen.</h3>
+<p>A continuación, se muestran las primeras filas de cada dataset tal
+como fueron importadas a R después del proceso de limpieza de nombres.
+Estos datos representan:</p>
+<p>Para Objetivo 1:</p>
+<pre><code>•   Identificación de mezcla (mezcla_n)
+•   Identificación del bloque (bloque_n)
+•   Variables de la prueba de Gbs (prefijo Gbs-)
+•   Cálculo del % de vacíos
+•   Propiedades volumétricas de la mezcla (prefijo PVM-)</code></pre>
+<p>Para Objetivo 2:</p>
+<p>• Mismas variables de Gbs y % de vacíos • Resultados del ensayo de
+fatiga (prefijo PDF-) • Propiedades volumétricas (prefijo PVM-)</p>
+<p>Estos datos constituyen la base para el análisis descriptivo, el
+ANOVA jerárquico del Objetivo 1 y los modelos de regresión para ambos
+objetivos.</p>
 <pre class="r"><code>head(datos_obj1_raw, 10) |&gt; kable() |&gt; kable_styling(full_width = FALSE)</code></pre>
 <table class="table" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
 <thead>
