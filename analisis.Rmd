@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 library(corrplot)
 library(ggcorrplot)
-
+library(car)
 library(dplyr)
 library(tidyverse)
 library(skimr)
@@ -1214,30 +1214,28 @@ Esto permite reducir la asimetría natural de los datos de fatiga y obtener rela
 
 B. Selección inicial de variables independientes
 
-Se incluyen:
+Para cada escenario se consideran como candidatos todos los predictores que, desde la perspectiva mecánica y volumétrica, pueden influir en la resistencia a fatiga. Estos se agrupan en dos categorías:
 
-Variables mecánicas T321:
-	•	rigidez inicial
-	•	rigidez final
-	•	energía disipada
-	•	carga aplicada (si corresponde)
+1. Propiedades mecánicas del ensayo T321
+	•	Rigidez inicial
+	•	Rigidez final
+	•	Energía disipada
+	•	Fuerza o amplitud (si aplica)
 
-Propiedades volumétricas
+Estas variables describen la condición mecánica de la viga al inicio y durante el deterioro, y suelen mostrar alta asociación con los ciclos a falla.
+
+2. Propiedades volumétricas y de gradación
 	•	VMA
 	•	VFA
-	•	vacíos PV
+	•	Vacíos PV
 	•	Gmm
 	•	Gmb
-	•	relación polvo/asfalto
+	•	Relación polvo/asfalto
 	•	% pasando (#4, #8, #200, 1/2”)
 
-```{r}
+Estas propiedades capturan la estructura interna de la mezcla, el empaquetamiento de agregados y la disponibilidad de ligante, factores que afectan directamente el comportamiento a fatiga.
 
-```
-
-```{r}
-
-```
+El objetivo en esta etapa es identificar todas las variables numéricas relevantes y dejar el subconjunto listo para el análisis de colinealidad y posterior selección.
 
 
 C. Colinealidad.
@@ -1245,12 +1243,90 @@ C. Colinealidad.
 	•	Matriz de correlación
 	•	VIF
 
+**Matriz de correlación**
+
 ```{r}
+# 1. Crear la variable logarítmica (esto ya funciona)
+df_12_400 <- df_12_400 |>
+  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
+
+# 2. Seleccionar variables que SÍ existen en df_12_400
+corr_data_12_400 <- df_12_400 |> 
+  dplyr::select(
+    log_ciclos,
+    pdf_rigidez_inicial_m_pa,
+    pdf_rigidez_final_mpa,
+    pdf_energia_disipada_k_j_m3,
+    pvm_vma_percent,
+    pvm_vfa_percent,
+    pvm_percent_vacios,
+    pvm_polvo_asfalto,
+    pvm_percent_pasando_1_2,
+    pvm_percent_pasando_number_4,
+    pvm_percent_pasando_number_8,
+    pvm_percent_pasando_number_200,
+    gbs_gmm,
+    gbs_gmb
+  )
 
 ```
 
 ```{r}
+cor_matrix_12_400 <- cor(corr_data_12_400, use = "pairwise.complete.obs")
 
+ggcorrplot::ggcorrplot(
+  cor_matrix_12_400,
+  hc.order = TRUE,
+  type = "upper",
+  lab = TRUE,
+  lab_size = 2.5,
+  tl.cex = 8,
+  colors = c("steelblue", "white", "firebrick")
+)
+```
+
+
+**VIF**
+
+```{r}
+# Modelo provisional con todos los predictores
+modelo_vif_12_400 <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +
+    pdf_rigidez_final_mpa +
+    pdf_energia_disipada_k_j_m3 +
+    pvm_vma_percent +
+    pvm_vfa_percent +
+    pvm_percent_vacios +
+    pvm_polvo_asfalto +
+    pvm_percent_pasando_1_2 +
+    pvm_percent_pasando_number_4 +
+    pvm_percent_pasando_number_8 +
+    pvm_percent_pasando_number_200 +
+    gbs_gmm +
+    gbs_gmb,
+  data = df_12_400
+)
+
+```
+
+```{r}
+# Modelo reducido solo para evaluar VIF (evita colinealidad perfecta)
+modelo_vif_12_400 <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +
+    pdf_rigidez_final_mpa +
+    pdf_energia_disipada_k_j_m3 +
+    pvm_vma_percent +
+    pvm_percent_vacios +
+    pvm_polvo_asfalto +
+    pvm_percent_pasando_1_2 +
+    pvm_percent_pasando_number_200,
+  data = df_12_400
+)
+
+library(car)
+car::vif(modelo_vif_12_400)
 ```
 
 
@@ -1282,6 +1358,14 @@ E.  Validación del modelo
 	•	Diagnóstico de residuos
 	•	Q–Q plot
 	•	Gráfico valor ajustado vs residual
+
+**R² y R² ajustado **
+
+**Diagnóstico de residuos **
+
+**Q–Q plot **
+
+**Gráfico valor ajustado vs residual **
 
 
 
