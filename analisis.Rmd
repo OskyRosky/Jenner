@@ -537,7 +537,7 @@ ggplot(datos_obj1_raw, aes(sample = gbs_percent_vacios_7_1)) +
 
 El análisis inicial del porcentaje de vacíos en los bloques y vigas revela una distribución centrada entre valores de 6% y 7%, con una mediana cercana a 6.8% y un rango general que oscila entre aproximadamente 5.3% y 12.3%. Estas cifras sugieren que, aunque la mayoría de las observaciones se encuentran dentro de valores habituales para mezclas asfálticas densas, existen algunos casos puntuales con porcentajes de vacíos notablemente más altos, lo cual ya anticipa que no todas las mezclas o bloques presentan un comportamiento homogéneo.
 
-Los boxplots por mezcla muestran diferencias claras entre diseños. Algunas mezclas exhiben valores mucho más altos y dispersos —especialmente las mezclas 1, 2 y 3— mientras que en la mayoría de los diseños el % de vacíos se mantiene relativamente estable alrededor del 6.5%–7.0%. Esto indica que el diseño de mezcla tiene un rol importante en la variabilidad global, pues se observan patrones consistentes dentro de mezcla pero diferenciados entre mezclas. Por otra parte, los boxplots de bloques dentro de mezcla revelan que, aunque existe cierta variación entre los bloques A y B, esta es significativamente menor que la variación atribuible a la mezcla. Esto sugiere que el proceso de compactación introduce variabilidad, pero su magnitud es más acotada en comparación con las diferencias entre diseños.
+Los boxplots por mezcla muestran diferencias claras entre diseños. Algunas mezclas exhiben valores mucho más altos y dispersos, especialmente las mezclas 1, 2 y 3, mientras que en la mayoría de los diseños el % de vacíos se mantiene relativamente estable alrededor del 6.5%–7.0%. Esto indica que el diseño de mezcla tiene un rol importante en la variabilidad global, pues se observan patrones consistentes dentro de mezcla pero diferenciados entre mezclas. Por otra parte, los boxplots de bloques dentro de mezcla revelan que, aunque existe cierta variación entre los bloques A y B, esta es significativamente menor que la variación atribuible a la mezcla. Esto sugiere que el proceso de compactación introduce variabilidad, pero su magnitud es más acotada en comparación con las diferencias entre diseños.
 
 El histograma y la curva de densidad refuerzan esta interpretación: la distribución general del % de vacíos presenta asimetría hacia la derecha, con un tramo principal concentrado en el rango de 6–8% y una cola que se extiende hacia valores mayores. El gráfico Q–Q confirma esta ligera desviación respecto a la normalidad, especialmente en la cola superior, que corresponde a las mezclas con valores de vacíos más elevados. No obstante, la mayor parte de los datos sigue una tendencia aproximadamente normal, lo cual es adecuado para proceder con modelos lineales y mixtos, siempre que se revisen los residuos posteriormente.
 
@@ -545,32 +545,45 @@ En conjunto, estos resultados preliminares sugieren que la mayor parte de la var
 
 ### 3.2 Modelo mixto para la variabilidad del % de vacíos
 
-Propósito:
-Determinar qué proporción de la variabilidad del % de vacíos se explica por:
-	•	la mezcla (diseño),
-	•	el bloque (compactación),
-	•	la viga (corte / operario),
-	•	el error residual.
+El siguiente paso del análisis del Objetivo 1 consiste en cuantificar de dónde proviene la variabilidad observada en el porcentaje de vacíos. En particular, se desea descomponer la variación total en cuatro componentes: el efecto del **diseño de mezcla**, el efecto del **bloque compactado**, el efecto de la **viga obtenida por corte** y la variabilidad residual asociada al proceso de medición. Para ello se utiliza un **modelo mixto jerárquico** (o modelo lineal mixto con estructura anidada), que combina efectos fijos y aleatorios respetando la jerarquía Mezcla → Bloque → Viga.
 
-Modelo recomendado:
-Un modelo mixto jerárquico:
+En este contexto, la mezcla se considera un **efecto fijo**, porque corresponde a diseños específicos que se quieren comparar explícitamente. Por otro lado, los bloques y las vigas se tratan como **efectos aleatorios**: representan realizaciones del proceso de compactación y del proceso de corte/operario dentro de cada mezcla, y su interés principal radica en la variabilidad que introducen y no en el valor puntual de cada bloque o viga.
+
+El modelo adoptado para el porcentaje de vacíos se escribe como:
 
 \[
 \text{Vacíos}_{ijk}
-= \mu \;+\; \alpha_i \;+\; b_{j(i)} \;+\; c_{k(ij)} \;+\; \varepsilon_{ijk}
+= \mu + \alpha_i + b_{j(i)} + c_{k(ij)} + \varepsilon_{ijk},
 \]
 
-donde:
-	•	Mezcla = efecto fijo
-	•	Bloque (Mezcla) = aleatorio
-	•	Viga (Bloque) = aleatorio
+donde
 
+\[
+\mu = \text{media global},
+\]
+\[
+\alpha_i = \text{efecto fijo de la mezcla } i,
+\]
+\[
+b_{j(i)} = \text{efecto aleatorio del bloque } j \text{ dentro de la mezcla } i,
+\]
+\[
+c_{k(ij)} = \text{efecto aleatorio de la viga } k \text{ dentro del bloque } j \text{ y mezcla } i,
+\]
+\[
+\varepsilon_{ijk} = \text{término de error residual}.
+\]
+
+En términos prácticos, el objetivo de este modelo es obtener, por un lado, la **prueba de significancia del efecto fijo de la mezcla** (mediante la tabla ANOVA del modelo), y por otro, los **componentes de varianza** asociados a bloques, vigas y residuo, expresados también como porcentaje de la variación total. Finalmente, se evaluarán los supuestos del modelo mediante gráficos de diagnóstico (residuos frente a valores ajustados y gráfico Q–Q de los residuos), para verificar que la aproximación lineal mixta resulta razonable para estos datos.
 Reportar:
+
+
 	•	Tabla ANOVA del efecto fijo (Mezcla)
 	•	Componentes de varianza (porcentaje de contribución)
 	•	Gráficos de diagnóstico:
 	•	residuos vs ajustados
 	•	normalidad de residuos
+
 
 (Esto responde la pregunta central: ¿dónde se origina la variación del % de vacíos?).
 
