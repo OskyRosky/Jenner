@@ -3449,13 +3449,81 @@ predictivos de desempeño.</p>
 <div id="objetivo-1-análisis-de-la-variabilidad-del-de-vacíos." class="section level2 tabset tabset-fade tabset-pills">
 <h2 class="tabset tabset-fade tabset-pills">3. Objetivo 1: Análisis de
 la variabilidad del % de vacíos.</h2>
-<p>El análisis del Objetivo 1 puede dividirse claramente en dos grandes
-bloques, cada uno cumpliendo un propósito estadístico distinto:</p>
-<pre><code>1.  Cuantificar de dónde proviene la variabilidad del % de vacíos</code></pre>
-<p>(diseño → compactación → corte). → ANOVA jerárquico / modelo mixto.
-2. Identificar qué propiedades volumétricas explican mejor el % de
-vacíos (relación física entre vacíos y características de la mezcla). →
-Modelos de regresión.</p>
+<p>El Objetivo 1 se centra en estudiar la variabilidad del porcentaje de
+vacíos de aire medido en las vigas obtenidas a partir del Compactador de
+Cortante ASC. Esta variable, registrada como gbs_percent_vacios_7_1,
+constituye la respuesta principal del análisis y refleja el desempeño
+volumétrico resultante del proceso de compactación y corte de los
+bloques prismáticos producidos bajo la norma ASTM D7981.</p>
+<p>El diseño experimental posee una estructura jerárquica claramente
+definida: para cada una de las 24 mezclas evaluadas se producen dos
+bloques (A y B), y de cada bloque se extraen cuatro vigas de ensayo.
+Esto genera tres niveles de variabilidad potencial: 1. Variabilidad
+entre mezclas (diferencias en el diseño de la mezcla asfáltica). 2.
+Variabilidad entre bloques dentro de mezcla (diferencias en el proceso
+de compactación). 3. Variabilidad entre vigas dentro de bloque
+(diferencias en el proceso de corte u operario).</p>
+<p>Esta estructura requiere un modelo estadístico capaz de descomponer
+la variación en cada uno de estos niveles. Por ello se utiliza un modelo
+mixto jerárquico, en el cual la mezcla se trata como efecto fijo (porque
+corresponden a diseños específicos) y los bloques y vigas como efectos
+aleatorios, anidados dentro de su nivel superior. El modelo general
+adoptado es:</p>
+<p><span class="math display">\[
+\text{Vacíos}_{ijk}
+= \mu
++ \alpha_i
++ b_{j(i)}
++ c_{k(ij)}
++ \varepsilon_{ijk},
+\]</span></p>
+<p>donde:</p>
+<p><span class="math display">\[
+\begin{aligned}
+\mu              &amp;:\ \text{media global}, \\
+\alpha_i         &amp;:\ \text{efecto fijo de la mezcla } i, \\
+b_{j(i)}         &amp;:\ \text{efecto aleatorio del bloque } j \text{
+dentro de la mezcla } i, \\
+c_{k(ij)}        &amp;:\ \text{efecto aleatorio de la viga } k \text{
+dentro del bloque } j \text{ y mezcla } i, \\
+\varepsilon_{ijk} &amp;:\ \text{error residual}.
+\end{aligned}
+\]</span></p>
+<p>Este modelo permite cuantificar la proporción de variabilidad
+atribuible a cada nivel del proceso (diseño → compactación → corte), lo
+cual constituye la primera parte del análisis solicitado.</p>
+<p>La segunda parte del Objetivo 1 consiste en identificar cuáles
+propiedades volumétricas explican mejor el porcentaje de vacíos, con el
+fin de obtener una primera ecuación explicativa del comportamiento de la
+mezcla. Para ello se consideran como posibles predictores las variables
+volumétricas y de gradación disponibles en el dataset, tales como: •
+Gmm, Gmb, VMA (%), VFA (%), Vacíos PV, Gbs • Contenido de asfalto
+efectivo y sobre MAC • Relación polvo/asfalto • Porcentajes pasando
+(1/2”, #4, #8, #200) • TMN (mm)</p>
+<p>Estas variables se emplean dentro de un modelo de regresión lineal
+múltiple de la forma:</p>
+<p><span class="math display">\[
+\widehat{\text{Vacíos}}
+= \beta_0
++ \beta_1 X_1
++ \beta_2 X_2
++ \cdots
++ \beta_p X_p,
+\]</span></p>
+<p>donde X_1, , X_p representan las propiedades volumétricas
+seleccionadas. Previo al ajuste del modelo se evalúa la colinealidad
+entre predictores mediante matrices de correlación y factores de
+inflación de la varianza (VIF), con el fin de evitar redundancias y
+garantizar que la ecuación estimada posea coherencia física y
+estadística.</p>
+<p>En resumen, el análisis del Objetivo 1 se desarrolla en dos etapas
+complementarias: 1. Modelo mixto jerárquico → cuantificar la
+variabilidad del % de vacíos según mezcla, bloque y viga. 2. Modelo de
+regresión volumétrica → identificar las propiedades de la mezcla que
+explican el % de vacíos y obtener una ecuación explicativa inicial.</p>
+<p>Ambos enfoques permiten caracterizar el comportamiento volumétrico de
+las mezclas asfálticas desde una perspectiva integradora: variabilidad
+estructural y relaciones físico–volumétricas.</p>
 <div id="exploración-inicial-del-de-vacíos" class="section level3">
 <h3>3.1 Exploración inicial del % de vacíos</h3>
 <p>Propósito: Describir cómo se distribuye el % de vacíos en el conjunto

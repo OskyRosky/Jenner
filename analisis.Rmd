@@ -408,20 +408,30 @@ Esta estructura requiere un modelo estadístico capaz de descomponer la variaci�
 \]
 
 donde:
-	•	\mu = media global
-	•	\alpha_i = efecto fijo de la mezcla i
-	•	b_{j(i)} = efecto aleatorio del bloque j dentro de la mezcla i
-	•	c_{k(ij)} = efecto aleatorio de la viga k dentro del bloque j y mezcla i
-	•	\varepsilon_{ijk} = error residual
+
+\[
+\begin{aligned}
+\mu              &:\ \text{media global}, \\
+\alpha_i         &:\ \text{efecto fijo de la mezcla } i, \\
+b_{j(i)}         &:\ \text{efecto aleatorio del bloque } j \text{ dentro de la mezcla } i, \\
+c_{k(ij)}        &:\ \text{efecto aleatorio de la viga } k \text{ dentro del bloque } j \text{ y mezcla } i, \\
+\varepsilon_{ijk} &:\ \text{error residual}.
+\end{aligned}
+\]
 
 Este modelo permite cuantificar la proporción de variabilidad atribuible a cada nivel del proceso (diseño → compactación → corte), lo cual constituye la primera parte del análisis solicitado.
 
 La segunda parte del Objetivo 1 consiste en identificar cuáles propiedades volumétricas explican mejor el porcentaje de vacíos, con el fin de obtener una primera ecuación explicativa del comportamiento de la mezcla. Para ello se consideran como posibles predictores las variables volumétricas y de gradación disponibles en el dataset, tales como:
-	•	Gmm, Gmb, VMA (%), VFA (%), Vacíos PV, Gbs
-	•	Contenido de asfalto efectivo y sobre MAC
-	•	Relación polvo/asfalto
-	•	Porcentajes pasando (1/2”, #4, #8, #200)
-	•	TMN (mm)
+
+•	Gmm, Gmb, VMA (%), VFA (%), Vacíos PV, Gbs
+
+•	Contenido de asfalto efectivo y sobre MAC
+
+•	Relación polvo/asfalto
+
+•	Porcentajes pasando (1/2”, #4, #8, #200)
+
+•	TMN (mm)
 
 Estas variables se emplean dentro de un modelo de regresión lineal múltiple de la forma:
 
@@ -439,8 +449,10 @@ donde X_1, \dots, X_p representan las propiedades volumétricas seleccionadas.
 Previo al ajuste del modelo se evalúa la colinealidad entre predictores mediante matrices de correlación y factores de inflación de la varianza (VIF), con el fin de evitar redundancias y garantizar que la ecuación estimada posea coherencia física y estadística.
 
 En resumen, el análisis del Objetivo 1 se desarrolla en dos etapas complementarias:
-	1.	Modelo mixto jerárquico → cuantificar la variabilidad del % de vacíos según mezcla, bloque y viga.
-	2.	Modelo de regresión volumétrica → identificar las propiedades de la mezcla que explican el % de vacíos y obtener una ecuación explicativa inicial.
+
+1.	Modelo mixto jerárquico → cuantificar la variabilidad del % de vacíos según mezcla, bloque y viga.
+
+2.	Modelo de regresión volumétrica → identificar las propiedades de la mezcla que explican el % de vacíos y obtener una ecuación explicativa inicial.
 
 Ambos enfoques permiten caracterizar el comportamiento volumétrico de las mezclas asfálticas desde una perspectiva integradora: variabilidad estructural y relaciones físico–volumétricas.
 
@@ -452,27 +464,77 @@ Ambos enfoques permiten caracterizar el comportamiento volumétrico de las mezcl
 ### 3.1 Exploración inicial del % de vacíos
 
 
-Propósito:
-Describir cómo se distribuye el % de vacíos en el conjunto de datos y visualizar diferencias preliminares por mezcla, por bloque y por viga.
 
-Incluye:
+Antes de ajustar el modelo jerárquico, es necesario describir el comportamiento general de la variable respuesta (% de vacíos) y explorar visualmente su variación a través de los distintos niveles del diseño experimental. Esta exploración permite identificar patrones preliminares, posibles outliers y verificar si la distribución es compatible con los supuestos del modelo mixto.
 
-•	Estadísticas descriptivas del % de vacíos.
-•	Boxplots por mezcla.
-•	Boxplots por bloque dentro de mezcla.
-•	Distribución general (histograma / densidad).
-•	Q–Q plot para una inspección elemental de normalidad.
+Los análisis incluidos en esta sección son:
 
-(Esto introduce el comportamiento de la variable respuesta antes de modelar).
+- Estadísticas descriptivas del % de vacíos.  
+- Boxplots por mezcla, para observar diferencias globales entre diseños.  
+- Boxplots por bloque dentro de cada mezcla, con el fin de inspeccionar posibles efectos de compactación.  
+- Histograma y curvas de densidad para evaluar la distribución general.  
+- Gráfico Q–Q para una inspección básica de la normalidad de los datos.
+
+Estos resultados permiten contextualizar la variabilidad observada y preparar el terreno para la partición formal de la varianza en la sección siguiente.
+
+
+
+**Estadísticas descriptivas**
 
 
 ```{r}
-
+summary(datos_obj1_raw$gbs_percent_vacios_7_1)
 ```
+
+
+**Boxplot por mezcla**
+
 
 ```{r}
-
+ggplot(datos_obj1_raw, aes(x = factor(mezcla_n), y = gbs_percent_vacios_7_1)) +
+  geom_boxplot(fill = "steelblue", alpha = 0.7) +
+  theme_bw() +
+  labs(x = "Mezcla", y = "% de vacíos")
 ```
+
+
+**Boxplot por bloque dentro de mezcla**
+
+
+```{r}
+ggplot(datos_obj1_raw, aes(x = bloque_n, y = gbs_percent_vacios_7_1)) +
+  geom_boxplot(fill = "darkorange", alpha = 0.7) +
+  theme_bw() +
+  labs(x = "Bloque", y = "% de vacíos") +
+  facet_wrap(~ mezcla_n, scales = "free_x")
+```
+
+
+
+**Histograma + densidad**
+
+
+```{r}
+ggplot(datos_obj1_raw, aes(x = gbs_percent_vacios_7_1)) +
+  geom_histogram(aes(y = ..density..), bins = 20, fill = "gray70", color = "black") +
+  geom_density(color = "red", linewidth = 1) +
+  theme_bw() +
+  labs(x = "% de vacíos", y = "Densidad")
+```
+
+
+**Q–Q plot**
+
+
+```{r}
+ggplot(datos_obj1_raw, aes(sample = gbs_percent_vacios_7_1)) +
+  stat_qq() +
+  stat_qq_line(color = "red") +
+  theme_bw() +
+  labs(x = "Cuantiles teóricos", y = "Cuantiles muestrales")
+```
+
+
 
 
 ### 3.2 Modelo mixto para la variabilidad del % de vacíos
