@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
+library(dplyr)
 library(tidyverse)
 library(skimr)
 library(readxl)
@@ -903,11 +904,36 @@ tibble(
   kable_styling(full_width = FALSE)
 ```
 
+El análisis de los cuatro escenarios del Objetivo 2 revela diferencias importantes en el tamaño de muestra entre los grupos de TMN 12.5 mm y TMN 19 mm, lo cual condiciona el tipo de modelos que pueden ajustarse y el nivel de confianza de sus resultados.
+
+1. Escenarios con TMN = 12.5 mm (n = 20 por escenario)
+Estos grupos presentan tamaños muestrales reducidos. Esto limita la complejidad estadística del modelo: solo es posible ajustar regresiones simples o con muy pocos predictores, idealmente aquellos con mayor respaldo físico, como rigidez inicial, VMA o energía disipada. Los diagnósticos de residuos también deben interpretarse con cautela, porque con n=20 es difícil identificar patrones claros.
+En resumen, los modelos para TMN 12.5 mm deben ser compactos, estables y guiados por criterios físicos más que estadísticos.
+
+2. Escenarios con TMN = 19 mm (n ≈ 56–57 por escenario)
+Estos grupos sí cuentan con muestras suficientes para ajustar modelos más completos, aplicar selección de variables (p. ej., backward por AIC) y evaluar colinealidad y estabilidad de coeficientes con mayor confianza. También permiten diagnósticos más sólidos y ecuaciones predictivas más robustas.
+En síntesis, los modelos para TMN 19 mm pueden ser más detallados y confiables, integrando tanto propiedades volumétricas como mecánicas.
+
+3. Diferencia estructural entre escenarios
+Debido a la disparidad en tamaños muestrales, las ecuaciones obtenidas no serán comparables entre sí en complejidad ni precisión. Los modelos con n=20 pueden mostrar R² altos o bajos sin que esto refleje realmente la calidad del ajuste. Por ello, la interpretación debe basarse en la combinación datos + física del material, más que en significancia estadística.
+
+4. Estrategia recomendada para los modelos
+	•	TMN 12.5 mm: Ajustar modelos simples (1–3 predictores), centrados en variables físicamente relevantes.
+	•	TMN 19 mm: Ajustar modelos múltiples completos con selección de variables, aprovechando la mayor estabilidad estadística de estos escenarios.
+
+5. Consistencia del diseño experimental
+El hecho de que ambos escenarios de TMN 12.5 mm tengan exactamente 20 observaciones confirma un diseño experimental completamente balanceado para ese TMN. En cambio, los grupos de TMN 19 mm incluyen más vigas, probablemente por disponibilidad de material o replicaciones adicionales, lo cual mejora la estabilidad de los modelos correspondientes.
+
+Además, esta diferenciación entre escenarios no es únicamente una consideración estadística, sino un requisito metodológico indispensable para evitar errores graves en la modelación de la fatiga. Separar los análisis por TMN y nivel de deformación garantiza que las ecuaciones resultantes representen fielmente el comportamiento mecánico establecido por la norma AASHTO T321, evitando mezclar dominios estructurales que responden de manera distinta a la carga repetida. Al mismo tiempo, reconocer la diferencia en estabilidad estadística entre los conjuntos con n=20 y n≈57 permite seleccionar modelos adecuados para cada caso, evitando sobreajustes y coeficientes inestables. En conjunto, este enfoque asegura que las ecuaciones obtenidas sean útiles y confiables para propósitos de diseño, control de calidad y predicción del desempeño a fatiga de las mezclas asfálticas.
+
 
 
 ### 4.2 Exploración descriptiva inicial (por escenario)
 
-Antes de correr regresiones, es indispensable revisar:
+Antes de ajustar los modelos predictivos para cada combinación TMN–deformación, es indispensable realizar una exploración gráfica y descriptiva de las variables mecánicas y volumétricas. Esta etapa permite identificar patrones generales, evaluar la presencia de asimetrías marcadas, posibles valores extremos y relaciones preliminares entre las variables que posteriormente entrarán en los modelos de regresión.
+
+
+
 
 A. Distribución de las variables clave (por escenario)
 
@@ -923,7 +949,62 @@ Incluir:
 
 ```{r}
 
+# Histograma básico
+plot_hist <- function(df, var, titulo = NULL) {
+  ggplot(df, aes(x = {{var}})) +
+    geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+    labs(title = titulo, x = quo_name(enquo(var)), y = "Frecuencia") +
+    theme_bw()
+}
+
+# Boxplot para todas las variables PVM_*
+plot_box_pvm <- function(df, titulo = NULL) {
+  df %>%
+    select(starts_with("pvm_")) %>%
+    pivot_longer(everything(), names_to = "variable", values_to = "valor") %>%
+    ggplot(aes(x = variable, y = valor)) +
+    geom_boxplot(fill = "darkgreen", alpha = 0.7) +
+    labs(title = titulo, x = "Propiedad volumétrica", y = "Valor") +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1))
+}
 ```
+
+
+
+**Histograma de log10(ciclos)**
+
+```{r}
+ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
+  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  labs(title = "log10(Ciclos) — TMN 12.5 mm, 400 με",
+       x = "log10(ciclos)",
+       y = "Frecuencia") +
+  theme_bw()
+```
+
+**Rigidez inicial**
+
+```{r}
+
+```
+
+
+**Rigidez final **
+
+```{r}
+
+```
+
+
+**Energía disipada**
+
+```{r}
+
+```
+
+
+**Boxplot de propiedades volumétricas**
 
 ```{r}
 
