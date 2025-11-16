@@ -675,21 +675,20 @@ En conjunto, estos resultados revelan que la variabilidad entre mezclas no es el
 
 ### 3.3 Regresión del % de vacíos vs propiedades volumétricas
 
-En esta sección se busca construir una ecuación explicativa que relacione el porcentaje de vacíos de aire medido en las vigas con las propiedades volumétricas y de gradación de la mezcla asfáltica. A diferencia del modelo mixto anterior, donde la mezcla se consideró como un factor categórico, aquí el interés se centra en variables con significado físico directo (Gmm, Gmb, VMA, VFA, vacíos PV, relación polvo/asfalto, % pasando, etc.), que permitan entender cómo cambia el % de vacíos cuando cambian las características del material.
+En esta sección se busca construir una ecuación explicativa que relacione el porcentaje de vacíos de aire medido en las vigas con las propiedades volumétricas y de gradación de la mezcla asfáltica. A diferencia del modelo mixto anterior, donde la mezcla se consideró como un factor categórico, aquí el interés se centra en variables con significado físico directo (Gmm, Gmb, VMA, VFA, vacíos en la mezcla, relación polvo/asfalto, porcentajes que pasan cada tamiz, etc.), que permitan entender cómo cambia el % de vacíos cuando cambian las características del material.
 
 La variable respuesta del modelo es el porcentaje de vacíos obtenido a partir de la prueba de Gbs:
 
-- Variable dependiente:  
-  \(\text{Vacíos} \equiv \texttt{gbs\_percent\_vacios\_7\_1}\).
+- **Variable dependiente**: \(\text{Vacíos} \equiv\) `gbs_percent_vacios_7_1`.
 
 Como variables explicativas \((X_1,\dots,X_p)\) se consideran únicamente las propiedades volumétricas y de gradación medidas en las mismas vigas, por ejemplo:
 
-- \(\texttt{gbs\_gmm}\), \(\texttt{gbs\_gmb}\),
-- \(\texttt{pvm\_asfalto\_efectivo\_percent}\), \(\texttt{pvm\_asfalto\_sobre\_mac\_percent}\),
-- \(\texttt{pvm\_vacios\_pv}\), \(\texttt{pvm\_gbs}\),
-- \(\texttt{pvm\_vma\_percent}\), \(\texttt{pvm\_vfa\_percent}\), \(\texttt{pvm\_polvo\_asfalto}\),
-- \(\texttt{pvm\_percent\_pasando\_1\_2}\), \(\texttt{pvm\_percent\_pasando\_number\_4}\),  
-  \(\texttt{pvm\_percent\_pasando\_number\_8}\), \(\texttt{pvm\_percent\\_pasando\_number\_200}\).
+- `gbs_gmm`, `gbs_gmb`
+- `pvm_asfalto_efectivo_percent`, `pvm_asfalto_sobre_mac_percent`
+- `pvm_vacios_pv`, `pvm_gbs`
+- `pvm_vma_percent`, `pvm_vfa_percent`, `pvm_polvo_asfalto`
+- `pvm_percent_pasando_1_2`, `pvm_percent_pasando_number_4`,
+  `pvm_percent_pasando_number_8`, `pvm_percent_pasando_number_200`.
 
 El modelo base que se plantea es una regresión lineal múltiple del tipo:
 
@@ -698,7 +697,7 @@ El modelo base que se plantea es una regresión lineal múltiple del tipo:
 = \beta_0 + \beta_1 X_{1i} + \cdots + \beta_p X_{pi} + \varepsilon_i,
 \]
 
-donde \(\beta_0\) es el intercepto, \(\beta_1,\dots,\beta_p\) son los coeficientes asociados a cada propiedad volumétrica y \(\varepsilon_i\) representa el término de error.  
+donde \(\beta_0\) es el intercepto, \(\beta_1,\dots,\beta_p\) son los coeficientes asociados a cada propiedad volumétrica y \(\varepsilon_i\) representa el término de error.
 
 El procedimiento se organiza en tres etapas:
 
@@ -706,6 +705,102 @@ El procedimiento se organiza en tres etapas:
 2. Ajustar un modelo base de regresión lineal con todas las variables candidatas.  
 3. Aplicar un proceso de selección (backward/forward) apoyado en criterios estadísticos y en la coherencia física de los coeficientes, seguido de una validación ligera mediante \(R^2\), \(R^2\) ajustado y análisis de residuos.
 
+**1. Definir variables candidatas**
+
+```{r}
+### 3.3 Regresión del % de vacíos vs propiedades volumétricas
+
+# Variable respuesta
+y <- datos_obj1_raw$gbs_percent_vacios_7_1
+
+# Conjunto de predictores candidatos: volumétricas + gradación
+predictores_obj1 <- datos_obj1_raw |>
+  select(
+    gbs_gmm,
+    gbs_gmb,
+    pvm_asfalto_efectivo_percent,
+    pvm_asfalto_sobre_mac_percent,
+    pvm_vacios_pv,
+    pvm_gbs,
+    pvm_vma_percent,
+    pvm_vfa_percent,
+    pvm_polvo_asfalto,
+    pvm_percent_pasando_1_2,
+    pvm_percent_pasando_number_4,
+    pvm_percent_pasando_number_8,
+    pvm_percent_pasando_number_200
+  )
+
+# Data.frame completo para la regresión
+datos_reg_obj1 <- bind_cols(
+  vacios = y,
+  predictores_obj1
+)
+```
+
+**2. Evaluación de colinealidad (correlación + VIF) **
+
+```{r}
+# Matriz de correlación (solo numéricas)
+corr_reg_obj1 <- cor(predictores_obj1, use = "pairwise.complete.obs")
+corrplot(corr_reg_obj1, method = "color", tl.cex = 0.7)
+
+# Modelo "lleno" para calcular VIF
+mod_full_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
+
+# Factores de inflación de la varianza
+vif_obj1 <- car::vif(mod_full_obj1)
+vif_obj1
+```
+
+**3. Ajuste del modelo base y selección de variables**
+
+```{r}
+# Modelo base con todas las variables candidatas
+mod_base_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
+summary(mod_base_obj1)
+
+# Selección stepwise basada en AIC (backward desde el modelo lleno)
+mod_step_obj1 <- step(mod_base_obj1, direction = "backward", trace = FALSE)
+summary(mod_step_obj1)
+```
+
+**4. Validación ligera del modelo seleccionado**
+
+```{r}
+# Extraer R² y R² ajustado
+summary(mod_step_obj1)$r.squared
+summary(mod_step_obj1)$adj.r.squared
+
+# Diagnóstico de residuos
+diag_reg_obj1 <- datos_reg_obj1 |>
+  mutate(
+    ajustados = fitted(mod_step_obj1),
+    residuos  = resid(mod_step_obj1)
+  )
+
+# Residuos vs ajustados
+ggplot(diag_reg_obj1, aes(x = ajustados, y = residuos)) +
+  geom_point(alpha = 0.7) +
+  geom_hline(yintercept = 0, linetype = "dashed") +
+  theme_bw() +
+  labs(
+    x = "Valores ajustados",
+    y = "Residuos",
+    title = "Residuos vs valores ajustados (modelo de regresión)"
+  )
+
+# Q–Q plot de residuos
+ggplot(diag_reg_obj1, aes(sample = residuos)) +
+  stat_qq() +
+  stat_qq_line(colour = "red") +
+  theme_bw() +
+  labs(
+    x = "Cuantiles teóricos",
+    y = "Cuantiles muestrales",
+    title = "Q–Q plot de los residuos del modelo de regresión"
+  )
+```
 
 
 
