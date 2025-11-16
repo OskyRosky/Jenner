@@ -176,12 +176,7 @@ names(datos_obj2_raw) |>
 ```
 
 
-
-
-
-### Calidad de los datos. 
-
-### Calidad de los datos
+### Calidad de los datos.
 
 Antes de proceder con los análisis estadísticos, se verificó la consistencia y validez general de las bases de datos.  
 Dado que los valores provienen directamente del proceso experimental, no se aplicó limpieza activa ni modificación de observaciones.  

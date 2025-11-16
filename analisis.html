@@ -589,8 +589,9 @@ display: none;
 datos.</a></li>
 <li><a href="#datos-de-origen." id="toc-datos-de-origen.">Datos de
 origen.</a></li>
-<li><a href="#limpieza-de-datos" id="toc-limpieza-de-datos">Limpieza de
-datos</a></li>
+<li><a href="#listado-de-variables-por-objetivo." id="toc-listado-de-variables-por-objetivo.">Listado de variables por
+objetivo.</a></li>
+<li><a href="#calidad-de-los-datos." id="toc-calidad-de-los-datos.">Calidad de los datos.</a></li>
 <li><a href="#estad%C3%ADsticas-descsriptivas." id="toc-estadísticas-descsriptivas.">Estadísticas
 descsriptivas.</a></li>
 </ul></li>
@@ -2528,8 +2529,444 @@ NA
 </tbody>
 </table>
 </div>
-<div id="limpieza-de-datos" class="section level3">
-<h3>Limpieza de datos</h3>
+<div id="listado-de-variables-por-objetivo." class="section level3">
+<h3>Listado de variables por objetivo.</h3>
+<p>A continuación se presentan todas las variables disponibles en cada
+conjunto de datos, de acuerdo con su organización y finalidad dentro de
+la tesis. Esta revisión facilita comprender qué información se analiza
+en cada objetivo y permite verificar la consistencia de nombres antes de
+aplicar los modelos estadísticos.</p>
+<p>Objetivo 1 – Variables disponibles</p>
+<p>Incluye:</p>
+<p>• Identificación de mezcla y bloque. • Variables derivadas de la
+prueba de Gbs (prefijo gbs_). • Porcentaje de vacíos. • Propiedades
+volumétricas de la mezcla (prefijo pvm_).</p>
+<pre class="r"><code>names(datos_obj1_raw) |&gt; 
+  as.data.frame() |&gt; 
+  kable(col.names = &quot;Variables – Objetivo 1&quot;) |&gt; 
+  kable_styling(full_width = FALSE)</code></pre>
+<table class="table" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Variables – Objetivo 1
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+mezcla_n
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bloque_n
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_gmm
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_tmn_mm
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_n_prisma
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_n_viga
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_pseco_kg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_psum_kg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_psss_kg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_gmb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_percent_vacios_7_1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_asfalto_efectivo_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_asfalto_sobre_mac_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_vacios_pv
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_gbs
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_vma_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_vfa_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_polvo_asfalto
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_1_2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_number_4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_number_8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_number_200
+</td>
+</tr>
+</tbody>
+</table>
+<p>Objetivo 2 – Variables disponibles</p>
+<p>Incluye:</p>
+<p>• Identificación de mezcla y bloque. • Variables de la prueba de Gbs.
+• Variables del ensayo de fatiga (prefijo pdf_). • Propiedades
+volumétricas de la mezcla (prefijo pvm_).</p>
+<pre class="r"><code>names(datos_obj2_raw) |&gt; 
+  as.data.frame() |&gt; 
+  kable(col.names = &quot;Variables – Objetivo 2&quot;) |&gt; 
+  kable_styling(full_width = FALSE)</code></pre>
+<table class="table" style="color: black; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+Variables – Objetivo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+mezcla_n
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+bloque_n
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_gmm
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_tmn_mm
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_n_prisma
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_n_viga
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_pseco_kg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_psum_kg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_psss_kg
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_gmb
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+gbs_percent_vacios_7_1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_deformacion_unitaria
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_n_viga_fatiga
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_fecha_ensayo
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_initial_tensile_stress_k_pa
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_rigidez_inicial_m_pa
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_energia_disipada_k_j_m3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_force_amplitude_n
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_rigidez_final_mpa
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pdf_numero_de_ciclos
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_asfalto_efectivo_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_asfalto_sobre_mac_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_vacios
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_gbs
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_vma_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_vfa_percent
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_polvo_asfalto
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_1_2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_number_4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_number_8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pvm_percent_pasando_number_200
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="calidad-de-los-datos." class="section level3">
+<h3>Calidad de los datos.</h3>
+<p>Antes de proceder con los análisis estadísticos, se verificó la
+consistencia y validez general de las bases de datos.<br />
+Dado que los valores provienen directamente del proceso experimental, no
+se aplicó limpieza activa ni modificación de observaciones.<br />
+Únicamente se evaluaron tres aspectos fundamentales:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Valores faltantes (NA).</strong><br />
+Se revisó la presencia de datos ausentes en las variables utilizadas en
+los modelos.<br />
+El análisis mostró que no existen valores faltantes en las variables
+relevantes para los Objetivos 1 y 2.</p></li>
+<li><p><strong>Consistencia del diseño jerárquico.</strong><br />
+Se confirmó la estructura esperada del experimento:</p>
+<ul>
+<li>cada mezcla cuenta con exactamente dos bloques (A y B),<br />
+</li>
+<li>cada bloque contiene cinco vigas,<br />
+</li>
+<li>totalizando 240 observaciones completas.<br />
+Esta verificación garantiza que el diseño está balanceado, condición
+favorable para el ANOVA jerárquico.</li>
+</ul></li>
+<li><p><strong>Revisión de rangos físicos.</strong><br />
+Se evaluó que los valores de % de vacíos, Gmm, Gmb, TMN y gradaciones se
+encuentran dentro de rangos físicamente plausibles.<br />
+No se detectaron valores imposibles ni inconsistencias
+experimentales.</p></li>
+</ol>
+<p>Con estas revisiones, se concluye que las bases de datos poseen
+calidad suficiente para continuar con las etapas de análisis descriptivo
+y modelado estadístico.</p>
+<div id="revisión-de-valores-faltantes-na." class="section level4">
+<h4>1. Revisión de valores faltantes (NA).</h4>
+<pre class="r"><code>colSums(is.na(datos_obj1_raw))</code></pre>
+<pre><code>##                       mezcla_n                       bloque_n 
+##                              0                              0 
+##                        gbs_gmm                     gbs_tmn_mm 
+##                              0                              0 
+##                   gbs_n_prisma                     gbs_n_viga 
+##                              0                              0 
+##                   gbs_pseco_kg                    gbs_psum_kg 
+##                              0                              0 
+##                    gbs_psss_kg                        gbs_gmb 
+##                              0                              0 
+##         gbs_percent_vacios_7_1   pvm_asfalto_efectivo_percent 
+##                              0                              0 
+##  pvm_asfalto_sobre_mac_percent                  pvm_vacios_pv 
+##                              0                              0 
+##                        pvm_gbs                pvm_vma_percent 
+##                              0                              0 
+##                pvm_vfa_percent              pvm_polvo_asfalto 
+##                              0                              0 
+##        pvm_percent_pasando_1_2   pvm_percent_pasando_number_4 
+##                              0                              0 
+##   pvm_percent_pasando_number_8 pvm_percent_pasando_number_200 
+##                              0                              0</code></pre>
+<pre class="r"><code>colSums(is.na(datos_obj2_raw))</code></pre>
+<pre><code>##                        mezcla_n                        bloque_n 
+##                               0                               0 
+##                         gbs_gmm                      gbs_tmn_mm 
+##                               0                               0 
+##                    gbs_n_prisma                      gbs_n_viga 
+##                               0                               0 
+##                    gbs_pseco_kg                     gbs_psum_kg 
+##                               0                               0 
+##                     gbs_psss_kg                         gbs_gmb 
+##                               0                               0 
+##          gbs_percent_vacios_7_1        pdf_deformacion_unitaria 
+##                               0                              39 
+##               pdf_n_viga_fatiga                pdf_fecha_ensayo 
+##                              87                              87 
+## pdf_initial_tensile_stress_k_pa        pdf_rigidez_inicial_m_pa 
+##                              87                              87 
+##     pdf_energia_disipada_k_j_m3           pdf_force_amplitude_n 
+##                              87                              87 
+##           pdf_rigidez_final_mpa            pdf_numero_de_ciclos 
+##                              87                              87 
+##    pvm_asfalto_efectivo_percent   pvm_asfalto_sobre_mac_percent 
+##                               0                               0 
+##              pvm_percent_vacios                         pvm_gbs 
+##                               0                               0 
+##                 pvm_vma_percent                 pvm_vfa_percent 
+##                               0                               0 
+##               pvm_polvo_asfalto         pvm_percent_pasando_1_2 
+##                               0                               0 
+##    pvm_percent_pasando_number_4    pvm_percent_pasando_number_8 
+##                               0                               0 
+##  pvm_percent_pasando_number_200 
+##                               0</code></pre>
+</div>
+<div id="consistencia-del-diseño-jerárquico-mezcla-bloque-viga" class="section level4">
+<h4>2. Consistencia del diseño jerárquico: Mezcla → Bloque → Viga</h4>
+<pre class="r"><code>datos_obj1_raw |&gt;
+  count(mezcla_n, bloque_n) |&gt;
+  count(n)</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##       n    nn
+##   &lt;int&gt; &lt;int&gt;
+## 1     5    48</code></pre>
+<pre class="r"><code>datos_obj1_raw |&gt;
+  count(mezcla_n) |&gt; 
+  count(n)</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##       n    nn
+##   &lt;int&gt; &lt;int&gt;
+## 1    10    24</code></pre>
+</div>
+<div id="rangos-físicos-de-las-variables-principales" class="section level4">
+<h4>3. Rangos físicos de las variables principales</h4>
+<pre class="r"><code>summary(datos_obj1_raw$gbs_percent_vacios_7_1)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   5.364   6.355   6.757   7.018   7.495  12.366</code></pre>
+<pre class="r"><code>summary(datos_obj1_raw$gbs_gmm)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   2.363   2.378   2.387   2.387   2.393   2.416</code></pre>
+<pre class="r"><code>summary(datos_obj1_raw$gbs_gmb)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   2.101   2.206   2.222   2.220   2.237   2.268</code></pre>
+<pre class="r"><code>table(datos_obj1_raw$gbs_tmn_mm)</code></pre>
+<pre><code>## 
+## 12.5   19 
+##   60  180</code></pre>
+</div>
 </div>
 <div id="estadísticas-descsriptivas." class="section level3">
 <h3>Estadísticas descsriptivas.</h3>
