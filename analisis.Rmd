@@ -14,6 +14,7 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
+library(glmnet)
 library(corrplot)
 library(ggcorrplot)
 library(car)
@@ -1352,10 +1353,6 @@ Una vez definidas la variable respuesta y la lista inicial de predictores, se pr
 El objetivo es obtener una ecuación estable, estadísticamente válida y, sobre todo, coherente con la física del comportamiento a fatiga.
 
 
-Luego:
-	•	Backward selection
-	•	Validación física de coeficientes
-
 **Backward selection**
 
 
@@ -1376,19 +1373,60 @@ mod_full_12_400 <- lm(
 
 summary(mod_full_12_400)
 ```
+Regresiones 1 a 1
+
 
 
 
 ```{r}
-# Selección backward basada en AIC
-mod_step_12_400 <- step(
-  mod_full_12_400,
-  direction = "backward",
-  trace = FALSE
+# --- Lista de predictores ---
+vars <- c(
+  "pdf_rigidez_inicial_m_pa",
+  "pdf_rigidez_final_mpa",
+  "pdf_energia_disipada_k_j_m3",
+  "pvm_vma_percent",
+  "pvm_vfa_percent",
+  "pvm_percent_vacios",
+  "pvm_polvo_asfalto",
+  "pvm_percent_pasando_1_2",
+  "pvm_percent_pasando_number_4",
+  "pvm_percent_pasando_number_8",
+  "pvm_percent_pasando_number_200"
 )
 
-summary(mod_step_12_400)
+# --- Data con variable dependiente ---
+df <- df_12_400 |> 
+  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
+
+# --- Función para ajustar regresión simple ---
+ajustar_regresion <- function(var) {
+  f <- as.formula(paste0("log_ciclos ~ ", var))
+  m <- lm(f, data = df)
+
+  data.frame(
+    variable = var,
+    coef = coef(m)[2],
+    p_value = summary(m)$coefficients[2,4],
+    r2 = summary(m)$r.squared
+  )
+}
+
+# --- Ejecutar todas las regresiones ---
+resultados_12_400 <- do.call(rbind, lapply(vars, ajustar_regresion))
+
+# --- Ordenar por R² ---
+resultados_12_400 <- resultados_12_400 |> arrange(desc(r2))
+
+resultados_12_400
+
 ```
+
+Tenemos problemas grandes de Multicolinealidad....
+
+
+**PLS **
+
+
 
 **Validación física de coeficientes**
 
