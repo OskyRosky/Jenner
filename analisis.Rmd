@@ -14,6 +14,9 @@ knitr::opts_chunk$set(
   warning = FALSE
 )
 
+library(corrplot)
+library(ggcorrplot)
+
 library(dplyr)
 library(tidyverse)
 library(skimr)
@@ -1028,7 +1031,22 @@ ggplot(df_12_400, aes(x = pdf_energia_disipada_k_j_m3)) +
 **Boxplot de propiedades volumétricas**
 
 ```{r}
-
+df_12_400 %>%
+  select(starts_with("pvm_")) %>%
+  pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "valor"
+  ) %>%
+  ggplot(aes(x = variable, y = valor)) +
+  geom_boxplot(fill = "darkgreen", alpha = 0.7) +
+  labs(
+    title = "Propiedades volumétricas — TMN 12.5 mm, 400 μɛ",
+    x = "Propiedad volumétrica",
+    y = "Valor"
+  ) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 
 
@@ -1045,26 +1063,96 @@ Esto sirve para:
 (Por ejemplo, rigidez inicial suele correlacionarse con rigidez final, y VMA con VFA.)
 
 ```{r}
+vars_num <- df_12_400 %>% 
+  select(where(is.numeric))
 
+names(vars_num)
+```
+
+```{r}
+cor_matrix <- cor(vars_num, use = "pairwise.complete.obs")
+cor_matrix
 ```
 
 ```{r}
 
+
+corrplot(
+  cor_matrix,
+  method = "color",
+  type = "upper",
+  tl.cex = 0.6,
+  tl.col = "black",
+  addCoef.col = "black",
+  number.cex = 0.5
+)
 ```
+
+
+```{r}
+
+vars_num <- df_12_400 %>%
+  select(where(is.numeric))
+
+# eliminar columnas constantes (sin variación)
+vars_num <- vars_num[, sapply(vars_num, function(x) length(unique(x)) > 1)]
+
+cor_matrix <- cor(vars_num, use = "pairwise.complete.obs")
+
+ggcorrplot(
+  cor_matrix,
+  hc.order = TRUE,
+  type = "upper",
+  lab = TRUE,
+  lab_size = 2.5,
+  tl.cex = 8,
+  colors = c("steelblue", "white", "firebrick")
+)
+```
+
 
 C. Evaluación inicial de la variable respuesta
 
-Específicamente:
-	•	Confirmar que log10(ciclos) reduce la asimetría
-	•	Ver si la dispersión cambia entre TMN y deformación
-	•	Ver si hay observaciones atípicas obvias
+Antes de ajustar los modelos de regresión, es necesario revisar el comportamiento de la variable respuesta (número de ciclos). En particular, se verifica si la transformación log10(ciclos) reduce la asimetría, cómo cambia la dispersión entre escenarios y si existen valores atípicos evidentes.
+
+**Histograma de ciclos en escala original**
 
 ```{r}
-
+ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
+  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  labs(
+    title = "Ciclos (escala original) — TMN 12.5 mm, 400 μɛ",
+    x = "Ciclos",
+    y = "Frecuencia"
+  ) +
+  theme_bw()
 ```
 
-```{r}
+**Histograma de log10(ciclos)**
 
+```{r}
+ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
+  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  labs(
+    title = "log10(Ciclos) — TMN 12.5 mm, 400 μɛ",
+    x = "log10(ciclos)",
+    y = "Frecuencia"
+  ) +
+  theme_bw()
+```
+
+**Boxplot para detectar posibles atípicos en log10(ciclos)**
+
+
+```{r}
+ggplot(df_12_400, aes(y = log10(pdf_numero_de_ciclos), x = "")) +
+  geom_boxplot(fill = "darkgreen", alpha = 0.7) +
+  labs(
+    title = "Boxplot log10(ciclos) — TMN 12.5 mm, 400 μɛ",
+    y = "log10(ciclos)",
+    x = ""
+  ) +
+  theme_bw()
 ```
 
 
