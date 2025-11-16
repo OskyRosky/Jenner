@@ -1284,7 +1284,13 @@ ggcorrplot::ggcorrplot(
   colors = c("steelblue", "white", "firebrick")
 )
 ```
+La matriz de correlación y los valores VIF muestran dos conclusiones claras:
 
+1. Las propiedades volumétricas están fuertemente correlacionadas
+
+Variables como VMA, VFA, vacíos, polvo/asfalto y los % pasando (#4, #8, #200, 1/2”) presentan correlaciones muy altas entre sí. Esto se confirma con VIF extremadamente elevados (algunos >100).
+
+Implicación: no pueden incluirse juntas en el modelo. Generarían inestabilidad, coeficientes erráticos y errores estándar inflados. Solo debe seleccionarse una o dos, guiadas por la coherencia física.
 
 **VIF**
 
@@ -1328,29 +1334,63 @@ modelo_vif_12_400 <- lm(
 library(car)
 car::vif(modelo_vif_12_400)
 ```
+Rigidez inicial, rigidez final y energía disipada muestran VIF bajos o moderados, sin colinealidad importante y con relación directa con el daño por fatiga.
+
+Implicación: son los predictores más confiables para este escenario y deben ser la base del modelo.
 
 
 D. Ajuste del modelo completo (full model)
 
-Luego:
-	•	Backward selection
-	•	Validación física de coeficientes
 
-
-
+Una vez definidas la variable respuesta y la lista inicial de predictores, se procede a ajustar el modelo completo, que incluye todas las variables mecánicas y el subconjunto reducido de propiedades volumétricas previamente filtradas por colinealidad. Este modelo sirve como punto de partida para aplicar selección backward, evaluando cuáles predictores aportan información real y cuáles deben eliminarse.
 
 
 \[
 \widehat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
 \]
 
-```{r}
+El objetivo es obtener una ecuación estable, estadísticamente válida y, sobre todo, coherente con la física del comportamiento a fatiga.
 
+
+Luego:
+	•	Backward selection
+	•	Validación física de coeficientes
+
+**Backward selection**
+
+
+```{r}
+# Modelo completo (full model) — TMN 12.5 mm, 400 με
+mod_full_12_400 <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +
+    pdf_rigidez_final_mpa +
+    pdf_energia_disipada_k_j_m3 +
+    pvm_vma_percent +
+    pvm_percent_vacios +
+    pvm_polvo_asfalto +
+    pvm_percent_pasando_1_2 +
+    pvm_percent_pasando_number_200,
+  data = df_12_400
+)
+
+summary(mod_full_12_400)
 ```
 
-```{r}
 
+
+```{r}
+# Selección backward basada en AIC
+mod_step_12_400 <- step(
+  mod_full_12_400,
+  direction = "backward",
+  trace = FALSE
+)
+
+summary(mod_step_12_400)
 ```
+
+**Validación física de coeficientes**
 
 E.  Validación del modelo
 
