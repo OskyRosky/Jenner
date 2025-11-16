@@ -137,9 +137,103 @@ head(datos_obj2_raw, 10) |> kable() |> kable_styling(full_width = FALSE)
 ```
 
 
-### Limpieza de datos
+### Listado de variables por objetivo.
+
+A continuación se presentan todas las variables disponibles en cada conjunto de datos, de acuerdo con su organización y finalidad dentro de la tesis. Esta revisión facilita comprender qué información se analiza en cada objetivo y permite verificar la consistencia de nombres antes de aplicar los modelos estadísticos.
+
+Objetivo 1 – Variables disponibles
+
+Incluye:
+
+•	Identificación de mezcla y bloque.
+•	Variables derivadas de la prueba de Gbs (prefijo gbs_).
+•	Porcentaje de vacíos.
+•	Propiedades volumétricas de la mezcla (prefijo pvm_).
 
 
+```{r}
+names(datos_obj1_raw) |> 
+  as.data.frame() |> 
+  kable(col.names = "Variables – Objetivo 1") |> 
+  kable_styling(full_width = FALSE)
+```
+
+Objetivo 2 – Variables disponibles
+
+Incluye:
+
+•	Identificación de mezcla y bloque.
+•	Variables de la prueba de Gbs.
+•	Variables del ensayo de fatiga (prefijo pdf_).
+•	Propiedades volumétricas de la mezcla (prefijo pvm_).
+
+
+```{r}
+names(datos_obj2_raw) |> 
+  as.data.frame() |> 
+  kable(col.names = "Variables – Objetivo 2") |> 
+  kable_styling(full_width = FALSE)
+```
+
+
+
+
+
+### Calidad de los datos. 
+
+### Calidad de los datos
+
+Antes de proceder con los análisis estadísticos, se verificó la consistencia y validez general de las bases de datos.  
+Dado que los valores provienen directamente del proceso experimental, no se aplicó limpieza activa ni modificación de observaciones.  
+Únicamente se evaluaron tres aspectos fundamentales:
+
+1. **Valores faltantes (NA).**  
+   Se revisó la presencia de datos ausentes en las variables utilizadas en los modelos.  
+   El análisis mostró que no existen valores faltantes en las variables relevantes para los Objetivos 1 y 2.
+
+2. **Consistencia del diseño jerárquico.**  
+   Se confirmó la estructura esperada del experimento:  
+   - cada mezcla cuenta con exactamente dos bloques (A y B),  
+   - cada bloque contiene cinco vigas,  
+   - totalizando 240 observaciones completas.  
+   Esta verificación garantiza que el diseño está balanceado, condición favorable para el ANOVA jerárquico.
+
+3. **Revisión de rangos físicos.**  
+   Se evaluó que los valores de % de vacíos, Gmm, Gmb, TMN y gradaciones se encuentran dentro de rangos físicamente plausibles.  
+   No se detectaron valores imposibles ni inconsistencias experimentales.
+
+Con estas revisiones, se concluye que las bases de datos poseen calidad suficiente para continuar con las etapas de análisis descriptivo y modelado estadístico.
+
+#### 1. Revisión de valores faltantes (NA).
+
+```{r}
+colSums(is.na(datos_obj1_raw))
+colSums(is.na(datos_obj2_raw))
+```
+
+#### 2. Consistencia del diseño jerárquico: Mezcla → Bloque → Viga
+
+```{r}
+datos_obj1_raw |>
+  count(mezcla_n, bloque_n) |>
+  count(n)
+```
+
+```{r}
+datos_obj1_raw |>
+  count(mezcla_n) |> 
+  count(n)
+```
+
+#### 3. Rangos físicos de las variables principales
+
+
+```{r}
+summary(datos_obj1_raw$gbs_percent_vacios_7_1)
+summary(datos_obj1_raw$gbs_gmm)
+summary(datos_obj1_raw$gbs_gmb)
+table(datos_obj1_raw$gbs_tmn_mm)
+```
 
 
 ### Estadísticas descsriptivas. 
