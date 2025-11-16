@@ -1187,23 +1187,29 @@ Finalmente, la evaluación del comportamiento de \log_{10}(\text{ciclos}) median
 
 ### 4.3 Modelado predictivo (regresión lineal para cada escenario)
 
-Para cada uno de los 4 subconjuntos:
+Con los subconjuntos de datos ya definidos y tras revisar la estructura estadística de las variables, se procede a construir modelos de regresión lineal cuyo objetivo es explicar y predecir el comportamiento a fatiga de las mezclas asfálticas. Dado que la respuesta mecánica depende simultáneamente del tamaño máximo nominal (TMN) y del nivel de deformación aplicado, los modelos se ajustan por separado para cada escenario experimental. Esto garantiza ecuaciones coherentes con la física del ensayo AASHTO T321 y evita mezclar poblaciones con comportamientos mecánicos distintos.
+
+El enfoque consiste en modelar el número de ciclos a falla en función de propiedades mecánicas (rigidez, energía disipada) y propiedades volumétricas (VMA, VFA, vacíos, graduación, densidades). Puesto que los ciclos presentan una marcada asimetría positiva, la variable dependiente se transforma mediante \log_{10}, lo que estabiliza la varianza y mejora la interpretación de los coeficientes.
+
+Cada modelo seguirá la misma secuencia metodológica:
+(1) definición de variables,
+(2) selección inicial de predictores,
+(3) diagnóstico de colinealidad,
+(4) ajuste del modelo completo y selección backward,
+(5) validación estadística y física,
+(6) expresión final de la ecuación en formato LaTeX.
 
 
 A. Definición de variable dependiente
+
+La variable respuesta será:
 
 \[
 Y = \log_{10}(\text{ciclos})
 \]
 
+Esto permite reducir la asimetría natural de los datos de fatiga y obtener relaciones aproximadamente lineales con las propiedades de la mezcla.
 
-```{r}
-
-```
-
-```{r}
-
-```
 
 
 B. Selección inicial de variables independientes
