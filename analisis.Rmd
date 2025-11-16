@@ -802,26 +802,25 @@ ggplot(diag_reg_obj1, aes(sample = residuos)) +
   )
 ```
 
+Los resultados del modelo de regresión muestran, en primer lugar, que la variabilidad del porcentaje de vacíos está extraordinariamente bien explicada por las propiedades volumétricas incluidas en el análisis. El modelo seleccionado mediante el procedimiento backward presenta un R^2 y un R^2 ajustado cercanos a 1, lo cual indica que prácticamente toda la variación observada en los vacíos puede reconstruirse de manera precisa utilizando las variables retenidas. Este nivel de ajuste se interpreta como una consecuencia natural de la relación física existente entre los parámetros de densidad (Gmm y Gmb) y el cálculo del porcentaje de vacíos, pues dicha variable se deriva directamente de ellos. Por tanto, el modelo no solo ajusta bien, sino que respeta la estructura mecánica del fenómeno.
 
+En cuanto a los coeficientes, tanto Gmm como Gmb aparecen como predictores altamente significativos y con signos coherentes con la fórmula fundamental de vacíos: un aumento de Gmm incrementa los vacíos, mientras que un aumento de Gmb los reduce. Además, variables como el asfalto sobre mezcla, los vacíos PV, la relación polvo/asfalto y ciertos porcentajes pasando también muestran asociaciones significativas. Estas variables no intervienen directamente en el cálculo de vacíos, pero sí afectan la compactabilidad y la estructura interna del material, por lo que su presencia en el modelo es consistente desde el punto de vista físico.
+
+Respecto a las variables que fueron eliminadas durante el proceso stepwise, su exclusión no debe interpretarse como irrelevancia técnica, sino como redundancia estadística. Muchas de ellas están fuertemente correlacionadas con Gmm, Gmb o con otras propiedades volumétricas, lo que se reflejó en VIF elevados y relaciones transversales observadas en la matriz de correlación. En un modelo donde las variables de densidad ya capturan la mayor parte de la estructura de los vacíos, estas variables adicionales aportan poca información independiente y, por tanto, el algoritmo las descarta sin afectar la capacidad explicativa del modelo.
+
+Finalmente, el diagnóstico de residuos confirma que el ajuste es adecuado: los residuos son pequeños, no muestran patrones sistemáticos y se distribuyen de manera cercana a la normalidad. El Q–Q plot presenta una alineación aceptable, especialmente considerando la escala muy corta de las desviaciones residuales, y la gráfica de residuos frente a valores ajustados no evidencia heterocedasticidad seria ni autocorrelación. Todos estos elementos sugieren que, desde el punto de vista estadístico y físico, el modelo es estable, interpretable y adecuado para describir el comportamiento del porcentaje de vacíos en función de las propiedades volumétricas.
 
 
 ### 3.4 Síntesis técnica del Objetivo 1
 
-(Sin conclusiones finales aún)
+El Objetivo 1 se orientó a comprender el comportamiento del porcentaje de vacíos de aire medido en las vigas compactadas, tanto desde la perspectiva de su variabilidad dentro del proceso productivo como desde su relación con las propiedades volumétricas de las mezclas. El propósito general fue identificar, por un lado, dónde se origina la variación observada entre mezclas, bloques y vigas, y por otro, qué características del material explican mejor dicha variación.
 
-Aquí solo se resume qué se modeló y por qué, no los resultados.
+El análisis se desarrolló mediante dos enfoques complementarios.
+En primer lugar, se empleó un modelo mixto jerárquico para respetar la estructura propia del diseño experimental, en el cual las vigas están anidadas dentro de bloques y los bloques dentro de mezclas. Bajo este esquema, la mezcla se consideró como efecto fijo —por representar diseños formulados de manera específica— mientras que los efectos correspondientes al bloque (compactación) y la viga (corte) se trataron como aleatorios. Este modelo permitió descomponer la variabilidad total del porcentaje de vacíos y evaluar la contribución relativa de cada nivel del proceso de fabricación.
 
-Ejemplo:
-	•	Se evaluó la variabilidad del % de vacíos mediante un modelo mixto jerárquico.
-	•	Se ajustó un modelo de regresión para identificar propiedades volumétricas relevantes.
-	•	Ambos análisis aportan información complementaria:
-	•	uno sobre variabilidad estructural,
-	•	el otro sobre relaciones físicas entre propiedades y vacíos.
+En segundo lugar, se ajustó un modelo de regresión lineal múltiple con el fin de estudiar la relación física entre el porcentaje de vacíos y las propiedades volumétricas y de gradación medidas en las propias vigas. A diferencia del análisis jerárquico, este enfoque no evalúa la estructura del proceso, sino la capacidad explicativa que tienen variables como el Gmm, el Gmb, el VMA, el VFA, los vacíos PV y los porcentajes que pasan por diferentes tamices para describir cómo cambian los vacíos cuando varían las características del material. Para ello, se realizó primero una evaluación de colinealidad, seguida del ajuste de un modelo base y un procedimiento de selección apoyado en criterios estadísticos y en la coherencia física de los coeficientes.
 
-(Las conclusiones van al final del documento, no aquí).
-
-
-
+En conjunto, ambos análisis ofrecen una visión integral del comportamiento de los vacíos: el modelo mixto permite entender la variación interna del proceso mezcla–bloque–viga, mientras que la regresión aporta una ecuación descriptiva que relaciona el resultado con las propiedades fundamentales del material. Esta sección resume únicamente el enfoque metodológico; las conclusiones de fondo se presentan más adelante en el documento.
 
 
 

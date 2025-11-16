@@ -3791,25 +3791,31 @@ relacione el porcentaje de vacíos de aire medido en las vigas con las
 propiedades volumétricas y de gradación de la mezcla asfáltica. A
 diferencia del modelo mixto anterior, donde la mezcla se consideró como
 un factor categórico, aquí el interés se centra en variables con
-significado físico directo (Gmm, Gmb, VMA, VFA, vacíos PV, relación
-polvo/asfalto, % pasando, etc.), que permitan entender cómo cambia el %
-de vacíos cuando cambian las características del material.</p>
+significado físico directo (Gmm, Gmb, VMA, VFA, vacíos en la mezcla,
+relación polvo/asfalto, porcentajes que pasan cada tamiz, etc.), que
+permitan entender cómo cambia el % de vacíos cuando cambian las
+características del material.</p>
 <p>La variable respuesta del modelo es el porcentaje de vacíos obtenido
 a partir de la prueba de Gbs:</p>
 <ul>
-<li>Variable dependiente:<br />
-<span class="math inline">\(\text{Vacíos} \equiv
-\texttt{gbs\_percent\_vacios\_7\_1}\)</span>.</li>
+<li><strong>Variable dependiente</strong>: <span class="math inline">\(\text{Vacíos} \equiv\)</span>
+<code>gbs_percent_vacios_7_1</code>.</li>
 </ul>
 <p>Como variables explicativas <span class="math inline">\((X_1,\dots,X_p)\)</span> se consideran únicamente
 las propiedades volumétricas y de gradación medidas en las mismas vigas,
 por ejemplo:</p>
-<p><span class="math inline">\(\texttt{gbs\_gmm}\)</span>, <span class="math inline">\(\texttt{gbs\_gmb}\)</span>, <span class="math inline">\(\texttt{pvm\_asfalto\_efectivo\_percent}\)</span>,
-<span class="math inline">\(\texttt{pvm\_asfalto\_sobre\_mac\_percent}\)</span>,
-<span class="math inline">\(\texttt{pvm\_vacios\_pv}\)</span>, <span class="math inline">\(\texttt{pvm\_gbs}\)</span>, <span class="math inline">\(\texttt{pvm\_vma\_percent}\)</span>, <span class="math inline">\(\texttt{pvm\_vfa\_percent}\)</span>, <span class="math inline">\(\texttt{pvm\_polvo\_asfalto}\)</span>, <span class="math inline">\(\texttt{pvm\_percent\_pasando\_1\_2}\)</span>,
-<span class="math inline">\(\texttt{pvm\_percent\_pasando\_number\_4}\)</span>,<br />
-<span class="math inline">\(\texttt{pvm\_percent\_pasando\_number\_8}\)</span>,
-<span class="math inline">\(\texttt{pvm\_percent\\_pasando\_number\_200}\)</span>.</p>
+<ul>
+<li><code>gbs_gmm</code>, <code>gbs_gmb</code></li>
+<li><code>pvm_asfalto_efectivo_percent</code>,
+<code>pvm_asfalto_sobre_mac_percent</code></li>
+<li><code>pvm_vacios_pv</code>, <code>pvm_gbs</code></li>
+<li><code>pvm_vma_percent</code>, <code>pvm_vfa_percent</code>,
+<code>pvm_polvo_asfalto</code></li>
+<li><code>pvm_percent_pasando_1_2</code>,
+<code>pvm_percent_pasando_number_4</code>,
+<code>pvm_percent_pasando_number_8</code>,
+<code>pvm_percent_pasando_number_200</code>.</li>
+</ul>
 <p>El modelo base que se plantea es una regresión lineal múltiple del
 tipo:</p>
 <p><span class="math display">\[
