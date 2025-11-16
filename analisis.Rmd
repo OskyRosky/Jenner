@@ -26,18 +26,21 @@ library(car)
 library(knitr)
 library(kableExtra)
 
-# Cargar datos del Objetivo 1
+# Objetivo 1: hoja "dataob1"
+# Salta la fila 1 (títulos de bloque) y usa la fila 2 como encabezado
 datos_obj1_raw <- read_excel(
   "data.xlsx",
-  sheet = "dataob1",
-  col_names = TRUE   # usa la primera fila como encabezado
+  sheet     = "dataob1",
+  skip      = 1,   # 👈 ahora la fila con "Mezcla N°  Bloque N°  Gbs-Gmm  ..." será el header
+  col_names = TRUE
 ) |>
-  clean_names()      # pasa a snake_case
+  clean_names()
 
-# Cargar datos del Objetivo 2
+# Objetivo 2: hoja "dataob2"
 datos_obj2_raw <- read_excel(
   "data.xlsx",
-  sheet = "dataob2",
+  sheet     = "dataob2",
+  skip      = 1,   # 👈 usa la fila con "Mezcla N°, Bloque N°, Gbs-Gmm, ..., PDF-..., PVM-..." como header
   col_names = TRUE
 ) |>
   clean_names()
@@ -88,7 +91,7 @@ El análisis estadístico se organiza en dos objetivos complementarios:
 
 Con este enfoque, el trabajo no solo cuantifica la variabilidad de los vacíos de aire en las distintas etapas del proceso (mezcla–bloque–viga), sino que también propone ecuaciones iniciales para relacionar las propiedades volumétricas con el desempeño mecánico a fatiga, aportando criterios objetivos para el diseño y control de mezclas asfálticas.
 
-## 2. Datos.  del R-Studio {.tabset .tabset-fade .tabset-pills}
+## 2. Datos.  {.tabset .tabset-fade .tabset-pills}
 
 ### Ingesta de datos.
 
