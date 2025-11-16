@@ -986,21 +986,42 @@ ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
 **Rigidez inicial**
 
 ```{r}
-
+ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
+  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  labs(
+    title = "log10(ciclos) — TMN 12.5 mm, 400 μɛ",
+    x = "log10(ciclos)",
+    y = "Frecuencia"
+  ) +
+  theme_bw()
 ```
 
 
 **Rigidez final **
 
 ```{r}
-
+ggplot(df_12_400, aes(x = pdf_rigidez_final_mpa)) +
+  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  labs(
+    title = "Rigidez final — TMN 12.5 mm, 400 μɛ",
+    x = "Rigidez final (MPa)",
+    y = "Frecuencia"
+  ) +
+  theme_bw()
 ```
 
 
 **Energía disipada**
 
 ```{r}
-
+ggplot(df_12_400, aes(x = pdf_energia_disipada_k_j_m3)) +
+  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  labs(
+    title = "Energía disipada — TMN 12.5 mm, 400 μɛ",
+    x = "Energía disipada (kJ/m³)",
+    y = "Frecuencia"
+  ) +
+  theme_bw()
 ```
 
 
