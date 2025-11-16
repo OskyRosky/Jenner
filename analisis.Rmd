@@ -850,23 +850,59 @@ donde \(X_1, \ldots, X_p\) representan las propiedades volumétricas, mecánicas
 
 ### 4.1 Preparación de los subconjuntos de análisis
 
-Antes de correr cualquier modelo, debemos dividir dataob2 en los cuatro escenarios experimentales:
-	1.	TMN = 12.5 mm, deformación = 400 μϵ
-	2.	TMN = 12.5 mm, deformación = 600 μϵ
-	3.	TMN = 19 mm, deformación = 400 μϵ
-	4.	TMN = 19 mm, deformación = 600 μϵ
-
-Esto permite ajustar modelos independientes porque el comportamiento mecánico cambia drásticamente entre TMN y nivel de deformación.
-
-👉 Código que generaremos después: crear df_12_400, df_12_600, df_19_400, df_19_600.
+Dado que el comportamiento a fatiga depende de forma conjunta del tamaño máximo nominal (TMN) y del nivel de deformación aplicado en el ensayo AASHTO T321, el análisis se realizará por separado para cada combinación de estos factores. En particular, se definen cuatro escenarios experimentales: TMN de 12.5 mm y 19 mm, cada uno ensayado a 400 y 600 microdeformaciones. Para cada escenario se construye un subconjunto de datos que agrupa únicamente las vigas que cumplen simultáneamente con el TMN y el nivel de deformación correspondientes. Esto permite ajustar modelos de regresión independientes y comparar de manera coherente el efecto de las propiedades de la mezcla sobre el número de ciclos a falla en condiciones de carga bien delimitadas.
 
 ```{r}
-
+# TMN 12.5 mm, deformación 400 microdeformaciones
+df_12_400 <- datos_obj2_raw |>
+  filter(
+    gbs_tmn_mm == 12.5,
+    pdf_deformacion_unitaria == 400
+  )
 ```
 
 ```{r}
-
+# TMN 12.5 mm, deformación 600 microdeformaciones
+df_12_600 <- datos_obj2_raw |>
+  filter(
+    gbs_tmn_mm == 12.5,
+    pdf_deformacion_unitaria == 600
+  )
 ```
+
+```{r}
+# TMN 19 mm, deformación 400 microdeformaciones
+df_19_400 <- datos_obj2_raw |>
+  filter(
+    gbs_tmn_mm == 19,
+    pdf_deformacion_unitaria == 400
+  )
+```
+
+```{r}
+# TMN 19 mm, deformación 600 microdeformaciones
+df_19_600 <- datos_obj2_raw |>
+  filter(
+    gbs_tmn_mm == 19,
+    pdf_deformacion_unitaria == 600
+  )
+```
+
+```{r}
+# Verificamos cuántas observaciones tiene cada escenario
+tibble(
+  escenario = c("12.5 - 400", "12.5 - 600", "19 - 400", "19 - 600"),
+  n = c(
+    nrow(df_12_400),
+    nrow(df_12_600),
+    nrow(df_19_400),
+    nrow(df_19_600)
+  )
+) |>
+  kable(col.names = c("Escenario TMN - deformación", "Número de observaciones")) |>
+  kable_styling(full_width = FALSE)
+```
+
 
 
 ### 4.2 Exploración descriptiva inicial (por escenario)
@@ -1056,8 +1092,6 @@ Ejemplo:
 	•	Qué propiedades resultaron más relevantes
 	•	Si el efecto de TMN y deformación es coherente
 	•	Si los modelos mostraron estabilidad y baja colinealidad
-
-
 
 
 ```{r}
