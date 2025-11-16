@@ -607,9 +607,19 @@ Regresión del % de vacíos vs propiedades volumétricas</a></li>
 <li><a href="#s%C3%ADntesis-t%C3%A9cnica-del-objetivo-1" id="toc-síntesis-técnica-del-objetivo-1">3.4 Síntesis técnica del
 Objetivo 1</a></li>
 </ul></li>
-<li><a href="#objetivo-2." id="toc-objetivo-2.">4. Objetivo 2.</a>
+<li><a href="#objetivo-2-modelos-predictivos-de-ciclos-de-fatiga-aashto-t321." id="toc-objetivo-2-modelos-predictivos-de-ciclos-de-fatiga-aashto-t321.">4.
+Objetivo 2: modelos predictivos de ciclos de fatiga AASHTO T321.</a>
 <ul>
-<li><a href="#section-1" id="toc-section-1"></a></li>
+<li><a href="#preparaci%C3%B3n-de-los-subconjuntos-de-an%C3%A1lisis" id="toc-preparación-de-los-subconjuntos-de-análisis">4.1 Preparación de
+los subconjuntos de análisis</a></li>
+<li><a href="#exploraci%C3%B3n-descriptiva-inicial-por-escenario" id="toc-exploración-descriptiva-inicial-por-escenario">4.2 Exploración
+descriptiva inicial (por escenario)</a></li>
+<li><a href="#modelado-predictivo-regresi%C3%B3n-lineal-para-cada-escenario" id="toc-modelado-predictivo-regresión-lineal-para-cada-escenario">4.3
+Modelado predictivo (regresión lineal para cada escenario)</a></li>
+<li><a href="#comparaci%C3%B3n-entre-los-cuatro-modelos" id="toc-comparación-entre-los-cuatro-modelos">4.4 Comparación entre los
+cuatro modelos</a></li>
+<li><a href="#s%C3%ADntesis-t%C3%A9cnica-del-objetivo-2." id="toc-síntesis-técnica-del-objetivo-2.">4.5 Síntesis técnica del
+Objetivo 2.</a></li>
 </ul></li>
 <li><a href="#conclusiones-y-discusi%C3%B3n." id="toc-conclusiones-y-discusión.">5. Conclusiones y discusión.</a></li>
 <li><a href="#ref" id="toc-ref">REF</a></li>
@@ -4078,8 +4088,9 @@ de las propiedades volumétricas del material. Esta sección resume
 conclusiones se presentan más adelante.</p>
 </div>
 </div>
-<div id="objetivo-2." class="section level2 tabset tabset-fade tabset-pills">
-<h2 class="tabset tabset-fade tabset-pills">4. Objetivo 2.</h2>
+<div id="objetivo-2-modelos-predictivos-de-ciclos-de-fatiga-aashto-t321." class="section level2 tabset tabset-fade tabset-pills">
+<h2 class="tabset tabset-fade tabset-pills">4. Objetivo 2: modelos
+predictivos de ciclos de fatiga AASHTO T321.</h2>
 <p>El segundo objetivo del estudio se centra en analizar el
 comportamiento a fatiga de las mezclas asfálticas ensayadas mediante
 flexo–tracción dinámica de acuerdo con la norma AASHTO T321. En este
@@ -4124,8 +4135,8 @@ permitirá identificar cuáles propiedades son verdaderamente
 determinantes en la resistencia a fatiga y generará una ecuación inicial
 que podrá servir como referencia para futuras etapas de validación o
 modelación más avanzada.</p>
-<div id="preparación-de-los-subconjuntos-de-análisis" class="section level4">
-<h4>4.1 Preparación de los subconjuntos de análisis</h4>
+<div id="preparación-de-los-subconjuntos-de-análisis" class="section level3">
+<h3>4.1 Preparación de los subconjuntos de análisis</h3>
 <p>Antes de correr cualquier modelo, debemos dividir dataob2 en los
 cuatro escenarios experimentales: 1. TMN = 12.5 mm, deformación = 400 μϵ
 2. TMN = 12.5 mm, deformación = 600 μϵ 3. TMN = 19 mm, deformación = 400
@@ -4135,8 +4146,8 @@ mecánico cambia drásticamente entre TMN y nivel de deformación.</p>
 <p>👉 Código que generaremos después: crear df_12_400, df_12_600,
 df_19_400, df_19_600.</p>
 </div>
-<div id="exploración-descriptiva-inicial-por-escenario" class="section level4">
-<h4>4.2 Exploración descriptiva inicial (por escenario)</h4>
+<div id="exploración-descriptiva-inicial-por-escenario" class="section level3">
+<h3>4.2 Exploración descriptiva inicial (por escenario)</h3>
 <p>Antes de correr regresiones, es indispensable revisar:</p>
 <p>A. Distribución de las variables clave (por escenario)</p>
 <p>Incluir: • Histograma de ciclos (sin transformar) • Histograma de
@@ -4157,8 +4168,8 @@ final, y VMA con VFA.)</p>
 Ver si la dispersión cambia entre TMN y deformación • Ver si hay
 observaciones atípicas obvias</p>
 </div>
-<div id="modelado-predictivo-regresión-lineal-para-cada-escenario" class="section level4">
-<h4>4.3 Modelado predictivo (regresión lineal para cada escenario)</h4>
+<div id="modelado-predictivo-regresión-lineal-para-cada-escenario" class="section level3">
+<h3>4.3 Modelado predictivo (regresión lineal para cada escenario)</h3>
 <p>Para cada uno de los 4 subconjuntos:</p>
 <p>A. Definición de variable dependiente</p>
 <p><span class="math display">\[
@@ -4188,20 +4199,17 @@ valor ajustado vs residual</p></li>
 \widehat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
 \]</span></p>
 </div>
-<div id="comparación-entre-los-cuatro-modelos" class="section level4">
-<h4>4.4 Comparación entre los cuatro modelos</h4>
+<div id="comparación-entre-los-cuatro-modelos" class="section level3">
+<h3>4.4 Comparación entre los cuatro modelos</h3>
 <p>Se analiza: • Diferencias entre TMN 12.5 y TMN 19 • Diferencias entre
 deformación 400 vs 600 μϵ • Efecto mecánico esperado: • más deformación
 → menos ciclos • TMN mayor → mayor rigidez pero menor sensibilidad</p>
 </div>
-<div id="síntesis-técnica-del-objetivo-2." class="section level4">
-<h4>4.5 Síntesis técnica del Objetivo 2.</h4>
+<div id="síntesis-técnica-del-objetivo-2." class="section level3">
+<h3>4.5 Síntesis técnica del Objetivo 2.</h3>
 <p>Ejemplo: • Qué propiedades resultaron más relevantes • Si el efecto
 de TMN y deformación es coherente • Si los modelos mostraron estabilidad
 y baja colinealidad</p>
-</div>
-<div id="section-1" class="section level3">
-<h3></h3>
 </div>
 </div>
 <div id="conclusiones-y-discusión." class="section level2 tabset tabset-fade tabset-pills">

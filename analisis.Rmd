@@ -848,7 +848,7 @@ Y_i = \beta_0 + \beta_1 X_{1i} + \cdots + \beta_p X_{pi} + \varepsilon_i
 donde \(X_1, \ldots, X_p\) representan las propiedades volumétricas, mecánicas y de gradación consideradas como posibles predictores. El análisis se desarrollará mediante una regresión lineal múltiple, complementada con evaluación de colinealidad, selección de variables, apoyada tanto en criterios estadísticos como en la coherencia física del comportamiento de la mezcla, y un diagnóstico básico de residuos. Este procedimiento permitirá identificar cuáles propiedades son verdaderamente determinantes en la resistencia a fatiga y generará una ecuación inicial que podrá servir como referencia para futuras etapas de validación o modelación más avanzada.
 
 
-#### 4.1 Preparación de los subconjuntos de análisis
+### 4.1 Preparación de los subconjuntos de análisis
 
 Antes de correr cualquier modelo, debemos dividir dataob2 en los cuatro escenarios experimentales:
 	1.	TMN = 12.5 mm, deformación = 400 μϵ
@@ -869,7 +869,7 @@ Esto permite ajustar modelos independientes porque el comportamiento mecánico c
 ```
 
 
-#### 4.2 Exploración descriptiva inicial (por escenario)
+### 4.2 Exploración descriptiva inicial (por escenario)
 
 Antes de correr regresiones, es indispensable revisar:
 
@@ -930,7 +930,7 @@ Específicamente:
 ```
 
 
-#### 4.3 Modelado predictivo (regresión lineal para cada escenario)
+### 4.3 Modelado predictivo (regresión lineal para cada escenario)
 
 Para cada uno de los 4 subconjuntos:
 
@@ -1039,7 +1039,7 @@ F. Guarda de ecuación final en forma LaTeX
 \]
 
 
-#### 4.4 Comparación entre los cuatro modelos
+### 4.4 Comparación entre los cuatro modelos
 
 Se analiza:
 	•	Diferencias entre TMN 12.5 y TMN 19
@@ -1050,7 +1050,7 @@ Se analiza:
 
 
 
-#### 4.5 Síntesis técnica del Objetivo 2.
+### 4.5 Síntesis técnica del Objetivo 2.
 
 Ejemplo:
 	•	Qué propiedades resultaron más relevantes
@@ -1058,7 +1058,7 @@ Ejemplo:
 	•	Si los modelos mostraron estabilidad y baja colinealidad
 
 
-###
+
 
 ```{r}
 
