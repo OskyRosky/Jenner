@@ -579,15 +579,22 @@ En términos prácticos, el objetivo de este modelo es obtener, por un lado, la 
 
 **Tabla ANOVA del efecto fijo (Mezcla)**
 
+	Se intentó especificar un modelo con tres niveles (mezcla, bloque, viga), pero el nivel de “viga dentro de bloque” disponía de una única observación por unidad, por lo que su componente de varianza no es identificable y se confunde con el término de error residual.
+
+	•	Por esa razón, el modelo final considera:
+	•	Mezcla como efecto fijo.
+	•	Bloque anidado en mezcla como efecto aleatorio.
+	•	La variabilidad entre vigas se incorpora en el error residual.
+
 ```{r}
 ### Ajuste del modelo mixto jerárquico
 
-# Asegurarnos de que los factores estén bien definidos
+### Ajuste del modelo mixto jerárquico (sin nivel de viga)
+
 datos_obj1_raw <- datos_obj1_raw |>
   mutate(
-    mezcla_n  = factor(mezcla_n),
-    bloque_n  = factor(bloque_n),
-    gbs_n_viga = factor(gbs_n_viga)
+    mezcla_n = factor(mezcla_n),
+    bloque_n = factor(bloque_n)
   )
 ```
 
@@ -596,7 +603,7 @@ datos_obj1_raw <- datos_obj1_raw |>
 # Vacíos ~ Mezcla (fijo) + Bloque y Viga anidados como aleatorios
 mod_vacios <- lmer(
   gbs_percent_vacios_7_1 ~ mezcla_n +
-    (1 | mezcla_n / bloque_n / gbs_n_viga),
+    (1 | mezcla_n / bloque_n),   # mezcla fija, bloque aleatorio anidado
   data = datos_obj1_raw
 )
 ```
@@ -657,36 +664,51 @@ ggplot(diag_df, aes(sample = residuos)) +
 ```
 
 
+Los resultados del modelo mixto jerárquico permiten evaluar la contribución relativa de cada nivel del proceso experimental a la variabilidad observada en el porcentaje de vacíos. El análisis ANOVA sobre el efecto fijo de la mezcla muestra que el factor Mezcla no resulta estadísticamente significativo para explicar diferencias en % de vacíos (p = 0.34). Este hallazgo sugiere que, aun cuando existen diferencias numéricas entre mezclas, dichas variaciones no son suficientemente grandes en relación con la variabilidad interna del proceso como para ser detectadas como significativas.
+
+El desglose de los componentes de varianza confirma esta interpretación: la variabilidad total del % de vacíos se distribuye de manera semejante entre los tres niveles del diseño experimental. Aproximadamente un tercio de la variación proviene de diferencias entre mezclas, otro tercio de diferencias entre bloques dentro de mezcla (compactación), y el tercio restante corresponde a la variación residual asociada a las vigas y a otras fuentes menores. Esta distribución relativamente equilibrada indica que ningún nivel domina claramente la variabilidad del proceso, lo cual es coherente con un sistema de producción relativamente estable donde mezcla, compactación y corte influyen de manera comparable.
+
+Las verificaciones de diagnóstico (residuos vs. ajustados y Q–Q plot) muestran un comportamiento razonable para un modelo de este tipo, sin patrones que invaliden su uso, aunque con ligeras desviaciones de normalidad atribuibles a algunos valores altos de % de vacíos ya identificados en la exploración inicial.
+
+En conjunto, estos resultados revelan que la variabilidad entre mezclas no es el principal determinante del % de vacíos. Esto refuerza la importancia de avanzar hacia el siguiente paso del Objetivo 1: ajustar un modelo de regresión que relacione el % de vacíos con las propiedades volumétricas y de gradación de la mezcla. A diferencia del factor Mezcla, que es solo un identificador categórico, las propiedades físicas (Gmm, Gmb, VMA, VFA, polvo-asfalto, entre otras) permiten capturar la estructura real del material y explicar por qué ciertas vigas presentan mayores o menores valores de % de vacíos. Por ello, la regresión constituye una herramienta fundamental para obtener una ecuación que describa el comportamiento del % de vacíos a partir de variables con significado ingenieril y no meramente categórico.
+
 
 ### 3.3 Regresión del % de vacíos vs propiedades volumétricas
 
-Propósito:
-Construir una ecuación explicativa que relacione el % de vacíos con las propiedades volumétricas de la mezcla (Gmm, VMA, VFA, vacíos PV, polvo-asfalto, etc.).
+En esta sección se busca construir una ecuación explicativa que relacione el porcentaje de vacíos de aire medido en las vigas con las propiedades volumétricas y de gradación de la mezcla asfáltica. A diferencia del modelo mixto anterior, donde la mezcla se consideró como un factor categórico, aquí el interés se centra en variables con significado físico directo (Gmm, Gmb, VMA, VFA, vacíos PV, relación polvo/asfalto, % pasando, etc.), que permitan entender cómo cambia el % de vacíos cuando cambian las características del material.
 
-Incluye:
-	1.	Selección de variables candidatas
-(todas las volumétricas y las de gradación).
-	2.	Evaluación de colinealidad
-	•	Matriz de correlación
-	•	VIF (Variance Inflation Factor)
-	3.	Ajuste del modelo base de regresión lineal
+La variable respuesta del modelo es el porcentaje de vacíos obtenido a partir de la prueba de Gbs:
+
+- Variable dependiente:  
+  \(\text{Vacíos} \equiv \texttt{gbs\_percent\_vacios\_7\_1}\).
+
+Como variables explicativas \((X_1,\dots,X_p)\) se consideran únicamente las propiedades volumétricas y de gradación medidas en las mismas vigas, por ejemplo:
+
+- \(\texttt{gbs\_gmm}\), \(\texttt{gbs\_gmb}\),
+- \(\texttt{pvm\_asfalto\_efectivo\_percent}\), \(\texttt{pvm\_asfalto\_sobre\_mac\_percent}\),
+- \(\texttt{pvm\_vacios\_pv}\), \(\texttt{pvm\_gbs}\),
+- \(\texttt{pvm\_vma\_percent}\), \(\texttt{pvm\_vfa\_percent}\), \(\texttt{pvm\_polvo\_asfalto}\),
+- \(\texttt{pvm\_percent\_pasando\_1\_2}\), \(\texttt{pvm\_percent\_pasando\_number\_4}\),  
+  \(\texttt{pvm\_percent\_pasando\_number\_8}\), \(\texttt{pvm\_percent\\_pasando\_number\_200}\).
+
+El modelo base que se plantea es una regresión lineal múltiple del tipo:
 
 \[
-\widehat{\text{Vacíos}}
-= \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
+\widehat{\text{Vacíos}}_i
+= \beta_0 + \beta_1 X_{1i} + \cdots + \beta_p X_{pi} + \varepsilon_i,
 \]
 
+donde \(\beta_0\) es el intercepto, \(\beta_1,\dots,\beta_p\) son los coeficientes asociados a cada propiedad volumétrica y \(\varepsilon_i\) representa el término de error.  
+
+El procedimiento se organiza en tres etapas:
+
+1. Definir el conjunto de variables candidatas y evaluar la colinealidad inicial mediante la matriz de correlación y el factor de inflación de la varianza (VIF).  
+2. Ajustar un modelo base de regresión lineal con todas las variables candidatas.  
+3. Aplicar un proceso de selección (backward/forward) apoyado en criterios estadísticos y en la coherencia física de los coeficientes, seguido de una validación ligera mediante \(R^2\), \(R^2\) ajustado y análisis de residuos.
 
 
-	4.	Métodos de selección de variables:
-	•	backward / forward
-	•	o interpretación basada en significancia + relevancia física
-	5.	Validación ligera del modelo:
-	•	R² y R² ajustado
-	•	análisis de residuos
-	•	coherencia física de los coeficientes
 
-(Aquí obtenés la “primera ecuación” que él quiere para describir el % de vacíos).
+
 
 ### 3.4 Síntesis técnica del Objetivo 1
 
