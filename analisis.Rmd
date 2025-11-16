@@ -361,18 +361,60 @@ datos_obj2_raw |>
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 
-El análisis descriptivo del conjunto de datos correspondiente al Objetivo 2 muestra primero que la estructura jerárquica del diseño (mezcla–bloque) se mantiene exactamente igual que en el Objetivo 1: las 24 mezclas tienen diez observaciones cada una, y cada mezcla contiene dos bloques A/B con cinco vigas cada uno. Esto confirma que el diseño experimental está completamente balanceado, lo cual es una condición favorable para los modelos de regresión comparativa que se ajustarán más adelante.
+```{r}
+datos_obj2_raw |> 
+  select(where(is.numeric)) |> 
+  select(-pdf_numero_de_ciclos) |>   # ⬅️ excluir la columna grande
+  pivot_longer(cols = everything()) |> 
+  ggplot(aes(x = name, y = value)) +
+  geom_boxplot(fill = "darkgreen", alpha = 0.7) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
 
-Desde un punto de vista numérico, los parámetros de compactación y propiedades volumétricas mantienen rangos prácticamente idénticos a los observados en el Objetivo 1, tal como se esperaba porque ambos objetivos provienen de los mismos bloques y vigas. La gran diferencia aparece en las variables propias del ensayo de fatiga bajo AASHTO T321: deformación unitaria, rigidez inicial, rigidez final, energía disipada y número de ciclos. Estas variables presentan una distribución mucho más dispersa y, en particular, el número de ciclos exhibe valores muy elevados (hasta niveles de cientos de miles o más), lo cual se refleja en el primer boxplot donde su magnitud domina la escala y oculta el comportamiento del resto de variables. Por esta razón fue necesario generar un segundo boxplot excluyendo esta variable, lo que permite observar con claridad la variabilidad general del resto de parámetros de fatiga.
+Resumen descriptivo del Objetivo 2
 
-Los gráficos de correlación ofrecen una primera visión interesante: las variables de fatiga están moderadamente asociadas entre sí, lo que es coherente desde el punto de vista mecánico (por ejemplo, mezclas con mayor rigidez tienden a presentar un comportamiento distinto ante ciclos de carga). Sin embargo, estas correlaciones no alcanzan niveles suficientemente altos como para anticipar problemas inmediatos de multicolinealidad severa. En contraste, las propiedades volumétricas —especialmente VMA, VFA, vacíos y asfalto efectivo— muestran nuevamente la estructura de dependencia interna típica de cualquier mezcla asfáltica, lo que es esperable debido a la relación matemática entre estas propiedades. Esta dependencia será importante al momento de ajustar los modelos de regresión: no impide el ajuste, pero sí requiere una selección cuidadosa de variables para evitar redundancias.
+El análisis descriptivo del conjunto de datos correspondiente al Objetivo 2 confirma que el diseño experimental conserva la misma estructura jerárquica utilizada en el Objetivo 1. Las 24 mezclas analizadas contienen dos bloques por mezcla (A/B) y cinco vigas por bloque, manteniendo un esquema completamente balanceado de 10 observaciones por mezcla. Esta consistencia es relevante, ya que permite comparar resultados de fatiga sin introducir sesgos derivados del diseño o de la distribución de muestras.
 
-En términos generales, el dataset se comporta de manera coherente y estable, no se detectan valores extremos fuera de rangos físicamente posibles y no existen problemas de balance o estructura que limiten los análisis posteriores. La única variable que requiere tratamiento visual especial es el número de ciclos, debido a su escala muy superior al resto. Por lo demás, la información está en condiciones adecuadas para avanzar hacia la construcción de modelos predictivos diferenciados por TMN y nivel de deformación, tal como requiere el Objetivo 2.
+En cuanto a los parámetros de compactación (Gmm, Gmb, TMN, masa seca/sumergida/saturada) y las propiedades volumétricas (VMA, VFA, vacíos, relación polvo-asfalto, gradación), los rangos observados coinciden con los del Objetivo 1, lo cual es esperable porque ambos conjuntos provienen de los mismos bloques y vigas. Esto aporta estabilidad conceptual: cualquier diferencia entre Objetivo 1 y Objetivo 2 provendrá del comportamiento mecánico de las vigas, no de variaciones en la compactación o en la gradación.
 
-## 3.  Objetivo 1. {.tabset .tabset-fade .tabset-pills}
+La mayor diferencia aparece en las variables propias del ensayo de fatiga según AASHTO T321. Variables como la rigidez inicial, la rigidez final, la deformación unitaria y la energía disipada presentan una dispersión significativamente mayor que las propiedades volumétricas. Sin embargo, la variable que condiciona la escala global es el número de ciclos a falla, cuyos valores pueden alcanzar cientos de miles o más. Este orden de magnitud genera que, en un boxplot general, el resto de variables numéricas quede visualmente comprimido. Por ese motivo se generó un segundo boxplot excluyendo esta variable, lo que permitió representar adecuadamente la variabilidad de los demás parámetros de fatiga.
+
+Esta diferencia de escalas no solo afecta la visualización: también tiene implicaciones metodológicas. En los modelos de regresión del Objetivo 2 —que se ajustarán por separado para cada combinación de TMN y nivel de deformación— será necesario considerar algún tipo de estandarización de variables (por ejemplo, normalización mediante media y desviación estándar) para evitar que las magnitudes absolutas condicionen la estimación de coeficientes. La estandarización no altera las relaciones estadísticas entre variables, pero mejora la estabilidad numérica de los modelos y facilita la interpretación de la importancia relativa de cada propiedad volumétrica.
+
+El análisis de correlación muestra asociaciones internas coherentes: las variables de fatiga mantienen relaciones moderadas entre sí, lo cual es consistente con el comportamiento mecánico esperado, mientras que las propiedades volumétricas exhiben su patrón clásico de dependencia interna (por razones geométricas y físicas). Estas correlaciones no son lo suficientemente altas como para anticipar problemas severos de multicolinealidad, aunque sí justifican una selección cuidadosa de predictores para evitar redundancias en la regresión.
+
+En conjunto, el dataset del Objetivo 2 se presenta estable, sin valores fuera de rango físico y sin problemas de balance. El único aspecto que requiere tratamiento especial es la diferencia extrema de escalas entre las variables de fatiga, particularmente el número de ciclos, lo que deberá considerarse al momento de construir los modelos predictivos de desempeño.
+
+## 3.  Objetivo 1: Análisis de la variabilidad del % de vacíos. {.tabset .tabset-fade .tabset-pills}
 
 
-###
+El análisis del Objetivo 1 puede dividirse claramente en dos grandes bloques, cada uno cumpliendo un propósito estadístico distinto:
+
+	1.	Cuantificar de dónde proviene la variabilidad del % de vacíos
+(diseño → compactación → corte).
+→ ANOVA jerárquico / modelo mixto.
+	2.	Identificar qué propiedades volumétricas explican mejor el % de vacíos
+(relación física entre vacíos y características de la mezcla).
+→ Modelos de regresión.
+
+
+### 3.1 Exploración inicial del % de vacíos
+
+
+Propósito:
+Describir cómo se distribuye el % de vacíos en el conjunto de datos y visualizar diferencias preliminares por mezcla, por bloque y por viga.
+
+Incluye:
+
+•	Estadísticas descriptivas del % de vacíos.
+•	Boxplots por mezcla.
+•	Boxplots por bloque dentro de mezcla.
+•	Distribución general (histograma / densidad).
+•	Q–Q plot para una inspección elemental de normalidad.
+
+(Esto introduce el comportamiento de la variable respuesta antes de modelar).
+
 
 ```{r}
 
@@ -383,7 +425,37 @@ En términos generales, el dataset se comporta de manera coherente y estable, no
 ```
 
 
-### 
+### 3.2 Modelo mixto para la variabilidad del % de vacíos
+
+Propósito:
+Determinar qué proporción de la variabilidad del % de vacíos se explica por:
+	•	la mezcla (diseño),
+	•	el bloque (compactación),
+	•	la viga (corte / operario),
+	•	el error residual.
+
+Modelo recomendado:
+Un modelo mixto jerárquico:
+
+\[
+\text{Vacíos}_{ijk}
+= \mu \;+\; \alpha_i \;+\; b_{j(i)} \;+\; c_{k(ij)} \;+\; \varepsilon_{ijk}
+\]
+
+donde:
+	•	Mezcla = efecto fijo
+	•	Bloque (Mezcla) = aleatorio
+	•	Viga (Bloque) = aleatorio
+
+Reportar:
+	•	Tabla ANOVA del efecto fijo (Mezcla)
+	•	Componentes de varianza (porcentaje de contribución)
+	•	Gráficos de diagnóstico:
+	•	residuos vs ajustados
+	•	normalidad de residuos
+
+(Esto responde la pregunta central: ¿dónde se origina la variación del % de vacíos?).
+
 
 ```{r}
 
@@ -392,9 +464,65 @@ En términos generales, el dataset se comporta de manera coherente y estable, no
 ```{r}
 
 ```
+
+
+### 3.3 Regresión del % de vacíos vs propiedades volumétricas
+
+Propósito:
+Construir una ecuación explicativa que relacione el % de vacíos con las propiedades volumétricas de la mezcla (Gmm, VMA, VFA, vacíos PV, polvo-asfalto, etc.).
+
+Incluye:
+	1.	Selección de variables candidatas
+(todas las volumétricas y las de gradación).
+	2.	Evaluación de colinealidad
+	•	Matriz de correlación
+	•	VIF (Variance Inflation Factor)
+	3.	Ajuste del modelo base de regresión lineal
+
+\[
+\widehat{\text{Vacíos}}
+= \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
+\]
+
+
+
+	4.	Métodos de selección de variables:
+	•	backward / forward
+	•	o interpretación basada en significancia + relevancia física
+	5.	Validación ligera del modelo:
+	•	R² y R² ajustado
+	•	análisis de residuos
+	•	coherencia física de los coeficientes
+
+(Aquí obtenés la “primera ecuación” que él quiere para describir el % de vacíos).
+
+### 3.4 Síntesis técnica del Objetivo 1
+
+(Sin conclusiones finales aún)
+
+Aquí solo se resume qué se modeló y por qué, no los resultados.
+
+Ejemplo:
+	•	Se evaluó la variabilidad del % de vacíos mediante un modelo mixto jerárquico.
+	•	Se ajustó un modelo de regresión para identificar propiedades volumétricas relevantes.
+	•	Ambos análisis aportan información complementaria:
+	•	uno sobre variabilidad estructural,
+	•	el otro sobre relaciones físicas entre propiedades y vacíos.
+
+(Las conclusiones van al final del documento, no aquí).
+
+
+
+
+
+
 
 
 ## 4. Objetivo 2.  {.tabset .tabset-fade .tabset-pills}
+
+
+
+
 
 ###
 
