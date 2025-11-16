@@ -305,7 +305,6 @@ corrplot(corr_obj1, method = "color", tl.cex = 0.6)
 
 
 ```{r}
-
 datos_obj1_raw |> 
   select(where(is.numeric)) |> 
   pivot_longer(cols = everything()) |> 
@@ -319,9 +318,38 @@ datos_obj1_raw |>
 #### dataob2
 
 
+```{r}
+summary(select(datos_obj2_raw, where(is.numeric)))
+```
 
 
+```{r}
+datos_obj2_raw |> 
+  count(mezcla_n) |> 
+  mutate(pct = n / sum(n) * 100)
 
+datos_obj2_raw |> 
+  count(bloque_n) |> 
+  mutate(pct = n / sum(n) * 100)
+```
+
+```{r}
+num_obj2 <- datos_obj2_raw |> select(where(is.numeric))
+
+corr_obj2 <- cor(num_obj2, use = "pairwise.complete.obs")
+
+corrplot(corr_obj2, method = "color", tl.cex = 0.55)
+```
+
+```{r}
+datos_obj2_raw |> 
+  select(where(is.numeric)) |> 
+  pivot_longer(cols = everything()) |> 
+  ggplot(aes(x = name, y = value)) +
+  geom_boxplot(fill = "darkgreen", alpha = 0.7) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
 
 ## 3.  Objetivo 1. {.tabset .tabset-fade .tabset-pills}
 
