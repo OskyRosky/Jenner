@@ -645,7 +645,6 @@ ggplot(diag_df, aes(x = ajustados, y = residuos)) +
 ```
 
 
-
 **Gráficos de diagnóstico: Normalidad de residuos**
 
 ```{r}
