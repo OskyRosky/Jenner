@@ -610,7 +610,6 @@ Objetivo 1</a></li>
 <li><a href="#objetivo-2." id="toc-objetivo-2.">4. Objetivo 2.</a>
 <ul>
 <li><a href="#section-1" id="toc-section-1"></a></li>
-<li><a href="#section-2" id="toc-section-2"></a></li>
 </ul></li>
 <li><a href="#conclusiones-y-discusi%C3%B3n." id="toc-conclusiones-y-discusión.">5. Conclusiones y discusión.</a></li>
 <li><a href="#ref" id="toc-ref">REF</a></li>
@@ -4118,17 +4117,90 @@ Y_i = \beta_0 + \beta_1 X_{1i} + \cdots + \beta_p X_{pi} + \varepsilon_i
 representan las propiedades volumétricas, mecánicas y de gradación
 consideradas como posibles predictores. El análisis se desarrollará
 mediante una regresión lineal múltiple, complementada con evaluación de
-colinealidad, selección de variables —apoyada tanto en criterios
+colinealidad, selección de variables, apoyada tanto en criterios
 estadísticos como en la coherencia física del comportamiento de la
-mezcla— y un diagnóstico básico de residuos. Este procedimiento
+mezcla, y un diagnóstico básico de residuos. Este procedimiento
 permitirá identificar cuáles propiedades son verdaderamente
 determinantes en la resistencia a fatiga y generará una ecuación inicial
 que podrá servir como referencia para futuras etapas de validación o
 modelación más avanzada.</p>
-<div id="section-1" class="section level3">
-<h3></h3>
+<div id="preparación-de-los-subconjuntos-de-análisis" class="section level4">
+<h4>4.1 Preparación de los subconjuntos de análisis</h4>
+<p>Antes de correr cualquier modelo, debemos dividir dataob2 en los
+cuatro escenarios experimentales: 1. TMN = 12.5 mm, deformación = 400 μϵ
+2. TMN = 12.5 mm, deformación = 600 μϵ 3. TMN = 19 mm, deformación = 400
+μϵ 4. TMN = 19 mm, deformación = 600 μϵ</p>
+<p>Esto permite ajustar modelos independientes porque el comportamiento
+mecánico cambia drásticamente entre TMN y nivel de deformación.</p>
+<p>👉 Código que generaremos después: crear df_12_400, df_12_600,
+df_19_400, df_19_600.</p>
 </div>
-<div id="section-2" class="section level3">
+<div id="exploración-descriptiva-inicial-por-escenario" class="section level4">
+<h4>4.2 Exploración descriptiva inicial (por escenario)</h4>
+<p>Antes de correr regresiones, es indispensable revisar:</p>
+<p>A. Distribución de las variables clave (por escenario)</p>
+<p>Incluir: • Histograma de ciclos (sin transformar) • Histograma de
+ciclos en escala log10 • Histograma de rigidez inicial • Histograma de
+rigidez final • Histograma de energía disipada • Boxplots de propiedades
+volumétricas relevantes</p>
+<p>👉 Esto te permite ver si hay asimetría, valores extremos y rangos
+razonables.</p>
+<p>B. Correlaciones entre propiedades mecánicas y volumétricas</p>
+<p>Para cada escenario: • Matriz de correlación solo de variables
+numéricas • Representación con corrplot o ggcorrplot</p>
+<p>Esto sirve para: • Identificar posibles pares colineales • Distinguir
+qué variables parecen relacionadas con ciclos</p>
+<p>(Por ejemplo, rigidez inicial suele correlacionarse con rigidez
+final, y VMA con VFA.)</p>
+<p>C. Evaluación inicial de la variable respuesta</p>
+<p>Específicamente: • Confirmar que log10(ciclos) reduce la asimetría •
+Ver si la dispersión cambia entre TMN y deformación • Ver si hay
+observaciones atípicas obvias</p>
+</div>
+<div id="modelado-predictivo-regresión-lineal-para-cada-escenario" class="section level4">
+<h4>4.3 Modelado predictivo (regresión lineal para cada escenario)</h4>
+<p>Para cada uno de los 4 subconjuntos:</p>
+<p>A. Definición de variable dependiente</p>
+<p><span class="math display">\[
+Y = \log_{10}(\text{ciclos})
+\]</span></p>
+<p>B. Selección inicial de variables independientes</p>
+<p>Se incluyen:</p>
+<p>Variables mecánicas T321: • rigidez inicial • rigidez final • energía
+disipada • carga aplicada (si corresponde)</p>
+<p>Propiedades volumétricas • VMA • VFA • vacíos PV • Gmm • Gmb •
+relación polvo/asfalto • % pasando (#4, #8, #200, 1/2”)</p>
+<p>C. Colinealidad.</p>
+<pre><code>•   Matriz de correlación
+•   VIF</code></pre>
+<p>D. Ajuste del modelo completo (full model)</p>
+<p>Luego: • Backward selection • Validación física de coeficientes</p>
+<p><span class="math display">\[
+\widehat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
+\]</span></p>
+<ol start="5" style="list-style-type: upper-alpha">
+<li><p>Validación del modelo</p>
+<p>• R² y R² ajustado • Diagnóstico de residuos • Q–Q plot • Gráfico
+valor ajustado vs residual</p></li>
+</ol>
+<p>F. Guarda de ecuación final en forma LaTeX</p>
+<p><span class="math display">\[
+\widehat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
+\]</span></p>
+</div>
+<div id="comparación-entre-los-cuatro-modelos" class="section level4">
+<h4>4.4 Comparación entre los cuatro modelos</h4>
+<p>Se analiza: • Diferencias entre TMN 12.5 y TMN 19 • Diferencias entre
+deformación 400 vs 600 μϵ • Efecto mecánico esperado: • más deformación
+→ menos ciclos • TMN mayor → mayor rigidez pero menor sensibilidad</p>
+</div>
+<div id="síntesis-técnica-del-objetivo-2." class="section level4">
+<h4>4.5 Síntesis técnica del Objetivo 2.</h4>
+<p>Ejemplo: • Qué propiedades resultaron más relevantes • Si el efecto
+de TMN y deformación es coherente • Si los modelos mostraron estabilidad
+y baja colinealidad</p>
+</div>
+<div id="section-1" class="section level3">
 <h3></h3>
 </div>
 </div>

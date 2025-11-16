@@ -824,7 +824,7 @@ En conjunto, el modelo mixto permitió identificar la magnitud de la variabilida
 
 
 
-## 4. Objetivo 2.  {.tabset .tabset-fade .tabset-pills}
+## 4. Objetivo 2: modelos predictivos de ciclos de fatiga AASHTO T321.  {.tabset .tabset-fade .tabset-pills}
 
 
 El segundo objetivo del estudio se centra en analizar el comportamiento a fatiga de las mezclas asfálticas ensayadas mediante flexo–tracción dinámica de acuerdo con la norma AASHTO T321. En este ensayo se registra, para cada viga, el número de ciclos que puede soportar antes de fallar bajo un nivel de deformación específico y para un tamaño máximo nominal (TMN) determinado. Dado que la resistencia a fatiga es altamente sensible tanto a las propiedades mecánicas iniciales como a la estructura volumétrica de la mezcla, resulta fundamental identificar cuáles de estas características explican en mayor medida la variabilidad observada en los ciclos a falla.
