@@ -1128,6 +1128,10 @@ ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
   theme_bw()
 ```
 
+El número de ciclos presenta la típica asimetría a la derecha (cola larga hacia valores altos), lo cual es completamente esperable en ensayos de fatiga AASHTO T321.
+Esto confirma que la variable no es normal y que la dispersión entre observaciones es muy marcada.
+
+
 **Histograma de log10(ciclos)**
 
 ```{r}
@@ -1140,6 +1144,13 @@ ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
   ) +
   theme_bw()
 ```
+
+Al aplicar la transformación \log_{10}:
+	•	La asimetría se reduce notablemente.
+	•	La distribución se vuelve más simétrica y compacta.
+	•	Se facilita el ajuste de un modelo lineal y mejora la estabilidad numérica.
+
+Esto valida que log10(ciclos) es una transformación adecuada para el modelo del Objetivo 2.
 
 **Boxplot para detectar posibles atípicos en log10(ciclos)**
 
@@ -1155,6 +1166,24 @@ ggplot(df_12_400, aes(y = log10(pdf_numero_de_ciclos), x = "")) +
   theme_bw()
 ```
 
+El boxplot muestra:
+	•	No hay valores atípicos claros (no aparecen puntos fuera de los bigotes).
+	•	La dispersión es razonable para n = 20.
+	•	El rango intercuartílico es pequeño, lo que sugiere estabilidad relativa en este escenario.
+
+Esto significa que no es necesario eliminar ni ajustar observaciones antes de correr la regresión.
+
+#### Sobre este análisis podemos decir
+
+Antes de ajustar los modelos predictivos de ciclos de fatiga, se realizó un análisis descriptivo de las variables mecánicas, volumétricas y del número de ciclos en cada escenario (TMN 12.5 y 19 mm a 400 y 600 μɛ). Esta etapa permitió verificar la calidad de los datos y definir el tratamiento adecuado de la variable respuesta.
+
+En primer lugar, los histogramas mostraron que el número de ciclos presenta una distribución fuertemente asimétrica, típica de ensayos de fatiga. La transformación \log_{10}(\text{ciclos}) redujo drásticamente esta asimetría y produjo una distribución mucho más simétrica y estable, lo cual justifica su uso como variable respuesta en los modelos de regresión.
+
+La exploración de las variables mecánicas (rigidez inicial, rigidez final y energía disipada) mostró distribuciones coherentes con su comportamiento esperado en mezclas asfálticas compactadas. Los boxplots de las propiedades volumétricas confirmaron rangos consistentes entre vigas, sin valores extremos evidentes que sugirieran errores de laboratorio o de digitación.
+
+La matriz de correlaciones permitió identificar relaciones esperadas entre variables, como la asociación entre rigidez inicial y final, y entre VMA, VFA y vacíos. Asimismo, mostró que algunas variables volumétricas están fuertemente correlacionadas entre sí, lo cual será relevante para evitar colinealidad en las regresiones.
+
+Finalmente, la evaluación del comportamiento de \log_{10}(\text{ciclos}) mediante histograma y boxplot confirmó la ausencia de valores atípicos marcados y la estabilidad de la variabilidad dentro de cada escenario. Esto respalda la viabilidad de proceder con modelos de regresión lineal ajustados por separado para cada combinación TMN–deformación.
 
 ### 4.3 Modelado predictivo (regresión lineal para cada escenario)
 
