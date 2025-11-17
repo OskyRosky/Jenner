@@ -1716,24 +1716,39 @@ En síntesis, el Objetivo 2 revela que los modelos lineales son capaces de ofrec
 
 ## REF {.tabset .tabset-fade .tabset-pills}
 
-Artículos científicos
+**Artículos científicos**
+
 	1.	Airey, G. D. (2002). Use of black diagrams to identify inconsistencies in rheological data. Road Materials and Pavement Design, 3(4), 403–424.
+	
 	2.	Brown, E. R., Kandhal, P. S., & Zhang, J. (2001). Performance testing for hot-mix asphalt. Transportation Research Record, 1767, 32–40.
+	
 	3.	Carpenter, S. H., & Ghuzlan, K. A. (2003). Fatigue endurance limit for highway and airport pavements. Transportation Research Record, 1832, 131–138.
+	
 	4.	Daniel, J. S., & Kim, Y. R. (2002). Development of a fatigue model for asphalt mixtures using the viscoelastic continuum damage approach. Journal of the Association of Asphalt Paving Technologists (AAPT), 71, 619–650.
+	
 	5.	Di Benedetto, H., de la Roche, C., Baaj, H., Pronk, A., & Lundström, R. (2004). Fatigue of bituminous mixtures. Materials and Structures, 37, 202–216.
+	
 	6.	Hintz, C., & Bahia, H. (2013). Simplified viscoelastic continuum damage model as a tool for evaluating asphalt mixture fatigue performance. Transportation Research Record, 2370, 78–86.
+	
 	7.	Kim, Y. R., Little, D. N., & Lytton, R. L. (2003). Fatigue damage characterization of asphalt mixtures. Journal of Materials in Civil Engineering, 15(4), 290–299.
+	
 	8.	Pellinen, T. K., & Witczak, M. W. (2002). Stress-dependent master curve construction for dynamic modulus. Journal of the Association of Asphalt Paving Technologists (AAPT), 71, 281–309.
+	
 	9.	Sabouri, M., & Kim, Y. R. (2014). Evaluation of fatigue performance of asphalt mixtures using direct tension cyclic fatigue test. Transportation Research Record, 2446, 117–125.
+	
 	10.	Underwood, B. S., Kim, Y. R., & Guddati, M. N. (2012). Reduced‐frequency test for asphalt mixture fatigue performance. Journal of Testing and Evaluation, 40(5), 755–764.
 
-⸻
 
-Libros especializados
+
+**Libros especializados**
+
 	11.	Anderson, R. M., & Kennedy, T. W. (1993). Asphalt mix design methods for asphalt paving mixtures. Asphalt Institute.
+	
 	12.	Christensen, R. M. (1982). Theory of viscoelasticity: An introduction. Academic Press.
+	
 	13.	Montgomery, D. C., Peck, E. A., & Vining, G. G. (2015). Introduction to Linear Regression Analysis (5th ed.). Wiley.
+	
 	14.	McCarthy, D. F. (2007). Essentials of Soil Mechanics and Foundations. Pearson-Prentice Hall.
+	
 	15.	Huang, Y. H. (2004). Pavement Analysis and Design (2nd ed.). Pearson.
 
