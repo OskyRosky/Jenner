@@ -1344,7 +1344,6 @@ Implicación: son los predictores más confiables para este escenario y deben se
 
 D. Ajuste del modelo completo (full model)
 
-
 Una vez definidas la variable respuesta y la lista inicial de predictores, se procede a ajustar el modelo completo, que incluye todas las variables mecánicas y el subconjunto reducido de propiedades volumétricas previamente filtradas por colinealidad. Este modelo sirve como punto de partida para aplicar selección backward, evaluando cuáles predictores aportan información real y cuáles deben eliminarse.
 
 
@@ -1352,145 +1351,334 @@ Una vez definidas la variable respuesta y la lista inicial de predictores, se pr
 \widehat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
 \]
 
-El objetivo es obtener una ecuación estable, estadísticamente válida y, sobre todo, coherente con la física del comportamiento a fatiga.
-
-
-**Backward selection**
-
+**D.1 Escenario TMN = 12.5 mm, deformación = 400 μɛ **
 
 ```{r}
-# Modelo completo (full model) — TMN 12.5 mm, 400 με
-mod_full_12_400 <- lm(
-  log_ciclos ~ 
-    pdf_rigidez_inicial_m_pa +
-    pdf_rigidez_final_mpa +
-    pdf_energia_disipada_k_j_m3 +
-    pvm_vma_percent +
-    pvm_percent_vacios +
-    pvm_polvo_asfalto +
-    pvm_percent_pasando_1_2 +
-    pvm_percent_pasando_number_200,
-  data = df_12_400
-)
-
-summary(mod_full_12_400)
+# Variable respuesta en log10(ciclos) para cada escenario
+df_12_400 <- df_12_400 |>
+  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
 ```
-Regresiones 1 a 1
-
-
 
 
 ```{r}
-# --- Lista de predictores ---
-vars <- c(
-  "pdf_rigidez_inicial_m_pa",
-  "pdf_rigidez_final_mpa",
-  "pdf_energia_disipada_k_j_m3",
-  "pvm_vma_percent",
-  "pvm_vfa_percent",
-  "pvm_percent_vacios",
-  "pvm_polvo_asfalto",
-  "pvm_percent_pasando_1_2",
-  "pvm_percent_pasando_number_4",
-  "pvm_percent_pasando_number_8",
-  "pvm_percent_pasando_number_200"
-)
+# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
+formula_full <- log_ciclos ~ 
+  pdf_rigidez_inicial_m_pa +
+  pdf_rigidez_final_mpa +
+  pdf_energia_disipada_k_j_m3 +
+  pvm_vma_percent +
+  pvm_vfa_percent +
+  pvm_percent_vacios +
+  pvm_polvo_asfalto +
+  pvm_percent_pasando_1_2 +
+  pvm_percent_pasando_number_4 +
+  pvm_percent_pasando_number_8 +
+  pvm_percent_pasando_number_200
 
-# --- Data con variable dependiente ---
-df <- df_12_400 |> 
+# D.1 Escenario TMN = 12.5 mm, deformación = 400 μɛ
+mod_12_400_full <- lm(formula_full, data = df_12_400)
+
+```
+
+**D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ**
+
+```{r}
+# Variable respuesta en log10(ciclos) para cada escenario
+df_12_600 <- df_12_600 |>
   mutate(log_ciclos = log10(pdf_numero_de_ciclos))
 
-# --- Función para ajustar regresión simple ---
-ajustar_regresion <- function(var) {
-  f <- as.formula(paste0("log_ciclos ~ ", var))
-  m <- lm(f, data = df)
-
-  data.frame(
-    variable = var,
-    coef = coef(m)[2],
-    p_value = summary(m)$coefficients[2,4],
-    r2 = summary(m)$r.squared
-  )
-}
-
-# --- Ejecutar todas las regresiones ---
-resultados_12_400 <- do.call(rbind, lapply(vars, ajustar_regresion))
-
-# --- Ordenar por R² ---
-resultados_12_400 <- resultados_12_400 |> arrange(desc(r2))
-
-resultados_12_400
+# D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ
+mod_12_600_full <- lm(formula_full, data = df_12_600)
 
 ```
 
-Tenemos problemas grandes de Multicolinealidad....
+```{r}
+# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
+formula_full <- log_ciclos ~ 
+  pdf_rigidez_inicial_m_pa +
+  pdf_rigidez_final_mpa +
+  pdf_energia_disipada_k_j_m3 +
+  pvm_vma_percent +
+  pvm_vfa_percent +
+  pvm_percent_vacios +
+  pvm_polvo_asfalto +
+  pvm_percent_pasando_1_2 +
+  pvm_percent_pasando_number_4 +
+  pvm_percent_pasando_number_8 +
+  pvm_percent_pasando_number_200
 
 
-**PLS **
+```
 
 
+**D.3 Escenario TMN = 19 mm, deformación = 400 μɛ**
 
-**Validación física de coeficientes**
+```{r}
+# Variable respuesta en log10(ciclos) para cada escenario
+df_19_400 <- df_19_400 |>
+  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
+```
+
+```{r}
+# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
+formula_full <- log_ciclos ~ 
+  pdf_rigidez_inicial_m_pa +
+  pdf_rigidez_final_mpa +
+  pdf_energia_disipada_k_j_m3 +
+  pvm_vma_percent +
+  pvm_vfa_percent +
+  pvm_percent_vacios +
+  pvm_polvo_asfalto +
+  pvm_percent_pasando_1_2 +
+  pvm_percent_pasando_number_4 +
+  pvm_percent_pasando_number_8 +
+  pvm_percent_pasando_number_200
+
+# D.3 Escenario TMN = 19 mm, deformación = 400 μɛ
+mod_19_400_full <- lm(formula_full, data = df_19_400)
+```
+
+
+**D.4 Escenario TMN = 19 mm, deformación = 400 μɛ**
+
+```{r}
+# Variable respuesta en log10(ciclos) para cada escenario
+df_19_600 <- df_19_600 |>
+  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
+```
+
+```{r}
+# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
+formula_full <- log_ciclos ~ 
+  pdf_rigidez_inicial_m_pa +
+  pdf_rigidez_final_mpa +
+  pdf_energia_disipada_k_j_m3 +
+  pvm_vma_percent +
+  pvm_vfa_percent +
+  pvm_percent_vacios +
+  pvm_polvo_asfalto +
+  pvm_percent_pasando_1_2 +
+  pvm_percent_pasando_number_4 +
+  pvm_percent_pasando_number_8 +
+  pvm_percent_pasando_number_200
+
+# D.4 Escenario TMN = 19 mm, deformación = 600 μɛ
+mod_19_600_full <- lm(formula_full, data = df_19_600)
+```
+
+
+Resultados
+
+```{r}
+summary(mod_12_400_full)
+summary(mod_12_600_full)
+summary(mod_19_400_full)
+summary(mod_19_600_full)
+```
+Escenarios TMN = 12.5 mm (n = 20)
+
+Resultados (400 y 600 με):
+	•	El modelo no encuentra predictores significativos.
+	•	Hay coeficientes no definidos (singularidades → colinealidad alta).
+	•	Los R² son bajos (0.20–0.40) y el R² ajustado es negativo.
+	•	El F-test no es significativo (p > 0.50).
+
+Interpretación breve:
+Con n = 20 y variables altamente correlacionadas, los modelos no logran detectar efectos estadísticos, aunque sí puedan existir desde la física del material. La muestra es demasiado pequeña para un modelo múltiple.
+
+⸻
+
+Escenarios TMN = 19 mm (n = 56–57)
+
+(400 με):
+	•	Varias variables muestran señales débiles (p entre 0.05 y 0.10).
+	•	R² ≈ 0.64 → el modelo explica parte importante de la variabilidad.
+	•	F-test significativo (p ~ 1e−6).
+	•	Algunos predictores relevantes:
+rigidez inicial, energía disipada, vacíos, % pasando 1/2, % pasando #4.
+
+(600 με):
+	•	Dos predictores significativos:
+• rigidez inicial (p = 0.025)
+• energía disipada (p = 0.017)
+	•	R² ≈ 0.40, F-test significativo (p = 0.008).
+	•	El resto de predictores no aporta evidencia fuerte.
+
+Interpretación breve:
+Con mayor tamaño de muestra, los modelos sí muestran relación estadística. La rigidez inicial y la energía disipada aparecen como predictores importantes de la vida a fatiga en TMN 19 mm.
+
+Conclusión general 
+	•	TMN 12.5 mm r (n = 20): los modelos múltiples no son confiables; la muestra es demasiado pequeña y hay colinealidad fuerte.
+	
+	•	TMN 19 mm (n ≈ 57): sí se identifican variables relevantes, especialmente rigidez inicial y energía disipada, con modelos estadísticamente significativos.
 
 E.  Validación del modelo
 
 	•	R² y R² ajustado
-	•	Diagnóstico de residuos
-	•	Q–Q plot
-	•	Gráfico valor ajustado vs residual
+	
+**D.1 Escenario TMN 12.5 mm – 400 με**
 
-**R² y R² ajustado **
+	R²: 0.2086
+	R² ajustado: –0.3670
 
-**Diagnóstico de residuos **
+**D.2 Escenario TMN 12.5 mm – 600 με**
 
-**Q–Q plot **
+R²: 0.4059
+R² ajustado: –0.02626
 
-**Gráfico valor ajustado vs residual **
+**D.3 Escenario TMN 19 mm – 400 με**
 
+R²: 0.6385
+R² ajustado: 0.5481
 
+**D.4 Escenario TMN 19 mm – 600 με**
+
+R²: 0.4009
+R² ajustado: 0.2545
+	
+•	Diagnóstico de residuos
+
+**D.1 Escenario TMN 12.5 mm – 400 με**
 
 ```{r}
+# =============================
+# Escenario 1: TMN 12.5 — 400 μɛ
+# =============================
+modelo <- mod_12_400_full
 
+par(mfrow = c(2, 2))
+plot(modelo)
+par(mfrow = c(1, 1))   # Reset
 ```
+
+Los residuos se ven dispersos, sin forma clara, pero el Q–Q plot muestra una desviación fuerte de la normalidad. El tamaño muestral (20) hace que el modelo sea muy inestable. No hay evidencia de linealidad clara y la influencia de puntos individuales es alta.
+Conclusión: el modelo no es confiable. Se debe a la poca cantidad de datos.
+
+**D.2 Escenario TMN 12.5 mm – 600 με**
 
 ```{r}
+# =============================
+# Escenario 2: TMN 12.5 — 600 μɛ
+# =============================
+modelo <- mod_12_600_full
 
+par(mfrow = c(2, 2))
+plot(modelo)
+par(mfrow = c(1, 1))   # Reset
 ```
 
-F. Guarda de ecuación final en forma LaTeX
+Sucede lo mismo que en 400 με: los residuos no siguen patrones claros, pero el Q–Q plot es pobre, y hay heterocedasticidad ligera. Los puntos con alta leverage afectan la forma del ajuste.
+Conclusión: tampoco es confiable; el tamaño muestral es la limitante principal.
 
-\[
-\widehat{Y} = \beta_0 + \beta_1 X_1 + \cdots + \beta_p X_p
-\]
+**D.3 Escenario TMN 19 mm – 400 με**
+
+```{r}
+# =============================
+# Escenario 3: TMN 19 — 400 μɛ
+# =============================
+modelo <- mod_19_400_full
+
+par(mfrow = c(2, 2))
+plot(modelo)
+par(mfrow = c(1, 1))   # Reset
+```
+
+Los residuos se distribuyen mejor, no hay un patrón marcado, y el Q–Q plot es más cercano a una línea recta. Aun así, hay algunas observaciones influyentes. La escala-location es más estable.
+Conclusión: los supuestos se cumplen “medianamente”; este modelo sí es utilizable, aunque no perfecto.
+
+**D.4 Escenario TMN 19 mm – 600 με**
+
+```{r}
+# =============================
+# Escenario 4: TMN 19 — 600 μɛ
+# =============================
+modelo <- mod_19_600_full
+
+par(mfrow = c(2, 2))
+plot(modelo)
+par(mfrow = c(1, 1))   # Reset
+```
+
+Es el modelo con los residuos más limpios: mejor linealidad, Q–Q plot razonable, varianza más estable y menos puntos de alta influencia.
+Conclusión: es el escenario donde los supuestos del modelo lineal se cumplen mejor.
 
 
-### 4.4 Comparación entre los cuatro modelos
+**Resumen general**
 
-Se analiza:
-	•	Diferencias entre TMN 12.5 y TMN 19
-	•	Diferencias entre deformación 400 vs 600 μϵ
-	•	Efecto mecánico esperado:
-	•	más deformación → menos ciclos
-	•	TMN mayor → mayor rigidez pero menor sensibilidad
-
+Los modelos con TMN 12.5 mm tienen tan pocos datos que los residuos nunca cumplirán los supuestos clásicos; por eso no hay significancia.
+Los modelos con TMN 19 mm muestran una estructura más estable y diagnósticos aceptables, especialmente el escenario de 600 με.
 
 
 ### 4.5 Síntesis técnica del Objetivo 2.
 
-Ejemplo:
-	•	Qué propiedades resultaron más relevantes
-	•	Si el efecto de TMN y deformación es coherente
-	•	Si los modelos mostraron estabilidad y baja colinealidad
+El Objetivo 2 consistió en ajustar modelos de regresión lineal para cuatro escenarios experimentales definidos por el tamaño máximo nominal (TMN = 12.5 mm y 19 mm) y el nivel de deformación aplicado (400 y 600 με). Cada escenario se analizó de forma independiente, respetando la estructura experimental de la norma AASHTO T321, que exige que las curvas de fatiga se desarrollen por separado según la condición mecánica del ensayo.
+
+**Tamaño muestral y estructura de datos**
+
+Los escenarios con TMN = 12.5 mm cuentan con 20 observaciones cada uno, mientras que los escenarios con TMN = 19 mm incluyen 56 y 57 observaciones. Esta diferencia condiciona el tipo de modelado que puede realizarse:
+	•	Con n = 20, la estimación de múltiples predictores presenta inestabilidad, alta varianza y singularidades en la matriz de correlaciones.
+	•	Con n ≈ 56, los modelos son más estables y permiten evaluar mejor la contribución conjunta de propiedades mecánicas y volumétricas.
+
+En todos los escenarios se modeló la variable de respuesta como:
 
 
-```{r}
+\[
+Y = \log_{10}(\text{ciclos})
+\]
 
-```
+lo que redujo la asimetría y permitió modelos más comparables.
 
-```{r}
+**Relación empírica entre predictores y ciclos**
 
-```
 
+
+Se consideraron como predictores:
+
+•	Propiedades mecánicas T321: rigidez inicial, rigidez final, energía disipada.
+
+•	Propiedades volumétricas: VMA, VFA, vacíos, polvo/asfalto.
+
+•	Gradación: % pasando 1/2”, #4, #8 y #200.
+
+En todos los escenarios se observó alta colinealidad entre varios predictores volumétricos, especialmente VMA, VFA y vacíos, así como entre los porcentajes de gradación. Esta colinealidad explicaba la presencia de coeficientes no definidos en los modelos completos de TMN 12.5 mm.
+
+En las regresiones individuales (1 a 1), ningún predictor mostró significancia estadística fuerte en los escenarios de TMN 12.5 mm. En los escenarios con TMN = 19 mm se observaron asociaciones más claras, aunque moderadas:
+	•	En TMN 19 mm – 400 με, variables como rigidez inicial, energía disipada, vacíos y % pasando #4 mostraron niveles de significancia marginal (p entre 0.05–0.10).
+	•	En TMN 19 mm – 600 με, rigidez inicial y energía disipada resultaron estadísticamente significativas.
+
+
+**Desempeño de los modelos **
+
+Los resultados empíricos de los modelos completos fueron:
+
+| Escenario       | R²    | R² ajustado | Observaciones principales                                                                            |
+|-----------------|-------|-------------|--------------------------------------------------------------------------------------------------------|
+| 12.5 – 400 μɛ   | 0.208 | –0.367      | Modelo inestable; coeficientes no definidos por singularidad; residuos no normales.                  |
+| 12.5 – 600 μɛ   | 0.406 | –0.026      | Coeficientes inestables; tres predictores colineales eliminados automáticamente; residuos alejados de normalidad. |
+| 19 – 400 μɛ     | 0.638 | 0.548       | Modelo estable; varios predictores marginalmente significativos; residuos razonablemente bien comportados. |
+| 19 – 600 μɛ     | 0.409 | 0.255       | Dos predictores significativos; menor ajuste que 19–400 pero con residuos aceptables.               |
+
+
+Los diagnósticos de residuos mostraron un patrón claro:
+
+TMN 12.5 mm: heterogeneidad, falta de normalidad, puntos influyentes y patrones no lineales.
+	
+•	TMN 19 mm: residuos mejor distribuidos, normalidad más cercana y menor influencia de puntos individuales.
+
+Estos comportamientos reflejan directamente el tamaño muestral y la variabilidad intrínseca del ensayo, más que fallos del propio modelo.
+
+**Síntesis empírica final**
+
+
+Los resultados muestran que:
+
+•	En TMN 12.5 mm, los modelos presentan poca capacidad explicativa y alta inestabilidad, principalmente debido al tamaño muestral reducido y a la colinealidad entre variables.
+	
+•	En TMN 19 mm, los modelos muestran una estructura estadística más sólida, con relaciones más coherentes entre propiedades mecánicas y número de ciclos, y diagnósticos más compatibles con los supuestos de la regresión lineal.
+
+Desde un punto de vista estrictamente empírico, los escenarios con mayor cantidad de vigas ensayadas presentan una relación más estable entre las propiedades medidas en laboratorio y el comportamiento a fatiga, mientras que los escenarios con n = 20 generan coeficientes imprecisos y un ajuste estadístico muy limitado.
+
+Esta evidencia demuestra que la capacidad del modelo para explicar el comportamiento a fatiga depende fuertemente de la disponibilidad de datos y de la variabilidad presente en cada condición experimental definida por la norma AASHTO T321.
 
 ## 5. Conclusiones y discusión.  {.tabset .tabset-fade .tabset-pills}
 
