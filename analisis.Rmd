@@ -1076,7 +1076,6 @@ En conjunto, el modelo mixto permitió identificar la magnitud de la variabilida
 
 
 
-
 ## 4. Objetivo 2: modelos predictivos de ciclos de fatiga AASHTO T321.  {.tabset .tabset-fade .tabset-pills}
 
 
@@ -1184,9 +1183,6 @@ Además, esta diferenciación entre escenarios no es únicamente una consideraci
 
 Antes de ajustar los modelos predictivos para cada combinación TMN–deformación, es indispensable realizar una exploración gráfica y descriptiva de las variables mecánicas y volumétricas. Esta etapa permite identificar patrones generales, evaluar la presencia de asimetrías marcadas, posibles valores extremos y relaciones preliminares entre las variables que posteriormente entrarán en los modelos de regresión.
 
-
-
-
 A. Distribución de las variables clave (por escenario)
 
 Incluir:
@@ -1222,81 +1218,77 @@ plot_box_pvm <- function(df, titulo = NULL) {
 }
 ```
 
+**Histogramas""
 
 
-**Histograma de log10(ciclos)**
 
 ```{r}
-ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
+# 1. Ciclos (sin transformar)
+ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
   geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
-  labs(title = "log10(Ciclos) — TMN 12.5 mm, 400 με",
-       x = "log10(ciclos)",
-       y = "Frecuencia") +
+  labs(
+    title = "Ciclos (sin transformar)",
+    x = "Ciclos", y = "Frecuencia"
+  ) +
   theme_bw()
-```
 
-**Rigidez inicial**
-
-```{r}
+# 2. log10(Ciclos)
 ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
   geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
   labs(
-    title = "log10(ciclos) — TMN 12.5 mm, 400 μɛ",
-    x = "log10(ciclos)",
-    y = "Frecuencia"
+    title = "log10(Ciclos) — TMN 12.5 mm, 400 μɛ",
+    x = "log10(ciclos)", y = "Frecuencia"
   ) +
   theme_bw()
-```
 
+# 3. Rigidez inicial
+ggplot(df_12_400, aes(x = pdf_rigidez_inicial_m_pa)) +
+  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  labs(
+    title = "Rigidez inicial",
+    x = "Rigidez inicial (MPa)", y = "Frecuencia"
+  ) +
+  theme_bw()
 
-**Rigidez final **
-
-```{r}
+# 4. Rigidez final
 ggplot(df_12_400, aes(x = pdf_rigidez_final_mpa)) +
   geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
   labs(
-    title = "Rigidez final — TMN 12.5 mm, 400 μɛ",
-    x = "Rigidez final (MPa)",
-    y = "Frecuencia"
+    title = "Rigidez final ",
+    x = "Rigidez final (MPa)", y = "Frecuencia"
   ) +
   theme_bw()
-```
 
-
-**Energía disipada**
-
-```{r}
+# 5. Energía disipada
 ggplot(df_12_400, aes(x = pdf_energia_disipada_k_j_m3)) +
   geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
   labs(
-    title = "Energía disipada — TMN 12.5 mm, 400 μɛ",
-    x = "Energía disipada (kJ/m³)",
-    y = "Frecuencia"
+    title = "Energía disipada",
+    x = "Energía disipada (kJ/m³)", y = "Frecuencia"
   ) +
   theme_bw()
-```
 
+
+```
 
 **Boxplot de propiedades volumétricas**
 
 ```{r}
+# 6. Boxplot de propiedades volumétricas
 df_12_400 %>%
   select(starts_with("pvm_")) %>%
-  pivot_longer(
-    cols = everything(),
-    names_to = "variable",
-    values_to = "valor"
-  ) %>%
+  pivot_longer(cols = everything(), names_to = "variable", values_to = "valor") %>%
   ggplot(aes(x = variable, y = valor)) +
   geom_boxplot(fill = "darkgreen", alpha = 0.7) +
   labs(
-    title = "Propiedades volumétricas — TMN 12.5 mm, 400 μɛ",
-    x = "Propiedad volumétrica",
-    y = "Valor"
+    title = "Propiedades volumétricas",
+    x = "Propiedad volumétrica", y = "Valor"
   ) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
+
+
 
 
 B. Correlaciones entre propiedades mecánicas y volumétricas
