@@ -549,16 +549,21 @@ Estos resultados permiten contextualizar la variabilidad observada y preparar el
 
 
 ```{r}
-# Resumen numérico del % de vacíos
-resumen_vacios <- summary(datos_obj1_raw$gbs_percent_vacios_7_1)
+# Obtener summary como vector
+s <- summary(datos_obj1_raw$gbs_percent_vacios_7_1)
 
-data.frame(
-  Estadístico = names(resumen_vacios),
-  Valor       = as.numeric(resumen_vacios)
-) |>
+# Convertir a data.frame para poder usar gt
+s_df <- data.frame(
+  Estadístico = names(s),
+  Valor = as.numeric(s),
+  row.names = NULL
+)
+
+# Mostrar en gt
+s_df |>
   gt() |>
   tab_header(
-    title = "Resumen — gbs_percent_vacios_7_1"
+    title = "Resumen estadístico — gbs_percent_vacios_7_1"
   ) |>
   fmt_number(
     columns = Valor,
@@ -667,9 +672,10 @@ En términos prácticos, el objetivo de este modelo es obtener, por un lado, la 
 	•	La variabilidad entre vigas se incorpora en el error residual.
 
 ```{r}
-# ==========================================
-# 1. Preparación de los datos
-# ==========================================
+### Ajuste del modelo mixto jerárquico
+
+### Ajuste del modelo mixto jerárquico (sin nivel de viga)
+
 datos_obj1_raw <- datos_obj1_raw |>
   mutate(
     mezcla_n = factor(mezcla_n),
@@ -678,111 +684,36 @@ datos_obj1_raw <- datos_obj1_raw |>
 ```
 
 ```{r}
-# ==========================================
-# 2. Ajuste del modelo mixto
-#    (Mezcla = fijo, Bloque anidado = aleatorio)
-# ==========================================
+# Modelo mixto:
+# Vacíos ~ Mezcla (fijo) + Bloque y Viga anidados como aleatorios
 mod_vacios <- lmer(
   gbs_percent_vacios_7_1 ~ mezcla_n +
-    (1 | mezcla_n / bloque_n),
+    (1 | mezcla_n / bloque_n),   # mezcla fija, bloque aleatorio anidado
   data = datos_obj1_raw
 )
 ```
 
+
 ```{r}
-# ==========================================
-# 3. ANOVA (efecto fijo de mezcla)
-# ==========================================
 anova_mod <- anova(mod_vacios, type = 3)
-# anova_mod
-```
-
-
-
-```{r}
-# ==========================================
-# 4. Convertir ANOVA a tabla gt
-# ==========================================
-
-anova_df <- as.data.frame(anova_mod)
-
-anova_df <- anova_df |>
-  mutate(
-    Term = rownames(anova_df)
-  ) |>
-  select(
-    Term,
-    Sum_Sq = `Sum Sq`,
-    Mean_Sq = `Mean Sq`,
-    NumDF,
-    DenDF,
-    F_value = `F value`,
-    Pr_greater_F = `Pr(>F)`
-  )
-
-# Tabla bonita en gt
-anova_df |>
-  gt() |>
-  tab_header(
-    title = md("**ANOVA — Efecto fijo de Mezcla**"),
-    subtitle = "Modelo mixto: Mezcla (fijo) + Bloque anidado (aleatorio)"
-  ) |>
-  fmt_number(
-    columns = c(Sum_Sq, Mean_Sq, F_value, Pr_greater_F),
-    decimals = 4
-  ) |>
-  fmt_number(columns = c(NumDF, DenDF), decimals = 0) |>
-  cols_label(
-    Term = "Término",
-    Sum_Sq = "Suma de Cuadrados",
-    Mean_Sq = "Media de Cuadrados",
-    NumDF = "GL Num",
-    DenDF = "GL Den",
-    F_value = "F",
-    Pr_greater_F = "p-valor"
-  )
+anova_mod
 ```
 
 
 **Componentes de varianza (porcentaje de contribución)**
 
 ```{r}
-# Extraer componentes de varianza
-vc <- VarCorr(mod_vacios) |> as.data.frame()
+vc <- as.data.frame(VarCorr(mod_vacios))
+vc
 
-# Preparar tabla con varianza, desviación estándar y aporte %
-vc_tidy <- vc |>
-  transmute(
-    Termino = recode(grp,
-                     "mezcla_n"             = "Mezcla (intercepto aleatorio)",
-                     "mezcla_n:bloque_n"    = "Bloque dentro de mezcla",
-                     "Residual"             = "Residuos"),
-    Varianza = vcov,
-    `Desv. Estándar` = sqrt(vcov),
-    `Aporte %` = 100 * vcov / sum(vcov)
+# calcular aporte porcentual de cada componente
+vc <- vc |>
+  mutate(
+    fuente = grp,
+    prop   = vcov / sum(vcov) * 100
   )
 
-# Mostrar como tabla gt
-vc_tidy |>
-  gt() |>
-  tab_header(
-    title = "Componentes de Varianza del Modelo Mixto",
-    subtitle = "Varianza, desviación estándar y porcentaje de contribución"
-  ) |>
-  fmt_number(
-    columns = c(Varianza, `Desv. Estándar`, `Aporte %`),
-    decimals = 4
-  ) |>
-  cols_label(
-    Termino = "Término",
-    Varianza = "Varianza",
-    `Desv. Estándar` = "Desv. Estándar",
-    `Aporte %` = "Aporte (%)"
-  ) |>
-  tab_style(
-    style = cell_text(weight = "bold"),
-    locations = cells_body(columns = Termino)
-  )
+vc[, c("fuente", "vcov", "prop")]
 ```
 
 
@@ -870,6 +801,8 @@ y <- datos_obj1_raw$gbs_percent_vacios_7_1
 # Conjunto de predictores candidatos: volumétricas + gradación
 predictores_obj1 <- datos_obj1_raw |>
   select(
+    gbs_gmm,
+    gbs_gmb,
     pvm_asfalto_efectivo_percent,
     pvm_asfalto_sobre_mac_percent,
     pvm_vacios_pv,
@@ -908,45 +841,14 @@ vif_obj1
 **3. Ajuste del modelo base y selección de variables**
 
 ```{r}
-# Extraer coeficientes del modelo seleccionado
-coef_step <- summary(mod_step_obj1)$coefficients |>
-  as.data.frame() |>
-  tibble::rownames_to_column("Termino") |>
-  dplyr::select(
-    Termino,
-    Estimate,
-    Std_Error = `Std. Error`,
-    t_value   = `t value`,
-    Pr_gt_t   = `Pr(>|t|)`
-  )
+# Modelo base con todas las variables candidatas
+mod_base_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
+summary(mod_base_obj1)
 
-# Tabla en gt
-coef_step |>
-  gt() |>
-  tab_header(
-    title    = "Modelo de regresión final — Objetivo 1",
-    subtitle = "Coeficientes estimados del modelo seleccionado por AIC"
-  ) |>
-  fmt_number(
-    columns = c(Estimate, Std_Error, t_value),
-    decimals = 4
-  ) |>
-  fmt_number(
-    columns = Pr_gt_t,
-    decimals = 4
-  ) |>
-  cols_label(
-    Termino  = "Término",
-    Estimate = "Estimado",
-    Std_Error = "Error estándar",
-    t_value  = "t",
-    Pr_gt_t  = "Pr(>|t|)"
-  )
+# Selección stepwise basada en AIC (backward desde el modelo lleno)
+mod_step_obj1 <- step(mod_base_obj1, direction = "backward", trace = FALSE)
+summary(mod_step_obj1)
 ```
-
-Ecuacuón final
-
-
 
 **4. Validación ligera del modelo seleccionado**
 
