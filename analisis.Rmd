@@ -863,11 +863,22 @@ El procedimiento se organiza en tres etapas:
 # Variable respuesta
 y <- datos_obj1_raw$gbs_percent_vacios_7_1
 
-# Conjunto de predictores candidatos: volumétricas + gradación
+# Asegurar que los identificadores estén como factores
+datos_obj1_raw <- datos_obj1_raw |>
+  mutate(
+    mezcla_n = factor(mezcla_n),
+    bloque_n = factor(bloque_n),
+    gbs_n_viga = factor(gbs_n_viga)   # número de viga (si esta variable existe)
+  )
+
+# Predictores candidatos según la corrección:
+# - NO incluir: gbs_n_prisma, gbs_pseco_kg, gbs_psum_kg, gbs_psss_kg, gbs_gmb
 predictores_obj1 <- datos_obj1_raw |>
   select(
-    gbs_gmm,
-    gbs_gmb,
+    mezcla_n,                        # número de mezcla
+    bloque_n,                        # número de bloque
+    gbs_n_viga,                      # número de viga
+    gbs_gmm,                         # Gmm
     pvm_asfalto_efectivo_percent,
     pvm_asfalto_sobre_mac_percent,
     pvm_vacios_pv,
