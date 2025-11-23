@@ -1573,32 +1573,50 @@ Una vez definidas la variable respuesta y la lista inicial de predictores, se pr
 **D.1 Escenario TMN = 12.5 mm, deformación = 400 μɛ **
 
 ```{r}
-# Escenario D.1 — TMN 12.5 mm, deformación = 400 μɛ
-
-# 1. Variable respuesta: log10(ciclos)
+# Variable respuesta log10(ciclos) (nombre log_ciclos)
 df_12_400 <- df_12_400 |>
   dplyr::mutate(
     log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-# 2. Fórmula del modelo con variables permitidas
-formula_12_400 <- log_ciclos ~ 
-  pdf_rigidez_inicial_m_pa +
-  pdf_energia_disipada_k_j_m3 +
-  gbs_gmm +
-  gbs_percent_vacios_7_1 +
-  pvm_vma_percent +
-  pvm_vfa_percent +
-  pvm_polvo_asfalto +
-  pvm_percent_pasando_1_2 +
-  pvm_percent_pasando_number_4 +
-  pvm_percent_pasando_number_8 +
-  pvm_percent_pasando_number_200
+# Fórmula general utilizada en los modelos del Objetivo 2
+formula_full <- log_ciclos ~ 
+  pdf_rigidez_inicial_m_pa +       # rigidez inicial
+  pdf_energia_disipada_k_j_m3 +    # energía disipada
+  gbs_gmm +                        # Gmm
+  gbs_percent_vacios_7_1 +         # vacíos GBS (7+1)
+  pvm_vma_percent +                # VMA
+  pvm_vfa_percent +                # VFA
+  pvm_polvo_asfalto +              # polvo-asfalto
+  pvm_percent_pasando_1_2          # % pasando 1/2"
+```
 
-# 3. Ajuste del modelo lineal
-mod_12_400_full <- lm(formula_12_400, data = df_12_400)
 
-# 4. Tabla bonita de coeficientes en gt
+```{r}
+
+# Escenario TMN = 12.5 mm, deformación = 400 μɛ
+
+# 1) Definir la respuesta
+df_12_400 <- df_12_400 |>
+  dplyr::mutate(
+    log_ciclos = log10(pdf_numero_de_ciclos)
+  )
+
+# 2) Ajustar el modelo con las variables permitidas
+mod_12_400_full <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +          # rigidez inicial
+    pdf_energia_disipada_k_j_m3 +       # energía disipada
+    gbs_gmm +                           # Gmm
+    gbs_percent_vacios_7_1 +            # vacíos Gbs (7+1)
+    pvm_vma_percent +                   # VMA
+    pvm_vfa_percent +                   # VFA
+    pvm_polvo_asfalto +                 # polvo-asfalto
+    pvm_percent_pasando_1_2,            # % pasando 1/2"
+  data = df_12_400
+)
+
+# 3) Tabla bonita en gt
 coef_12_400 <- summary(mod_12_400_full)$coefficients |>
   as.data.frame() |>
   tibble::rownames_to_column("Termino") |>
@@ -1620,11 +1638,11 @@ coef_12_400 |>
     decimals = 4
   ) |>
   gt::cols_label(
-    Termino       = "Término",
-    Estimado      = "Estimado",
+    Termino        = "Término",
+    Estimado       = "Estimado",
     Error_estandar = "Error estándar",
-    t_value       = "t",
-    p_value       = "p-valor"
+    t_value        = "t",
+    p_value        = "p-valor"
   )
 
 ```
