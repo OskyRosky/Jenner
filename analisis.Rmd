@@ -1419,7 +1419,7 @@ Cada modelo seguirá la misma secuencia metodológica:
 (6) expresión final de la ecuación en formato LaTeX.
 
 
-A. Definición de variable dependiente
+**A. Definición de variable dependiente**
 
 La variable respuesta será:
 
@@ -1431,7 +1431,7 @@ Esto permite reducir la asimetría natural de los datos de fatiga y obtener rela
 
 
 
-B. Selección inicial de variables independientes
+**B. Selección inicial de variables independientes**
 
 Para cada escenario se consideran como candidatos todos los predictores que, desde la perspectiva mecánica y volumétrica, pueden influir en la resistencia a fatiga. Estos se agrupan en dos categorías:
 
@@ -1457,7 +1457,9 @@ Estas propiedades capturan la estructura interna de la mezcla, el empaquetamient
 El objetivo en esta etapa es identificar todas las variables numéricas relevantes y dejar el subconjunto listo para el análisis de colinealidad y posterior selección.
 
 
-C. Colinealidad.
+**C. Colinealidad.**
+
+Para la colinealidad se analiza:
 
 	•	Matriz de correlación
 	•	VIF
@@ -1503,7 +1505,8 @@ ggcorrplot::ggcorrplot(
   colors = c("steelblue", "white", "firebrick")
 )
 ```
-La matriz de correlación y los valores VIF muestran dos conclusiones claras:
+
+La matriz de correlación y los valores VIF muestran dos conclusiones claras de asoación o correlación entre las variables independientes. 
 
 1. Las propiedades volumétricas están fuertemente correlacionadas
 
@@ -1558,7 +1561,7 @@ Rigidez inicial, rigidez final y energía disipada muestran VIF bajos o moderado
 Implicación: son los predictores más confiables para este escenario y deben ser la base del modelo.
 
 
-D. Ajuste del modelo completo (full model)
+**D. Ajuste del modelo completo (full model)**
 
 Una vez definidas la variable respuesta y la lista inicial de predictores, se procede a ajustar el modelo completo, que incluye todas las variables mecánicas y el subconjunto reducido de propiedades volumétricas previamente filtradas por colinealidad. Este modelo sirve como punto de partida para aplicar selección backward, evaluando cuáles predictores aportan información real y cuáles deben eliminarse.
 
@@ -1596,6 +1599,10 @@ mod_12_400_full <- lm(formula_full, data = df_12_400)
 
 ```
 
+*Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 400 μɛ*
+
+
+
 **D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ**
 
 ```{r}
@@ -1626,6 +1633,8 @@ formula_full <- log_ciclos ~
 ```
 
 
+*Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 600 μɛ*
+
 **D.3 Escenario TMN = 19 mm, deformación = 400 μɛ**
 
 ```{r}
@@ -1652,8 +1661,9 @@ formula_full <- log_ciclos ~
 mod_19_400_full <- lm(formula_full, data = df_19_400)
 ```
 
+*Ecuación de regresión para el escenario TMN = 19 mm, deformación = 400 μɛ*
 
-**D.4 Escenario TMN = 19 mm, deformación = 400 μɛ**
+**D.4 Escenario TMN = 19 mm, deformación = 600 μɛ**
 
 ```{r}
 # Variable respuesta en log10(ciclos) para cada escenario
@@ -1678,6 +1688,8 @@ formula_full <- log_ciclos ~
 # D.4 Escenario TMN = 19 mm, deformación = 600 μɛ
 mod_19_600_full <- lm(formula_full, data = df_19_600)
 ```
+
+*Ecuación de regresión para el escenario TMN = 19 mm, deformación = 600 μɛ*
 
 
 Resultados
