@@ -549,20 +549,19 @@ Estos resultados permiten contextualizar la variabilidad observada y preparar el
 
 
 ```{r}
-summary(datos_obj1_raw$gbs_percent_vacios_7_1) |>
-  as.data.frame() |>
-  tibble::rownames_to_column("estadístico") |>
-  rename(valor = 2) |>
+# Resumen numérico del % de vacíos
+resumen_vacios <- summary(datos_obj1_raw$gbs_percent_vacios_7_1)
+
+data.frame(
+  Estadístico = names(resumen_vacios),
+  Valor       = as.numeric(resumen_vacios)
+) |>
   gt() |>
   tab_header(
-    title = "Summary — gbs_percent_vacios_7_1"
-  ) |>
-  cols_label(
-    estadístico = "Estadístico",
-    valor = "Valor"
+    title = "Resumen — gbs_percent_vacios_7_1"
   ) |>
   fmt_number(
-    columns = valor,
+    columns = Valor,
     decimals = 4
   )
 ```
