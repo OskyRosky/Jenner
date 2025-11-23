@@ -695,8 +695,48 @@ mod_vacios <- lmer(
 
 
 ```{r}
+# ANOVA tipo III (asegura que mod_vacios ya existe en un chunk anterior)
 anova_mod <- anova(mod_vacios, type = 3)
-anova_mod
+
+# Pasar a data.frame
+anova_df <- as.data.frame(anova_mod)
+
+# Agregar nombres de fila como columna
+anova_df$Term <- rownames(anova_df)
+
+# Ordenar y renombrar columnas
+anova_df <- anova_df |>
+  select(
+    Term,
+    Sum_Sq       = `Sum Sq`,
+    Mean_Sq      = `Mean Sq`,
+    NumDF,
+    DenDF,
+    F_value      = `F value`,
+    Pr_greater_F = `Pr(>F)`
+  )
+
+# Tabla bonita con gt
+anova_df |>
+  gt() |>
+  tab_header(
+    title = "ANOVA — Efecto fijo de Mezcla",
+    subtitle = "Modelo mixto: Mezcla fija + Bloque anidado aleatorio"
+  ) |>
+  fmt_number(
+    columns = c(Sum_Sq, Mean_Sq, F_value, Pr_greater_F),
+    decimals = 4
+  ) |>
+  fmt_number(columns = c(NumDF, DenDF), decimals = 0) |>
+  cols_label(
+    Term          = "Término",
+    Sum_Sq        = "Suma de Cuadrados",
+    Mean_Sq       = "Media de Cuadrados",
+    NumDF         = "GL Num",
+    DenDF         = "GL Den",
+    F_value       = "F",
+    Pr_greater_F  = "p-valor"
+  )
 ```
 
 
