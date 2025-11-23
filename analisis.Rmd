@@ -734,17 +734,42 @@ anova_df |>
 **Componentes de varianza (porcentaje de contribución)**
 
 ```{r}
-vc <- as.data.frame(VarCorr(mod_vacios))
-vc
+# Extraer componentes de varianza
+vc <- VarCorr(mod_vacios) |> as.data.frame()
 
-# calcular aporte porcentual de cada componente
-vc <- vc |>
-  mutate(
-    fuente = grp,
-    prop   = vcov / sum(vcov) * 100
+# Preparar tabla con varianza, desviación estándar y aporte %
+vc_tidy <- vc |>
+  transmute(
+    Termino = recode(grp,
+                     "mezcla_n"             = "Mezcla (intercepto aleatorio)",
+                     "mezcla_n:bloque_n"    = "Bloque dentro de mezcla",
+                     "Residual"             = "Residuos"),
+    Varianza = vcov,
+    `Desv. Estándar` = sqrt(vcov),
+    `Aporte %` = 100 * vcov / sum(vcov)
   )
 
-vc[, c("fuente", "vcov", "prop")]
+# Mostrar como tabla gt
+vc_tidy |>
+  gt() |>
+  tab_header(
+    title = "Componentes de Varianza del Modelo Mixto",
+    subtitle = "Varianza, desviación estándar y porcentaje de contribución"
+  ) |>
+  fmt_number(
+    columns = c(Varianza, `Desv. Estándar`, `Aporte %`),
+    decimals = 4
+  ) |>
+  cols_label(
+    Termino = "Término",
+    Varianza = "Varianza",
+    `Desv. Estándar` = "Desv. Estándar",
+    `Aporte %` = "Aporte (%)"
+  ) |>
+  tab_style(
+    style = cell_text(weight = "bold"),
+    locations = cells_body(columns = Termino)
+  )
 ```
 
 
@@ -872,14 +897,47 @@ vif_obj1
 **3. Ajuste del modelo base y selección de variables**
 
 ```{r}
-# Modelo base con todas las variables candidatas
-mod_base_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
-summary(mod_base_obj1)
+# Extraer coeficientes del modelo seleccionado
+coef_step <- summary(mod_step_obj1)$coefficients |>
+  as.data.frame() |>
+  tibble::rownames_to_column("Termino") |>
+  dplyr::select(
+    Termino,
+    Estimate,
+    Std_Error = `Std. Error`,
+    t_value   = `t value`,
+    Pr_gt_t   = `Pr(>|t|)`
+  )
 
-# Selección stepwise basada en AIC (backward desde el modelo lleno)
-mod_step_obj1 <- step(mod_base_obj1, direction = "backward", trace = FALSE)
-summary(mod_step_obj1)
+# Tabla en gt
+coef_step |>
+  gt() |>
+  tab_header(
+    title    = "Modelo de regresión final — Objetivo 1",
+    subtitle = "Coeficientes estimados del modelo seleccionado por AIC"
+  ) |>
+  fmt_number(
+    columns = c(Estimate, Std_Error, t_value),
+    decimals = 4
+  ) |>
+  fmt_number(
+    columns = Pr_gt_t,
+    decimals = 4
+  ) |>
+  cols_label(
+    Termino  = "Término",
+    Estimate = "Estimado",
+    Std_Error = "Error estándar",
+    t_value  = "t",
+    Pr_gt_t  = "Pr(>|t|)"
+  )
 ```
+
+Ecuacuón final
+
+$$
+\widehat{\text{Vacíos}} = 6.732 - 1.245\,\text{Gmb} + 0.310\,\text{VMA} - 0.052\,\text{Polvo/Asfalto}
+$$
 
 **4. Validación ligera del modelo seleccionado**
 
