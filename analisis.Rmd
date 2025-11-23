@@ -1573,35 +1573,78 @@ Una vez definidas la variable respuesta y la lista inicial de predictores, se pr
 **D.1 Escenario TMN = 12.5 mm, deformación = 400 μɛ **
 
 ```{r}
-# Variable respuesta en log10(ciclos) para cada escenario
+# Escenario D.1 — TMN 12.5 mm, deformación = 400 μɛ
+
+# 1. Variable respuesta: log10(ciclos)
 df_12_400 <- df_12_400 |>
-  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
-```
+  dplyr::mutate(
+    log_ciclos = log10(pdf_numero_de_ciclos)
+  )
 
-
-```{r}
-# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
-formula_full <- log_ciclos ~ 
+# 2. Fórmula del modelo con variables permitidas
+formula_12_400 <- log_ciclos ~ 
   pdf_rigidez_inicial_m_pa +
-  pdf_rigidez_final_mpa +
   pdf_energia_disipada_k_j_m3 +
+  gbs_gmm +
+  gbs_percent_vacios_7_1 +
   pvm_vma_percent +
   pvm_vfa_percent +
-  pvm_percent_vacios +
   pvm_polvo_asfalto +
   pvm_percent_pasando_1_2 +
   pvm_percent_pasando_number_4 +
   pvm_percent_pasando_number_8 +
   pvm_percent_pasando_number_200
 
-# D.1 Escenario TMN = 12.5 mm, deformación = 400 μɛ
-mod_12_400_full <- lm(formula_full, data = df_12_400)
+# 3. Ajuste del modelo lineal
+mod_12_400_full <- lm(formula_12_400, data = df_12_400)
+
+# 4. Tabla bonita de coeficientes en gt
+coef_12_400 <- summary(mod_12_400_full)$coefficients |>
+  as.data.frame() |>
+  tibble::rownames_to_column("Termino") |>
+  dplyr::rename(
+    Estimado       = Estimate,
+    Error_estandar = `Std. Error`,
+    t_value        = `t value`,
+    p_value        = `Pr(>|t|)`
+  )
+
+coef_12_400 |>
+  gt::gt() |>
+  gt::tab_header(
+    title    = "Modelo de regresión — TMN 12.5 mm, 400 μɛ",
+    subtitle = "Variables mecánicas, GBS y volumétricas permitidas"
+  ) |>
+  gt::fmt_number(
+    columns  = c(Estimado, Error_estandar, t_value, p_value),
+    decimals = 4
+  ) |>
+  gt::cols_label(
+    Termino       = "Término",
+    Estimado      = "Estimado",
+    Error_estandar = "Error estándar",
+    t_value       = "t",
+    p_value       = "p-valor"
+  )
 
 ```
 
 *Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 400 μɛ*
 
+\[
+\widehat{\log_{10}(\text{Ciclos})} \;=\;
+1222.5950
+- 0.0001\,\text{pdf\_rigidez\_inicial\_m\_pa}
+- 0.3369\,\text{pdf\_energia\_disipada\_k\_j\_m3}
+- 586.4602\,\text{gbs\_gmm}
++ 0.2333\,\text{gbs\_percent\_vacios\_7\_1}
+- 2.4589\,\text{pvm\_vma\_percent}
+- 1.0302\,\text{pvm\_vfa\_percent}
++ 51.4099\,\text{pvm\_polvo\_asfalto}
++ 2.5250\,\text{pvm\_percent\_pasando\_1\_2}
+\]
 
+Nota: ningúna variable resultó ser significativa. 
 
 **D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ**
 
