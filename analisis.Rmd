@@ -1236,7 +1236,7 @@ ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
 ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
   geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
   labs(
-    title = "log10(Ciclos) — TMN 12.5 mm, 400 μɛ",
+    title = "log10(Ciclos)",
     x = "log10(ciclos)", y = "Frecuencia"
   ) +
   theme_bw()
@@ -1362,7 +1362,7 @@ Antes de ajustar los modelos de regresión, es necesario revisar el comportamien
 ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
   geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
   labs(
-    title = "Ciclos (escala original) — TMN 12.5 mm, 400 μɛ",
+    title = "Ciclos (escala original)",
     x = "Ciclos",
     y = "Frecuencia"
   ) +
@@ -1373,23 +1373,14 @@ El número de ciclos presenta la típica asimetría a la derecha (cola larga hac
 Esto confirma que la variable no es normal y que la dispersión entre observaciones es muy marcada.
 
 
-**Histograma de log10(ciclos)**
-
-```{r}
-ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
-  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
-  labs(
-    title = "log10(Ciclos) — TMN 12.5 mm, 400 μɛ",
-    x = "log10(ciclos)",
-    y = "Frecuencia"
-  ) +
-  theme_bw()
-```
 
 Al aplicar la transformación \log_{10}:
-	•	La asimetría se reduce notablemente.
-	•	La distribución se vuelve más simétrica y compacta.
-	•	Se facilita el ajuste de un modelo lineal y mejora la estabilidad numérica.
+
+•	La asimetría se reduce notablemente.
+
+•	La distribución se vuelve más simétrica y compacta.
+
+•	Se facilita el ajuste de un modelo lineal y mejora la estabilidad numérica.
 
 Esto valida que log10(ciclos) es una transformación adecuada para el modelo del Objetivo 2.
 
@@ -1400,7 +1391,7 @@ Esto valida que log10(ciclos) es una transformación adecuada para el modelo del
 ggplot(df_12_400, aes(y = log10(pdf_numero_de_ciclos), x = "")) +
   geom_boxplot(fill = "darkgreen", alpha = 0.7) +
   labs(
-    title = "Boxplot log10(ciclos) — TMN 12.5 mm, 400 μɛ",
+    title = "Boxplot log10(ciclos)",
     y = "log10(ciclos)",
     x = ""
   ) +
@@ -1408,8 +1399,11 @@ ggplot(df_12_400, aes(y = log10(pdf_numero_de_ciclos), x = "")) +
 ```
 
 El boxplot muestra:
+
 	•	No hay valores atípicos claros (no aparecen puntos fuera de los bigotes).
+	
 	•	La dispersión es razonable para n = 20.
+	
 	•	El rango intercuartílico es pequeño, lo que sugiere estabilidad relativa en este escenario.
 
 Esto significa que no es necesario eliminar ni ajustar observaciones antes de correr la regresión.
