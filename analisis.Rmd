@@ -1410,15 +1410,15 @@ Esto significa que no es necesario eliminar ni ajustar observaciones antes de co
 
 #### Sobre este análisis podemos decir
 
-Antes de ajustar los modelos predictivos de ciclos de fatiga, se realizó un análisis descriptivo de las variables mecánicas, volumétricas y del número de ciclos en cada escenario (TMN 12.5 y 19 mm a 400 y 600 μɛ). Esta etapa permitió verificar la calidad de los datos y definir el tratamiento adecuado de la variable respuesta.
+Antes de ajustar los modelos predictivos de ciclos de fatiga, se realizó una exploración gráfica y descriptiva de las variables mecánicas, volumétricas y del número de ciclos en cada escenario (TMN 12.5 y 19 mm, a 400 y 600 μɛ). Esta etapa tuvo como objetivo verificar la calidad de los datos, identificar posibles asimetrías o valores atípicos y definir el tratamiento más adecuado para la variable respuesta.
 
-En primer lugar, los histogramas mostraron que el número de ciclos presenta una distribución fuertemente asimétrica, típica de ensayos de fatiga. La transformación \log_{10}(\text{ciclos}) redujo drásticamente esta asimetría y produjo una distribución mucho más simétrica y estable, lo cual justifica su uso como variable respuesta en los modelos de regresión.
+Los histogramas del número de ciclos en escala original muestran la asimetría típica de ensayos de fatiga, con una cola larga hacia valores altos y una concentración principal de observaciones en rangos intermedios. Al aplicar la transformación \log_{10}(\text{ciclos}), la distribución se vuelve claramente más compacta y aproximadamente simétrica, sin indicios de valores atípicos extremos. Esta transformación estabiliza la variabilidad entre observaciones y resulta adecuada para ser utilizada como variable respuesta en los modelos de regresión del Objetivo 2.
 
-La exploración de las variables mecánicas (rigidez inicial, rigidez final y energía disipada) mostró distribuciones coherentes con su comportamiento esperado en mezclas asfálticas compactadas. Los boxplots de las propiedades volumétricas confirmaron rangos consistentes entre vigas, sin valores extremos evidentes que sugirieran errores de laboratorio o de digitación.
+Las variables mecánicas —rigidez inicial, rigidez final y energía disipada— presentan distribuciones coherentes con el comportamiento esperado de mezclas asfálticas sometidas a carga repetida. Para cada escenario TMN–deformación, los histogramas muestran rangos razonables y ausencia de valores aislados que sugieran errores de medición o de digitación. De forma complementaria, los boxplots de las propiedades volumétricas (contenido de asfalto, vacíos, VMA, VFA, polvo-asfalto y porcentajes pasando) indican un comportamiento relativamente estable entre vigas, sin outliers evidentes y con variaciones internas compatibles con la dispersión normal del proceso de diseño y compactación.
 
-La matriz de correlaciones permitió identificar relaciones esperadas entre variables, como la asociación entre rigidez inicial y final, y entre VMA, VFA y vacíos. Asimismo, mostró que algunas variables volumétricas están fuertemente correlacionadas entre sí, lo cual será relevante para evitar colinealidad en las regresiones.
+Finalmente, las matrices de correlación entre propiedades mecánicas y volumétricas permiten identificar patrones acordes con la teoría: la rigidez inicial y final muestran asociaciones altas, y las variables volumétricas relacionadas con vacíos (VMA, VFA, % vacíos, polvo-asfalto, etc.) presentan correlaciones fuertes entre sí. Estos resultados confirman que existe estructura interna en los datos, pero también advierten sobre posibles problemas de colinealidad que deberán controlarse en la fase de regresión (p. ej., mediante selección de variables y revisión de VIF) dentro de cada escenario TMN–deformación.
 
-Finalmente, la evaluación del comportamiento de \log_{10}(\text{ciclos}) mediante histograma y boxplot confirmó la ausencia de valores atípicos marcados y la estabilidad de la variabilidad dentro de cada escenario. Esto respalda la viabilidad de proceder con modelos de regresión lineal ajustados por separado para cada combinación TMN–deformación.
+En conjunto, la exploración descriptiva respalda la calidad de la base de datos y justifica el uso de \log_{10}(\text{ciclos}) como respuesta, estableciendo un punto de partida sólido para la construcción de modelos de regresión específicos para cada combinación de TMN y nivel de deformación.
 
 ### 4.3 Modelado predictivo (regresión lineal para cada escenario)
 
@@ -1628,7 +1628,6 @@ mod_12_600_full <- lm(formula_full, data = df_12_600)
 # Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
 formula_full <- log_ciclos ~ 
   pdf_rigidez_inicial_m_pa +
-  pdf_rigidez_final_mpa +
   pdf_energia_disipada_k_j_m3 +
   pvm_vma_percent +
   pvm_vfa_percent +
@@ -1655,7 +1654,6 @@ df_19_400 <- df_19_400 |>
 # Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
 formula_full <- log_ciclos ~ 
   pdf_rigidez_inicial_m_pa +
-  pdf_rigidez_final_mpa +
   pdf_energia_disipada_k_j_m3 +
   pvm_vma_percent +
   pvm_vfa_percent +
@@ -1683,7 +1681,6 @@ df_19_600 <- df_19_600 |>
 # Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
 formula_full <- log_ciclos ~ 
   pdf_rigidez_inicial_m_pa +
-  pdf_rigidez_final_mpa +
   pdf_energia_disipada_k_j_m3 +
   pvm_vma_percent +
   pvm_vfa_percent +
@@ -1848,8 +1845,10 @@ El Objetivo 2 consistió en ajustar modelos de regresión lineal para cuatro esc
 **Tamaño muestral y estructura de datos**
 
 Los escenarios con TMN = 12.5 mm cuentan con 20 observaciones cada uno, mientras que los escenarios con TMN = 19 mm incluyen 56 y 57 observaciones. Esta diferencia condiciona el tipo de modelado que puede realizarse:
-	•	Con n = 20, la estimación de múltiples predictores presenta inestabilidad, alta varianza y singularidades en la matriz de correlaciones.
-	•	Con n ≈ 56, los modelos son más estables y permiten evaluar mejor la contribución conjunta de propiedades mecánicas y volumétricas.
+
+•	Con n = 20, la estimación de múltiples predictores presenta inestabilidad, alta varianza y singularidades en la matriz de correlaciones.
+
+•	Con n ≈ 56, los modelos son más estables y permiten evaluar mejor la contribución conjunta de propiedades mecánicas y volumétricas.
 
 En todos los escenarios se modeló la variable de respuesta como:
 
@@ -1875,8 +1874,10 @@ Se consideraron como predictores:
 En todos los escenarios se observó alta colinealidad entre varios predictores volumétricos, especialmente VMA, VFA y vacíos, así como entre los porcentajes de gradación. Esta colinealidad explicaba la presencia de coeficientes no definidos en los modelos completos de TMN 12.5 mm.
 
 En las regresiones individuales (1 a 1), ningún predictor mostró significancia estadística fuerte en los escenarios de TMN 12.5 mm. En los escenarios con TMN = 19 mm se observaron asociaciones más claras, aunque moderadas:
-	•	En TMN 19 mm – 400 με, variables como rigidez inicial, energía disipada, vacíos y % pasando #4 mostraron niveles de significancia marginal (p entre 0.05–0.10).
-	•	En TMN 19 mm – 600 με, rigidez inicial y energía disipada resultaron estadísticamente significativas.
+
+•	En TMN 19 mm – 400 με, variables como rigidez inicial, energía disipada, vacíos y % pasando #4 mostraron niveles de significancia marginal (p entre 0.05–0.10).
+
+•	En TMN 19 mm – 600 με, rigidez inicial y energía disipada resultaron estadísticamente significativas.
 
 
 **Desempeño de los modelos **
