@@ -667,10 +667,9 @@ En términos prácticos, el objetivo de este modelo es obtener, por un lado, la 
 	•	La variabilidad entre vigas se incorpora en el error residual.
 
 ```{r}
-### Ajuste del modelo mixto jerárquico
-
-### Ajuste del modelo mixto jerárquico (sin nivel de viga)
-
+# ==========================================
+# 1. Preparación de los datos
+# ==========================================
 datos_obj1_raw <- datos_obj1_raw |>
   mutate(
     mezcla_n = factor(mezcla_n),
@@ -679,18 +678,32 @@ datos_obj1_raw <- datos_obj1_raw |>
 ```
 
 ```{r}
-# Modelo mixto:
-# Vacíos ~ Mezcla (fijo) + Bloque y Viga anidados como aleatorios
+# ==========================================
+# 2. Ajuste del modelo mixto
+#    (Mezcla = fijo, Bloque anidado = aleatorio)
+# ==========================================
 mod_vacios <- lmer(
   gbs_percent_vacios_7_1 ~ mezcla_n +
-    (1 | mezcla_n / bloque_n),   # mezcla fija, bloque aleatorio anidado
+    (1 | mezcla_n / bloque_n),
   data = datos_obj1_raw
 )
 ```
 
+```{r}
+# ==========================================
+# 3. ANOVA (efecto fijo de mezcla)
+# ==========================================
+anova_mod <- anova(mod_vacios, type = 3)
+# anova_mod
+```
+
+
 
 ```{r}
-# Convertir la tabla ANOVA a data.frame para gt
+# ==========================================
+# 4. Convertir ANOVA a tabla gt
+# ==========================================
+
 anova_df <- as.data.frame(anova_mod)
 
 anova_df <- anova_df |>
@@ -707,11 +720,11 @@ anova_df <- anova_df |>
     Pr_greater_F = `Pr(>F)`
   )
 
-# Tabla en gt
+# Tabla bonita en gt
 anova_df |>
   gt() |>
   tab_header(
-    title = "ANOVA — Efecto fijo de Mezcla",
+    title = md("**ANOVA — Efecto fijo de Mezcla**"),
     subtitle = "Modelo mixto: Mezcla (fijo) + Bloque anidado (aleatorio)"
   ) |>
   fmt_number(
@@ -723,8 +736,8 @@ anova_df |>
     Term = "Término",
     Sum_Sq = "Suma de Cuadrados",
     Mean_Sq = "Media de Cuadrados",
-    NumDF = "Gl Num",
-    DenDF = "Gl Den",
+    NumDF = "GL Num",
+    DenDF = "GL Den",
     F_value = "F",
     Pr_greater_F = "p-valor"
   )
@@ -857,8 +870,6 @@ y <- datos_obj1_raw$gbs_percent_vacios_7_1
 # Conjunto de predictores candidatos: volumétricas + gradación
 predictores_obj1 <- datos_obj1_raw |>
   select(
-    gbs_gmm,
-    gbs_gmb,
     pvm_asfalto_efectivo_percent,
     pvm_asfalto_sobre_mac_percent,
     pvm_vacios_pv,
@@ -935,9 +946,7 @@ coef_step |>
 
 Ecuacuón final
 
-$$
-\widehat{\text{Vacíos}} = 6.732 - 1.245\,\text{Gmb} + 0.310\,\text{VMA} - 0.052\,\text{Polvo/Asfalto}
-$$
+
 
 **4. Validación ligera del modelo seleccionado**
 
