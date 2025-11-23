@@ -620,13 +620,14 @@ ggplot(datos_obj1_raw, aes(sample = gbs_percent_vacios_7_1)) +
 ```
 
 
-El análisis inicial del porcentaje de vacíos en los bloques y vigas revela una distribución centrada entre valores de 6% y 7%, con una mediana cercana a 6.8% y un rango general que oscila entre aproximadamente 5.3% y 12.3%. Estas cifras sugieren que, aunque la mayoría de las observaciones se encuentran dentro de valores habituales para mezclas asfálticas densas, existen algunos casos puntuales con porcentajes de vacíos notablemente más altos, lo cual ya anticipa que no todas las mezclas o bloques presentan un comportamiento homogéneo.
+El análisis exploratorio del porcentaje de vacíos muestra que la mayoría de las observaciones se concentran entre 6% y 8%, con una mediana cercana al 6.8%, aunque existen algunos casos puntuales con valores más altos que generan una ligera cola hacia la derecha. Estos valores se encuentran dentro de lo esperable para mezclas densas, pero la presencia de observaciones elevadas indica que no todas las combinaciones mezcla–bloque presentan el mismo comportamiento.
 
-Los boxplots por mezcla muestran diferencias claras entre diseños. Algunas mezclas exhiben valores mucho más altos y dispersos, especialmente las mezclas 1, 2 y 3, mientras que en la mayoría de los diseños el % de vacíos se mantiene relativamente estable alrededor del 6.5%–7.0%. Esto indica que el diseño de mezcla tiene un rol importante en la variabilidad global, pues se observan patrones consistentes dentro de mezcla pero diferenciados entre mezclas. Por otra parte, los boxplots de bloques dentro de mezcla revelan que, aunque existe cierta variación entre los bloques A y B, esta es significativamente menor que la variación atribuible a la mezcla. Esto sugiere que el proceso de compactación introduce variabilidad, pero su magnitud es más acotada en comparación con las diferencias entre diseños.
+Los boxplots por mezcla evidencian diferencias visibles entre diseños: algunas mezclas muestran valores de vacíos más altos o más dispersos que otras. Este patrón sugiere, en apariencia, que podría existir un efecto de mezcla sobre la variabilidad del porcentaje de vacíos. Sin embargo, es importante subrayar que esta impresión proviene únicamente de la inspección gráfica, la cual refleja diferencias aparentes pero no necesariamente diferencias estadísticamente significativas. Por su parte, los boxplots por bloque dentro de mezcla muestran variación más acotada, lo cual sugiere que el proceso de compactación sí introduce dispersión, pero visualmente en menor magnitud que las diferencias observadas entre mezclas.
 
-El histograma y la curva de densidad refuerzan esta interpretación: la distribución general del % de vacíos presenta asimetría hacia la derecha, con un tramo principal concentrado en el rango de 6–8% y una cola que se extiende hacia valores mayores. El gráfico Q–Q confirma esta ligera desviación respecto a la normalidad, especialmente en la cola superior, que corresponde a las mezclas con valores de vacíos más elevados. No obstante, la mayor parte de los datos sigue una tendencia aproximadamente normal, lo cual es adecuado para proceder con modelos lineales y mixtos, siempre que se revisen los residuos posteriormente.
+El histograma, la curva de densidad y el gráfico Q–Q indican que los datos presentan cierta asimetría en la cola superior —asociada a las mezclas con vacíos más elevados—, pero en general siguen un patrón cercano a la normalidad. Esto permite anticipar que los modelos lineales y mixtos pueden ajustarse de forma adecuada, siempre que las conclusiones se basen posteriormente en el análisis formal de residuos y en la estimación de componentes de varianza.
 
-En conjunto, estos resultados preliminares sugieren que la mayor parte de la variación visible en el % de vacíos parece estar asociada al diseño de mezcla, mientras que bloques y vigas muestran variabilidad más contenida. La exploración inicial también evidencia que el comportamiento general es estable y sin valores atípicos extremos que comprometan el ajuste de los modelos posteriores, aunque la asimetría observada en ciertos diseños deberá ser tenida en cuenta al interpretar los componentes de varianza y la regresión volumétrica.
+En síntesis, la exploración gráfica sugiere que podría existir un efecto de mezcla más marcado que el de bloque; sin embargo, esta interpretación debe considerarse provisional. La evidencia visual es útil para orientar el análisis, pero la confirmación o refutación de dichas diferencias requiere necesariamente el contraste empírico mediante el modelo mixto y el ANOVA, que se desarrolla en la sección siguiente. Por ello, la interpretación definitiva sobre la magnitud relativa de los efectos depende de los resultados estadísticos formales y no únicamente de la inspección exploratoria.
+
 
 ### 3.2 Modelo mixto para la variabilidad del % de vacíos
 
@@ -814,14 +815,15 @@ ggplot(diag_df, aes(sample = residuos)) +
 ```
 
 
-Los resultados del modelo mixto jerárquico permiten evaluar la contribución relativa de cada nivel del proceso experimental a la variabilidad observada en el porcentaje de vacíos. El análisis ANOVA sobre el efecto fijo de la mezcla muestra que el factor Mezcla no resulta estadísticamente significativo para explicar diferencias en % de vacíos (p = 0.34). Este hallazgo sugiere que, aun cuando existen diferencias numéricas entre mezclas, dichas variaciones no son suficientemente grandes en relación con la variabilidad interna del proceso como para ser detectadas como significativas.
+El modelo mixto jerárquico permite evaluar formalmente qué proporción de la variabilidad del porcentaje de vacíos proviene del diseño de mezcla, del nivel de bloque y del nivel de viga. A diferencia de la exploración gráfica realizada en la sección anterior, este enfoque incorpora explícitamente la estructura jerárquica del experimento y separa las fuentes de variación en componentes de varianza estimados.
 
-El desglose de los componentes de varianza confirma esta interpretación: la variabilidad total del % de vacíos se distribuye de manera semejante entre los tres niveles del diseño experimental. Aproximadamente un tercio de la variación proviene de diferencias entre mezclas, otro tercio de diferencias entre bloques dentro de mezcla (compactación), y el tercio restante corresponde a la variación residual asociada a las vigas y a otras fuentes menores. Esta distribución relativamente equilibrada indica que ningún nivel domina claramente la variabilidad del proceso, lo cual es coherente con un sistema de producción relativamente estable donde mezcla, compactación y corte influyen de manera comparable.
+El ANOVA de efectos fijos aplicado al modelo muestra únicamente el término Mezcla, ya que los demás niveles (bloque y viga) fueron especificados como efectos aleatorios. En este tipo de modelos, por norma estadística, los efectos aleatorios no se contrastan mediante pruebas F tradicionales; su contribución se evalúa mediante los componentes de varianza y no mediante p-valores. El resultado del ANOVA indica que el efecto fijo de mezcla no es estadísticamente significativo (p = 0.34), lo que implica que, una vez descontada la variabilidad atribuible a bloque y al error residual, las diferencias entre mezclas no son lo suficientemente grandes como para ser detectadas con evidencia estadística fuerte.
 
-Las verificaciones de diagnóstico (residuos vs. ajustados y Q–Q plot) muestran un comportamiento razonable para un modelo de este tipo, sin patrones que invaliden su uso, aunque con ligeras desviaciones de normalidad atribuibles a algunos valores altos de % de vacíos ya identificados en la exploración inicial.
+La estimación de componentes de varianza ofrece una visión complementaria. La variabilidad total del porcentaje de vacíos se distribuye de forma relativamente equilibrada entre mezcla, bloque y el nivel residual (que incorpora la variabilidad entre vigas y el error). Aproximadamente un tercio de la variación se atribuye a diferencias entre mezclas, otro tercio a diferencias entre bloques dentro de mezcla —lo cual refleja el efecto de la compactación— y el tercio restante corresponde a variabilidad residual. Esta estructura balanceada indica que ninguna fuente domina de manera clara el proceso: ni el diseño de mezcla, ni la compactación, ni el corte se destacan como fuentes de variación desproporcionadas.
 
-En conjunto, estos resultados revelan que la variabilidad entre mezclas no es el principal determinante del % de vacíos. Esto refuerza la importancia de avanzar hacia el siguiente paso del Objetivo 1: ajustar un modelo de regresión que relacione el % de vacíos con las propiedades volumétricas y de gradación de la mezcla. A diferencia del factor Mezcla, que es solo un identificador categórico, las propiedades físicas (Gmm, Gmb, VMA, VFA, polvo-asfalto, entre otras) permiten capturar la estructura real del material y explicar por qué ciertas vigas presentan mayores o menores valores de % de vacíos. Por ello, la regresión constituye una herramienta fundamental para obtener una ecuación que describa el comportamiento del % de vacíos a partir de variables con significado ingenieril y no meramente categórico.
+Los diagnósticos de residuos del modelo no muestran patrones severos que invaliden la especificación: los residuos vs. ajustados no presentan formas sistemáticas y el gráfico Q–Q solo presenta leves desviaciones en la cola superior, coherentes con los valores altos de % de vacíos identificados previamente en la exploración gráfica. Esto confirma que el modelo ofrece una representación apropiada de la estructura de variabilidad en los datos.
 
+En conjunto, los resultados del modelo mixto permiten matizar la impresión inicial obtenida en la exploración gráfica. Aunque visualmente algunas mezclas parecían mostrar diferencias claras, el análisis formal revela que estas diferencias no alcanzan significancia estadística y que la variación del proceso se distribuye de manera comparable entre mezcla, bloque y la variación residual. Este resultado subraya la importancia de avanzar hacia la regresión volumétrica: a diferencia del factor mezcla, que es un identificador categórico, las propiedades ingenieriles de la mezcla (Gmm, VMA, VFA, vacíos PV, polvo-asfalto, gradación, etc.) sí permiten captar relaciones funcionales que expliquen por qué ciertas vigas presentan mayores o menores valores de vacíos. Por ello, la regresión constituye un paso fundamental para profundizar en las causas materiales del comportamiento del porcentaje de vacíos más allá de los niveles experimentales.
 
 ### 3.3 Regresión del % de vacíos vs propiedades volumétricas
 
@@ -965,14 +967,56 @@ coef_base |>
 ```
 
 ```{r}
-# Selección stepwise basada en AIC (backward desde el modelo lleno)
+# 1. Selección stepwise basada en AIC (backward)
 mod_step_obj1 <- step(mod_base_obj1, direction = "backward", trace = FALSE)
-summary(mod_step_obj1)
+
+# 2. Extraer y preparar coeficientes del modelo seleccionado
+coef_step <- summary(mod_step_obj1)$coefficients |>
+  as.data.frame() |>
+  tibble::rownames_to_column("Termino") |>
+  dplyr::rename(
+    Estimado       = Estimate,
+    Error_estandar = `Std. Error`,
+    t_value        = `t value`,
+    p_value        = `Pr(>|t|)`
+  )
+
+# 3. Tabla en formato gt
+coef_step |>
+  gt::gt() |>
+  gt::tab_header(
+    title    = "Modelo Seleccionado por AIC — Objetivo 1",
+    subtitle = "Coeficientes estimados del modelo final (stepwise backward)"
+  ) |>
+  gt::fmt_number(
+    columns  = c(Estimado, Error_estandar, t_value, p_value),
+    decimals = 4
+  ) |>
+  gt::cols_label(
+    Termino        = "Término",
+    Estimado       = "Estimado",
+    Error_estandar = "Error estándar",
+    t_value        = "t",
+    p_value        = "p-valor"
+  )
 ```
 
-**Modelo de regresión seleccionado** 
 
 
+**Modelo final de regresión seleccionado** 
+
+\[
+\begin{aligned}
+\widehat{\text{Vacíos (7+1)}} \;=\;& -60.9815  \\
+&\quad +\; 5.7645\,\text{pvm\_asfalto\_efectivo\_percent} \\
+&\quad +\; 7.4055\,\text{pvm\_vacios\_pv} \\
+&\quad -\; 2.9734\,\text{pvm\_vma\_percent} \\
+&\quad +\; 0.7545\,\text{pvm\_vfa\_percent} \\
+&\quad +\; 10.9475\,\text{pvm\_polvo\_asfalto} \\
+&\quad +\; 0.0956\,\text{pvm\_percent\_pasando\_number\_8} \\
+&\quad -\; 2.9261\,\text{pvm\_percent\_pasando\_number\_200}
+\end{aligned}
+\]
 
 **4. Validación ligera del modelo seleccionado**
 
