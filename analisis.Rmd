@@ -215,8 +215,20 @@ Con estas revisiones, se concluye que las bases de datos poseen calidad suficien
 #### 1. Revisión de valores faltantes (NA).
 
 ```{r}
-colSums(is.na(datos_obj1_raw))
-colSums(is.na(datos_obj2_raw))
+
+tabla_na_gt <- function(df, titulo = "Conteo de NA por columna") {
+  df %>%
+    summarise(across(everything(), ~ sum(is.na(.)))) %>%
+    t() %>%
+    as.data.frame() %>%
+    tibble::rownames_to_column("Variable") %>%
+    rename(NA_count = V1) %>%
+    gt() %>%
+    tab_header(title = titulo)
+}
+
+tabla_na_gt(datos_obj1_raw, "NAs — Objetivo 1")
+tabla_na_gt(datos_obj2_raw, "NAs — Objetivo 2")
 ```
 
 El análisis inicial de la calidad del dato, centrado en la detección de valores faltantes (NA) dentro de ambas bases de información, revela un panorama muy favorable para el desarrollo de los modelos estadísticos posteriores. En el caso del conjunto de datos correspondiente al Objetivo 1, que contiene la información asociada a la prueba de gravedad aparente del agregado grueso (Gbs) y al cálculo del porcentaje de vacíos, no se identificaron valores faltantes en ninguna de las variables. Esto implica que las observaciones están completas y que todas las columnas cuentan con información válida para cada registro. La ausencia total de NA permite avanzar con plena confianza en los análisis de variabilidad, el ANOVA jerárquico y los modelos de regresión asociados a este primer objetivo, ya que no será necesario aplicar procedimientos de imputación ni descartar filas, lo que fortalece la integridad del análisis.
