@@ -902,9 +902,21 @@ datos_reg_obj1 <- bind_cols(
 **2. Evaluación de colinealidad (correlación + VIF) **
 
 ```{r}
+## 2. Evaluación de colinealidad (correlación + VIF)
+
+# 2.1. Seleccionar solo predictores numéricos para la correlación
+predictores_num_obj1 <- predictores_obj1 |>
+  dplyr::select(where(is.numeric))
+
 # Matriz de correlación (solo numéricas)
-corr_reg_obj1 <- cor(predictores_obj1, use = "pairwise.complete.obs")
+corr_reg_obj1 <- cor(predictores_num_obj1, use = "pairwise.complete.obs")
 corrplot(corr_reg_obj1, method = "color", tl.cex = 0.7)
+
+# 2.2. Data.frame para la regresión y VIF (respuesta + predictores numéricos)
+datos_reg_obj1 <- dplyr::bind_cols(
+  vacios = y,
+  predictores_num_obj1
+)
 
 # Modelo "lleno" para calcular VIF
 mod_full_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
@@ -917,14 +929,50 @@ vif_obj1
 **3. Ajuste del modelo base y selección de variables**
 
 ```{r}
-# Modelo base con todas las variables candidatas
+# 1. Ajuste del modelo base con todas las variables candidatas
 mod_base_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
-summary(mod_base_obj1)
 
+# 2. Extraer coeficientes del modelo base y prepararlos para gt
+coef_base <- summary(mod_base_obj1)$coefficients |>
+  as.data.frame() |>
+  tibble::rownames_to_column("Termino") |>
+  dplyr::rename(
+    Estimado       = Estimate,
+    Error_estandar = `Std. Error`,
+    t_value        = `t value`,
+    p_value        = `Pr(>|t|)`
+  )
+
+# 3. Tabla bonita en gt
+coef_base |>
+  gt::gt() |>
+  gt::tab_header(
+    title    = "Modelo Base — Objetivo 1",
+    subtitle = "Coeficientes estimados del modelo con todas las variables volumétricas"
+  ) |>
+  gt::fmt_number(
+    columns  = c(Estimado, Error_estandar, t_value, p_value),
+    decimals = 4
+  ) |>
+  gt::cols_label(
+    Termino        = "Término",
+    Estimado       = "Estimado",
+    Error_estandar = "Error estándar",
+    t_value        = "t",
+    p_value        = "p-valor"
+  )
+
+```
+
+```{r}
 # Selección stepwise basada en AIC (backward desde el modelo lleno)
 mod_step_obj1 <- step(mod_base_obj1, direction = "backward", trace = FALSE)
 summary(mod_step_obj1)
 ```
+
+**Modelo de regresión seleccionado** 
+
+
 
 **4. Validación ligera del modelo seleccionado**
 
