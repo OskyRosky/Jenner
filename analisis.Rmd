@@ -1384,29 +1384,8 @@ Al aplicar la transformación \log_{10}:
 
 Esto valida que log10(ciclos) es una transformación adecuada para el modelo del Objetivo 2.
 
-**Boxplot para detectar posibles atípicos en log10(ciclos)**
+Ahora, se debe de tomar en cuenta que aún con la transformación, los escenarios con solo una muestre de 20, puedes ser un problema para correctar ecuaciones de regresión. Esto será valorado más adelante.
 
-
-```{r}
-ggplot(df_12_400, aes(y = log10(pdf_numero_de_ciclos), x = "")) +
-  geom_boxplot(fill = "darkgreen", alpha = 0.7) +
-  labs(
-    title = "Boxplot log10(ciclos)",
-    y = "log10(ciclos)",
-    x = ""
-  ) +
-  theme_bw()
-```
-
-El boxplot muestra:
-
-	•	No hay valores atípicos claros (no aparecen puntos fuera de los bigotes).
-	
-	•	La dispersión es razonable para n = 20.
-	
-	•	El rango intercuartílico es pequeño, lo que sugiere estabilidad relativa en este escenario.
-
-Esto significa que no es necesario eliminar ni ajustar observaciones antes de correr la regresión.
 
 #### Sobre este análisis podemos decir
 
