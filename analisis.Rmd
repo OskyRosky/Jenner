@@ -240,15 +240,31 @@ En síntesis, la presencia de NA no compromete el desarrollo de la tesis. Para e
 #### 2. Consistencia del diseño jerárquico: Mezcla → Bloque → Viga
 
 ```{r}
+# 1) Mezcla–bloque
 datos_obj1_raw |>
   count(mezcla_n, bloque_n) |>
-  count(n)
+  count(n, name = "frecuencia") |>
+  gt() |>
+  tab_header(title = "Distribución del número de observaciones por combinación mezcla–bloque") |>
+  cols_label(
+    n          = "N° de observaciones por mezcla–bloque",
+    frecuencia = "Frecuencia"
+  )
+
 ```
 
 ```{r}
+# 1) Mezcla–bloque
 datos_obj1_raw |>
-  count(mezcla_n) |> 
-  count(n)
+  count(mezcla_n, bloque_n) |>
+  count(n, name = "frecuencia") |>
+  gt() |>
+  tab_header(title = "Distribución del número de observaciones por combinación mezcla–bloque") |>
+  cols_label(
+    n          = "N° de observaciones por mezcla–bloque",
+    frecuencia = "Frecuencia"
+  )
+
 ```
 
 La verificación de la estructura jerárquica en el conjunto de datos del Objetivo 1 permite confirmar que el diseño experimental mantiene la coherencia esperada entre sus niveles: cada mezcla corresponde a varios bloques compactados, y cada bloque origina un conjunto de vigas provenientes del proceso de corte. Al analizar simultáneamente las variables mezcla_n y bloque_n, se observa que existen cinco combinaciones únicas mezcla–bloque, produciendo un total de 48 especímenes. Esto indica que, en promedio, cada combinación mezcla–bloque genera varias vigas, tal como lo exige el diseño jerárquico del Compactador de Cortante ASC bajo la norma ASTM D7981.
@@ -267,7 +283,18 @@ En síntesis, el análisis del diseño jerárquico confirma que los datos del Ob
 summary(datos_obj1_raw$gbs_percent_vacios_7_1)
 summary(datos_obj1_raw$gbs_gmm)
 summary(datos_obj1_raw$gbs_gmb)
-table(datos_obj1_raw$gbs_tmn_mm)
+
+
+datos_obj1_raw |>
+  count(gbs_tmn_mm, name = "frecuencia") |>
+  gt() |>
+  tab_header(
+    title = "Frecuencia por TMN (gbs_tmn_mm)"
+  ) |>
+  cols_label(
+    gbs_tmn_mm = "TMN (mm)",
+    frecuencia = "Frecuencia"
+  )
 ```
 
 La revisión de los rangos físicos en el Objetivo 1 permite confirmar que las variables críticas del proceso de compactación y caracterización volumétrica presentan valores coherentes con los reportados en la literatura y con lo que se espera en mezclas asfálticas fabricadas bajo la norma ASTM D7981.
@@ -299,7 +326,26 @@ Por eso el análisis de rangos físicos es indispensable en el Objetivo 1, pero 
 #### dataob1
 
 ```{r}
-summary(select(datos_obj1_raw, where(is.numeric)))
+# Summary solo de variables numéricas
+summary_df <- summary(select(datos_obj1_raw, where(is.numeric))) |>
+  as.data.frame() |>
+  tibble::rownames_to_column("estadístico") |>
+  rename(valor = 2)
+
+# Tabla en gt
+summary_df |>
+  gt() |>
+  tab_header(
+    title = "Summary de variables numéricas — Objetivo 1"
+  ) |>
+  cols_label(
+    estadístico = "Estadístico",
+    valor = "Valor"
+  ) |>
+  fmt_number(
+    columns = valor,
+    decimals = 4
+  )
 ```
 
 
@@ -503,7 +549,22 @@ Estos resultados permiten contextualizar la variabilidad observada y preparar el
 
 
 ```{r}
-summary(datos_obj1_raw$gbs_percent_vacios_7_1)
+summary(datos_obj1_raw$gbs_percent_vacios_7_1) |>
+  as.data.frame() |>
+  tibble::rownames_to_column("estadístico") |>
+  rename(valor = 2) |>
+  gt() |>
+  tab_header(
+    title = "Summary — gbs_percent_vacios_7_1"
+  ) |>
+  cols_label(
+    estadístico = "Estadístico",
+    valor = "Valor"
+  ) |>
+  fmt_number(
+    columns = valor,
+    decimals = 4
+  )
 ```
 
 

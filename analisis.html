@@ -2877,62 +2877,949 @@ calidad suficiente para continuar con las etapas de análisis descriptivo
 y modelado estadístico.</p>
 <div id="revisión-de-valores-faltantes-na." class="section level4">
 <h4>1. Revisión de valores faltantes (NA).</h4>
-<pre class="r"><code>colSums(is.na(datos_obj1_raw))</code></pre>
-<pre><code>##                       mezcla_n                       bloque_n 
-##                              0                              0 
-##                        gbs_gmm                     gbs_tmn_mm 
-##                              0                              0 
-##                   gbs_n_prisma                     gbs_n_viga 
-##                              0                              0 
-##                   gbs_pseco_kg                    gbs_psum_kg 
-##                              0                              0 
-##                    gbs_psss_kg                        gbs_gmb 
-##                              0                              0 
-##         gbs_percent_vacios_7_1   pvm_asfalto_efectivo_percent 
-##                              0                              0 
-##  pvm_asfalto_sobre_mac_percent                  pvm_vacios_pv 
-##                              0                              0 
-##                        pvm_gbs                pvm_vma_percent 
-##                              0                              0 
-##                pvm_vfa_percent              pvm_polvo_asfalto 
-##                              0                              0 
-##        pvm_percent_pasando_1_2   pvm_percent_pasando_number_4 
-##                              0                              0 
-##   pvm_percent_pasando_number_8 pvm_percent_pasando_number_200 
-##                              0                              0</code></pre>
-<pre class="r"><code>colSums(is.na(datos_obj2_raw))</code></pre>
-<pre><code>##                        mezcla_n                        bloque_n 
-##                               0                               0 
-##                         gbs_gmm                      gbs_tmn_mm 
-##                               0                               0 
-##                    gbs_n_prisma                      gbs_n_viga 
-##                               0                               0 
-##                    gbs_pseco_kg                     gbs_psum_kg 
-##                               0                               0 
-##                     gbs_psss_kg                         gbs_gmb 
-##                               0                               0 
-##          gbs_percent_vacios_7_1        pdf_deformacion_unitaria 
-##                               0                              39 
-##               pdf_n_viga_fatiga                pdf_fecha_ensayo 
-##                              87                              87 
-## pdf_initial_tensile_stress_k_pa        pdf_rigidez_inicial_m_pa 
-##                              87                              87 
-##     pdf_energia_disipada_k_j_m3           pdf_force_amplitude_n 
-##                              87                              87 
-##           pdf_rigidez_final_mpa            pdf_numero_de_ciclos 
-##                              87                              87 
-##    pvm_asfalto_efectivo_percent   pvm_asfalto_sobre_mac_percent 
-##                               0                               0 
-##              pvm_percent_vacios                         pvm_gbs 
-##                               0                               0 
-##                 pvm_vma_percent                 pvm_vfa_percent 
-##                               0                               0 
-##               pvm_polvo_asfalto         pvm_percent_pasando_1_2 
-##                               0                               0 
-##    pvm_percent_pasando_number_4    pvm_percent_pasando_number_8 
-##                               0                               0 
-##  pvm_percent_pasando_number_200 
-##                               0</code></pre>
+<pre class="r"><code>tabla_na_gt &lt;- function(df, titulo = &quot;Conteo de NA por columna&quot;) {
+  df %&gt;%
+    summarise(across(everything(), ~ sum(is.na(.)))) %&gt;%
+    t() %&gt;%
+    as.data.frame() %&gt;%
+    tibble::rownames_to_column(&quot;Variable&quot;) %&gt;%
+    rename(NA_count = V1) %&gt;%
+    gt() %&gt;%
+    tab_header(title = titulo)
+}
+
+tabla_na_gt(datos_obj1_raw, &quot;NAs — Objetivo 1&quot;)</code></pre>
+<div id="aqngbhsndl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#aqngbhsndl table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#aqngbhsndl thead, #aqngbhsndl tbody, #aqngbhsndl tfoot, #aqngbhsndl tr, #aqngbhsndl td, #aqngbhsndl th {
+border-style: none;
+}
+#aqngbhsndl p {
+margin: 0;
+padding: 0;
+}
+#aqngbhsndl .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#aqngbhsndl .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#aqngbhsndl .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#aqngbhsndl .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#aqngbhsndl .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#aqngbhsndl .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#aqngbhsndl .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#aqngbhsndl .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#aqngbhsndl .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#aqngbhsndl .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#aqngbhsndl .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#aqngbhsndl .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#aqngbhsndl .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#aqngbhsndl .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#aqngbhsndl .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#aqngbhsndl .gt_from_md > :first-child {
+margin-top: 0;
+}
+#aqngbhsndl .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#aqngbhsndl .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#aqngbhsndl .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#aqngbhsndl .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#aqngbhsndl .gt_row_group_first td {
+border-top-width: 2px;
+}
+#aqngbhsndl .gt_row_group_first th {
+border-top-width: 2px;
+}
+#aqngbhsndl .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#aqngbhsndl .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#aqngbhsndl .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#aqngbhsndl .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#aqngbhsndl .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#aqngbhsndl .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#aqngbhsndl .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#aqngbhsndl .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#aqngbhsndl .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#aqngbhsndl .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#aqngbhsndl .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#aqngbhsndl .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#aqngbhsndl .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#aqngbhsndl .gt_left {
+text-align: left;
+}
+#aqngbhsndl .gt_center {
+text-align: center;
+}
+#aqngbhsndl .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#aqngbhsndl .gt_font_normal {
+font-weight: normal;
+}
+#aqngbhsndl .gt_font_bold {
+font-weight: bold;
+}
+#aqngbhsndl .gt_font_italic {
+font-style: italic;
+}
+#aqngbhsndl .gt_super {
+font-size: 65%;
+}
+#aqngbhsndl .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#aqngbhsndl .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#aqngbhsndl .gt_indent_1 {
+text-indent: 5px;
+}
+#aqngbhsndl .gt_indent_2 {
+text-indent: 10px;
+}
+#aqngbhsndl .gt_indent_3 {
+text-indent: 15px;
+}
+#aqngbhsndl .gt_indent_4 {
+text-indent: 20px;
+}
+#aqngbhsndl .gt_indent_5 {
+text-indent: 25px;
+}
+#aqngbhsndl .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#aqngbhsndl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="2" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>NAs — Objetivo 1</td>
+    </tr>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Variable">Variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="NA_count">NA_count</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Variable" class="gt_row gt_left">mezcla_n</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">bloque_n</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_gmm</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_tmn_mm</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_n_prisma</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_n_viga</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_pseco_kg</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_psum_kg</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_psss_kg</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_gmb</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_percent_vacios_7_1</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_asfalto_efectivo_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_asfalto_sobre_mac_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_vacios_pv</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_gbs</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_vma_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_vfa_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_polvo_asfalto</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_1_2</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_number_4</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_number_8</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_number_200</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+  </tbody>
+  
+</table>
+</div>
+<pre class="r"><code>tabla_na_gt(datos_obj2_raw, &quot;NAs — Objetivo 2&quot;)</code></pre>
+<div id="eabbhebkuj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#eabbhebkuj table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#eabbhebkuj thead, #eabbhebkuj tbody, #eabbhebkuj tfoot, #eabbhebkuj tr, #eabbhebkuj td, #eabbhebkuj th {
+border-style: none;
+}
+#eabbhebkuj p {
+margin: 0;
+padding: 0;
+}
+#eabbhebkuj .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#eabbhebkuj .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#eabbhebkuj .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#eabbhebkuj .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#eabbhebkuj .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#eabbhebkuj .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#eabbhebkuj .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#eabbhebkuj .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#eabbhebkuj .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#eabbhebkuj .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#eabbhebkuj .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#eabbhebkuj .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#eabbhebkuj .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#eabbhebkuj .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#eabbhebkuj .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#eabbhebkuj .gt_from_md > :first-child {
+margin-top: 0;
+}
+#eabbhebkuj .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#eabbhebkuj .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#eabbhebkuj .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#eabbhebkuj .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#eabbhebkuj .gt_row_group_first td {
+border-top-width: 2px;
+}
+#eabbhebkuj .gt_row_group_first th {
+border-top-width: 2px;
+}
+#eabbhebkuj .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#eabbhebkuj .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#eabbhebkuj .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#eabbhebkuj .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#eabbhebkuj .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#eabbhebkuj .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#eabbhebkuj .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#eabbhebkuj .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#eabbhebkuj .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#eabbhebkuj .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#eabbhebkuj .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#eabbhebkuj .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#eabbhebkuj .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#eabbhebkuj .gt_left {
+text-align: left;
+}
+#eabbhebkuj .gt_center {
+text-align: center;
+}
+#eabbhebkuj .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#eabbhebkuj .gt_font_normal {
+font-weight: normal;
+}
+#eabbhebkuj .gt_font_bold {
+font-weight: bold;
+}
+#eabbhebkuj .gt_font_italic {
+font-style: italic;
+}
+#eabbhebkuj .gt_super {
+font-size: 65%;
+}
+#eabbhebkuj .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#eabbhebkuj .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#eabbhebkuj .gt_indent_1 {
+text-indent: 5px;
+}
+#eabbhebkuj .gt_indent_2 {
+text-indent: 10px;
+}
+#eabbhebkuj .gt_indent_3 {
+text-indent: 15px;
+}
+#eabbhebkuj .gt_indent_4 {
+text-indent: 20px;
+}
+#eabbhebkuj .gt_indent_5 {
+text-indent: 25px;
+}
+#eabbhebkuj .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#eabbhebkuj div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="2" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>NAs — Objetivo 2</td>
+    </tr>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Variable">Variable</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="NA_count">NA_count</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="Variable" class="gt_row gt_left">mezcla_n</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">bloque_n</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_gmm</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_tmn_mm</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_n_prisma</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_n_viga</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_pseco_kg</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_psum_kg</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_psss_kg</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_gmb</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">gbs_percent_vacios_7_1</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_deformacion_unitaria</td>
+<td headers="NA_count" class="gt_row gt_right">39</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_n_viga_fatiga</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_fecha_ensayo</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_initial_tensile_stress_k_pa</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_rigidez_inicial_m_pa</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_energia_disipada_k_j_m3</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_force_amplitude_n</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_rigidez_final_mpa</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pdf_numero_de_ciclos</td>
+<td headers="NA_count" class="gt_row gt_right">87</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_asfalto_efectivo_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_asfalto_sobre_mac_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_vacios</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_gbs</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_vma_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_vfa_percent</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_polvo_asfalto</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_1_2</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_number_4</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_number_8</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+    <tr><td headers="Variable" class="gt_row gt_left">pvm_percent_pasando_number_200</td>
+<td headers="NA_count" class="gt_row gt_right">0</td></tr>
+  </tbody>
+  
+</table>
+</div>
 <p>El análisis inicial de la calidad del dato, centrado en la detección
 de valores faltantes (NA) dentro de ambas bases de información, revela
 un panorama muy favorable para el desarrollo de los modelos estadísticos
@@ -2974,20 +3861,854 @@ planteados.</p>
 </div>
 <div id="consistencia-del-diseño-jerárquico-mezcla-bloque-viga" class="section level4">
 <h4>2. Consistencia del diseño jerárquico: Mezcla → Bloque → Viga</h4>
-<pre class="r"><code>datos_obj1_raw |&gt;
+<pre class="r"><code># 1) Mezcla–bloque
+datos_obj1_raw |&gt;
   count(mezcla_n, bloque_n) |&gt;
-  count(n)</code></pre>
-<pre><code>## # A tibble: 1 × 2
-##       n    nn
-##   &lt;int&gt; &lt;int&gt;
-## 1     5    48</code></pre>
-<pre class="r"><code>datos_obj1_raw |&gt;
-  count(mezcla_n) |&gt; 
-  count(n)</code></pre>
-<pre><code>## # A tibble: 1 × 2
-##       n    nn
-##   &lt;int&gt; &lt;int&gt;
-## 1    10    24</code></pre>
+  count(n, name = &quot;frecuencia&quot;) |&gt;
+  gt() |&gt;
+  tab_header(title = &quot;Distribución del número de observaciones por combinación mezcla–bloque&quot;) |&gt;
+  cols_label(
+    n          = &quot;N° de observaciones por mezcla–bloque&quot;,
+    frecuencia = &quot;Frecuencia&quot;
+  )</code></pre>
+<div id="wrusefwbba" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wrusefwbba table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#wrusefwbba thead, #wrusefwbba tbody, #wrusefwbba tfoot, #wrusefwbba tr, #wrusefwbba td, #wrusefwbba th {
+border-style: none;
+}
+#wrusefwbba p {
+margin: 0;
+padding: 0;
+}
+#wrusefwbba .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#wrusefwbba .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#wrusefwbba .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#wrusefwbba .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#wrusefwbba .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#wrusefwbba .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wrusefwbba .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#wrusefwbba .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#wrusefwbba .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#wrusefwbba .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#wrusefwbba .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#wrusefwbba .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#wrusefwbba .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#wrusefwbba .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#wrusefwbba .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#wrusefwbba .gt_from_md > :first-child {
+margin-top: 0;
+}
+#wrusefwbba .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#wrusefwbba .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#wrusefwbba .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wrusefwbba .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#wrusefwbba .gt_row_group_first td {
+border-top-width: 2px;
+}
+#wrusefwbba .gt_row_group_first th {
+border-top-width: 2px;
+}
+#wrusefwbba .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wrusefwbba .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#wrusefwbba .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#wrusefwbba .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wrusefwbba .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wrusefwbba .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#wrusefwbba .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#wrusefwbba .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#wrusefwbba .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#wrusefwbba .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#wrusefwbba .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wrusefwbba .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#wrusefwbba .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#wrusefwbba .gt_left {
+text-align: left;
+}
+#wrusefwbba .gt_center {
+text-align: center;
+}
+#wrusefwbba .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#wrusefwbba .gt_font_normal {
+font-weight: normal;
+}
+#wrusefwbba .gt_font_bold {
+font-weight: bold;
+}
+#wrusefwbba .gt_font_italic {
+font-style: italic;
+}
+#wrusefwbba .gt_super {
+font-size: 65%;
+}
+#wrusefwbba .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#wrusefwbba .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#wrusefwbba .gt_indent_1 {
+text-indent: 5px;
+}
+#wrusefwbba .gt_indent_2 {
+text-indent: 10px;
+}
+#wrusefwbba .gt_indent_3 {
+text-indent: 15px;
+}
+#wrusefwbba .gt_indent_4 {
+text-indent: 20px;
+}
+#wrusefwbba .gt_indent_5 {
+text-indent: 25px;
+}
+#wrusefwbba .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#wrusefwbba div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="2" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Distribución del número de observaciones por combinación mezcla–bloque</td>
+    </tr>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="n">N° de observaciones por mezcla–bloque</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="frecuencia">Frecuencia</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="n" class="gt_row gt_right">5</td>
+<td headers="frecuencia" class="gt_row gt_right">48</td></tr>
+  </tbody>
+  
+</table>
+</div>
+<pre class="r"><code># 1) Mezcla–bloque
+datos_obj1_raw |&gt;
+  count(mezcla_n, bloque_n) |&gt;
+  count(n, name = &quot;frecuencia&quot;) |&gt;
+  gt() |&gt;
+  tab_header(title = &quot;Distribución del número de observaciones por combinación mezcla–bloque&quot;) |&gt;
+  cols_label(
+    n          = &quot;N° de observaciones por mezcla–bloque&quot;,
+    frecuencia = &quot;Frecuencia&quot;
+  )</code></pre>
+<div id="vikukltiwp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vikukltiwp table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#vikukltiwp thead, #vikukltiwp tbody, #vikukltiwp tfoot, #vikukltiwp tr, #vikukltiwp td, #vikukltiwp th {
+border-style: none;
+}
+#vikukltiwp p {
+margin: 0;
+padding: 0;
+}
+#vikukltiwp .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#vikukltiwp .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#vikukltiwp .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#vikukltiwp .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#vikukltiwp .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#vikukltiwp .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#vikukltiwp .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#vikukltiwp .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#vikukltiwp .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#vikukltiwp .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#vikukltiwp .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#vikukltiwp .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#vikukltiwp .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#vikukltiwp .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#vikukltiwp .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#vikukltiwp .gt_from_md > :first-child {
+margin-top: 0;
+}
+#vikukltiwp .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#vikukltiwp .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#vikukltiwp .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#vikukltiwp .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#vikukltiwp .gt_row_group_first td {
+border-top-width: 2px;
+}
+#vikukltiwp .gt_row_group_first th {
+border-top-width: 2px;
+}
+#vikukltiwp .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#vikukltiwp .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#vikukltiwp .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#vikukltiwp .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#vikukltiwp .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#vikukltiwp .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#vikukltiwp .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#vikukltiwp .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#vikukltiwp .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#vikukltiwp .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#vikukltiwp .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#vikukltiwp .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#vikukltiwp .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#vikukltiwp .gt_left {
+text-align: left;
+}
+#vikukltiwp .gt_center {
+text-align: center;
+}
+#vikukltiwp .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#vikukltiwp .gt_font_normal {
+font-weight: normal;
+}
+#vikukltiwp .gt_font_bold {
+font-weight: bold;
+}
+#vikukltiwp .gt_font_italic {
+font-style: italic;
+}
+#vikukltiwp .gt_super {
+font-size: 65%;
+}
+#vikukltiwp .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#vikukltiwp .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#vikukltiwp .gt_indent_1 {
+text-indent: 5px;
+}
+#vikukltiwp .gt_indent_2 {
+text-indent: 10px;
+}
+#vikukltiwp .gt_indent_3 {
+text-indent: 15px;
+}
+#vikukltiwp .gt_indent_4 {
+text-indent: 20px;
+}
+#vikukltiwp .gt_indent_5 {
+text-indent: 25px;
+}
+#vikukltiwp .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#vikukltiwp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="2" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Distribución del número de observaciones por combinación mezcla–bloque</td>
+    </tr>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="n">N° de observaciones por mezcla–bloque</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="frecuencia">Frecuencia</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="n" class="gt_row gt_right">5</td>
+<td headers="frecuencia" class="gt_row gt_right">48</td></tr>
+  </tbody>
+  
+</table>
+</div>
 <p>La verificación de la estructura jerárquica en el conjunto de datos
 del Objetivo 1 permite confirmar que el diseño experimental mantiene la
 coherencia esperada entre sus niveles: cada mezcla corresponde a varios
@@ -3041,10 +4762,432 @@ analítico directo.</p>
 <pre class="r"><code>summary(datos_obj1_raw$gbs_gmb)</code></pre>
 <pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##   2.101   2.206   2.222   2.220   2.237   2.268</code></pre>
-<pre class="r"><code>table(datos_obj1_raw$gbs_tmn_mm)</code></pre>
-<pre><code>## 
-## 12.5   19 
-##   60  180</code></pre>
+<pre class="r"><code>datos_obj1_raw |&gt;
+  count(gbs_tmn_mm, name = &quot;frecuencia&quot;) |&gt;
+  gt() |&gt;
+  tab_header(
+    title = &quot;Frecuencia por TMN (gbs_tmn_mm)&quot;
+  ) |&gt;
+  cols_label(
+    gbs_tmn_mm = &quot;TMN (mm)&quot;,
+    frecuencia = &quot;Frecuencia&quot;
+  )</code></pre>
+<div id="evkwfhpnpk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#evkwfhpnpk table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#evkwfhpnpk thead, #evkwfhpnpk tbody, #evkwfhpnpk tfoot, #evkwfhpnpk tr, #evkwfhpnpk td, #evkwfhpnpk th {
+border-style: none;
+}
+#evkwfhpnpk p {
+margin: 0;
+padding: 0;
+}
+#evkwfhpnpk .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#evkwfhpnpk .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#evkwfhpnpk .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#evkwfhpnpk .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#evkwfhpnpk .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#evkwfhpnpk .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#evkwfhpnpk .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#evkwfhpnpk .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#evkwfhpnpk .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#evkwfhpnpk .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#evkwfhpnpk .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#evkwfhpnpk .gt_from_md > :first-child {
+margin-top: 0;
+}
+#evkwfhpnpk .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#evkwfhpnpk .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#evkwfhpnpk .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#evkwfhpnpk .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#evkwfhpnpk .gt_row_group_first td {
+border-top-width: 2px;
+}
+#evkwfhpnpk .gt_row_group_first th {
+border-top-width: 2px;
+}
+#evkwfhpnpk .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#evkwfhpnpk .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#evkwfhpnpk .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#evkwfhpnpk .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#evkwfhpnpk .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#evkwfhpnpk .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#evkwfhpnpk .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#evkwfhpnpk .gt_left {
+text-align: left;
+}
+#evkwfhpnpk .gt_center {
+text-align: center;
+}
+#evkwfhpnpk .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#evkwfhpnpk .gt_font_normal {
+font-weight: normal;
+}
+#evkwfhpnpk .gt_font_bold {
+font-weight: bold;
+}
+#evkwfhpnpk .gt_font_italic {
+font-style: italic;
+}
+#evkwfhpnpk .gt_super {
+font-size: 65%;
+}
+#evkwfhpnpk .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#evkwfhpnpk .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#evkwfhpnpk .gt_indent_1 {
+text-indent: 5px;
+}
+#evkwfhpnpk .gt_indent_2 {
+text-indent: 10px;
+}
+#evkwfhpnpk .gt_indent_3 {
+text-indent: 15px;
+}
+#evkwfhpnpk .gt_indent_4 {
+text-indent: 20px;
+}
+#evkwfhpnpk .gt_indent_5 {
+text-indent: 25px;
+}
+#evkwfhpnpk .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#evkwfhpnpk div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="2" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Frecuencia por TMN (gbs_tmn_mm)</td>
+    </tr>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="gbs_tmn_mm">TMN (mm)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="frecuencia">Frecuencia</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="gbs_tmn_mm" class="gt_row gt_right">12.5</td>
+<td headers="frecuencia" class="gt_row gt_right">60</td></tr>
+    <tr><td headers="gbs_tmn_mm" class="gt_row gt_right">19.0</td>
+<td headers="frecuencia" class="gt_row gt_right">180</td></tr>
+  </tbody>
+  
+</table>
+</div>
 <p>La revisión de los rangos físicos en el Objetivo 1 permite confirmar
 que las variables críticas del proceso de compactación y caracterización
 volumétrica presentan valores coherentes con los reportados en la
@@ -3107,56 +5250,944 @@ variables, no la validación del proceso de fabricación.</p>
 <h3>Estadísticas descsriptivas.</h3>
 <div id="dataob1" class="section level4">
 <h4>dataob1</h4>
-<pre class="r"><code>summary(select(datos_obj1_raw, where(is.numeric)))</code></pre>
-<pre><code>##     mezcla_n        gbs_gmm        gbs_tmn_mm     gbs_n_prisma   gbs_n_viga
-##  Min.   : 1.00   Min.   :2.363   Min.   :12.50   Min.   :1.0   Min.   :0   
-##  1st Qu.: 6.75   1st Qu.:2.378   1st Qu.:17.38   1st Qu.:1.0   1st Qu.:1   
-##  Median :12.50   Median :2.387   Median :19.00   Median :1.5   Median :2   
-##  Mean   :12.50   Mean   :2.387   Mean   :17.38   Mean   :1.5   Mean   :2   
-##  3rd Qu.:18.25   3rd Qu.:2.393   3rd Qu.:19.00   3rd Qu.:2.0   3rd Qu.:3   
-##  Max.   :24.00   Max.   :2.416   Max.   :19.00   Max.   :2.0   Max.   :4   
-##   gbs_pseco_kg     gbs_psum_kg      gbs_psss_kg        gbs_gmb     
-##  Min.   : 2.442   Min.   : 1.353   Min.   : 2.446   Min.   :2.101  
-##  1st Qu.: 2.648   1st Qu.: 1.472   1st Qu.: 2.662   1st Qu.:2.206  
-##  Median : 2.741   Median : 1.523   Median : 2.754   Median :2.222  
-##  Mean   : 6.965   Mean   : 3.872   Mean   : 7.027   Mean   :2.220  
-##  3rd Qu.: 2.822   3rd Qu.: 1.572   3rd Qu.: 2.833   3rd Qu.:2.237  
-##  Max.   :24.491   Max.   :13.620   Max.   :24.707   Max.   :2.268  
-##  gbs_percent_vacios_7_1 pvm_asfalto_efectivo_percent
-##  Min.   : 5.364         Min.   :4.330               
-##  1st Qu.: 6.355         1st Qu.:4.725               
-##  Median : 6.757         Median :4.940               
-##  Mean   : 7.018         Mean   :4.907               
-##  3rd Qu.: 7.495         3rd Qu.:5.090               
-##  Max.   :12.366         Max.   :5.460               
-##  pvm_asfalto_sobre_mac_percent pvm_vacios_pv      pvm_gbs      pvm_vma_percent
-##  Min.   :5.360                 Min.   :2.500   Min.   :2.271   Min.   :13.10  
-##  1st Qu.:5.588                 1st Qu.:3.275   1st Qu.:2.295   1st Qu.:14.07  
-##  Median :5.755                 Median :3.400   Median :2.303   Median :14.70  
-##  Mean   :5.764                 Mean   :3.529   Mean   :2.303   Mean   :14.57  
-##  3rd Qu.:6.000                 3rd Qu.:3.650   3rd Qu.:2.310   3rd Qu.:15.03  
-##  Max.   :6.140                 Max.   :4.900   Max.   :2.339   Max.   :15.50  
-##  pvm_vfa_percent pvm_polvo_asfalto pvm_percent_pasando_1_2
-##  Min.   :68.00   Min.   :0.900     Min.   :81.00          
-##  1st Qu.:74.75   1st Qu.:1.100     1st Qu.:85.00          
-##  Median :76.00   Median :1.100     Median :87.00          
-##  Mean   :75.71   Mean   :1.108     Mean   :87.29          
-##  3rd Qu.:78.00   3rd Qu.:1.200     3rd Qu.:88.50          
-##  Max.   :83.00   Max.   :1.300     Max.   :94.00          
-##  pvm_percent_pasando_number_4 pvm_percent_pasando_number_8
-##  Min.   :47.00                Min.   :32.00               
-##  1st Qu.:50.75                1st Qu.:35.00               
-##  Median :53.00                Median :36.50               
-##  Mean   :52.92                Mean   :36.46               
-##  3rd Qu.:55.25                3rd Qu.:38.00               
-##  Max.   :60.00                Max.   :41.00               
-##  pvm_percent_pasando_number_200
-##  Min.   :4.700                 
-##  1st Qu.:5.100                 
-##  Median :5.400                 
-##  Mean   :5.412                 
-##  3rd Qu.:5.725                 
-##  Max.   :6.000</code></pre>
+<pre class="r"><code># Summary solo de variables numéricas
+summary_df &lt;- summary(select(datos_obj1_raw, where(is.numeric))) |&gt;
+  as.data.frame() |&gt;
+  tibble::rownames_to_column(&quot;estadístico&quot;) |&gt;
+  rename(valor = 2)
+
+# Tabla en gt
+summary_df |&gt;
+  gt() |&gt;
+  tab_header(
+    title = &quot;Summary de variables numéricas — Objetivo 1&quot;
+  ) |&gt;
+  cols_label(
+    estadístico = &quot;Estadístico&quot;,
+    valor = &quot;Valor&quot;
+  ) |&gt;
+  fmt_number(
+    columns = valor,
+    decimals = 4
+  )</code></pre>
+<div id="teitykhnoo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#teitykhnoo table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#teitykhnoo thead, #teitykhnoo tbody, #teitykhnoo tfoot, #teitykhnoo tr, #teitykhnoo td, #teitykhnoo th {
+border-style: none;
+}
+#teitykhnoo p {
+margin: 0;
+padding: 0;
+}
+#teitykhnoo .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#teitykhnoo .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#teitykhnoo .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#teitykhnoo .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#teitykhnoo .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#teitykhnoo .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#teitykhnoo .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#teitykhnoo .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#teitykhnoo .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#teitykhnoo .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#teitykhnoo .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#teitykhnoo .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#teitykhnoo .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#teitykhnoo .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#teitykhnoo .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#teitykhnoo .gt_from_md > :first-child {
+margin-top: 0;
+}
+#teitykhnoo .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#teitykhnoo .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#teitykhnoo .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#teitykhnoo .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#teitykhnoo .gt_row_group_first td {
+border-top-width: 2px;
+}
+#teitykhnoo .gt_row_group_first th {
+border-top-width: 2px;
+}
+#teitykhnoo .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#teitykhnoo .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#teitykhnoo .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#teitykhnoo .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#teitykhnoo .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#teitykhnoo .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#teitykhnoo .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#teitykhnoo .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#teitykhnoo .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#teitykhnoo .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#teitykhnoo .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#teitykhnoo .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#teitykhnoo .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#teitykhnoo .gt_left {
+text-align: left;
+}
+#teitykhnoo .gt_center {
+text-align: center;
+}
+#teitykhnoo .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#teitykhnoo .gt_font_normal {
+font-weight: normal;
+}
+#teitykhnoo .gt_font_bold {
+font-weight: bold;
+}
+#teitykhnoo .gt_font_italic {
+font-style: italic;
+}
+#teitykhnoo .gt_super {
+font-size: 65%;
+}
+#teitykhnoo .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#teitykhnoo .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#teitykhnoo .gt_indent_1 {
+text-indent: 5px;
+}
+#teitykhnoo .gt_indent_2 {
+text-indent: 10px;
+}
+#teitykhnoo .gt_indent_3 {
+text-indent: 15px;
+}
+#teitykhnoo .gt_indent_4 {
+text-indent: 20px;
+}
+#teitykhnoo .gt_indent_5 {
+text-indent: 25px;
+}
+#teitykhnoo .katex-display {
+display: inline-flex !important;
+margin-bottom: 0.75em !important;
+}
+#teitykhnoo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border" style>Summary de variables numéricas — Objetivo 1</td>
+    </tr>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="estadístico">Estadístico</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="valor">Valor</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Var2">Var2</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Freq">Freq</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="estadístico" class="gt_row gt_right">1</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   mezcla_n</td>
+<td headers="Freq" class="gt_row gt_left">Min.   : 1.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">2</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   mezcla_n</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.: 6.75  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">3</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   mezcla_n</td>
+<td headers="Freq" class="gt_row gt_left">Median :12.50  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">4</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   mezcla_n</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :12.50  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">5</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   mezcla_n</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:18.25  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">6</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   mezcla_n</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :24.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">7</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmm</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :2.363  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">8</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmm</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:2.378  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">9</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmm</td>
+<td headers="Freq" class="gt_row gt_left">Median :2.387  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">10</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmm</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :2.387  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">11</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmm</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:2.393  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">12</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmm</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :2.416  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">13</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_tmn_mm</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :12.50  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">14</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_tmn_mm</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:17.38  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">15</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_tmn_mm</td>
+<td headers="Freq" class="gt_row gt_left">Median :19.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">16</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_tmn_mm</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :17.38  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">17</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_tmn_mm</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:19.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">18</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_tmn_mm</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :19.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">19</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_n_prisma</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :1.0  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">20</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_n_prisma</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:1.0  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">21</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_n_prisma</td>
+<td headers="Freq" class="gt_row gt_left">Median :1.5  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">22</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_n_prisma</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :1.5  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">23</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_n_prisma</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:2.0  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">24</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_n_prisma</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :2.0  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">25</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_n_viga</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :0  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">26</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_n_viga</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:1  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">27</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_n_viga</td>
+<td headers="Freq" class="gt_row gt_left">Median :2  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">28</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_n_viga</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :2  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">29</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_n_viga</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:3  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">30</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">  gbs_n_viga</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :4  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">31</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_pseco_kg</td>
+<td headers="Freq" class="gt_row gt_left">Min.   : 2.442  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">32</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_pseco_kg</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.: 2.648  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">33</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_pseco_kg</td>
+<td headers="Freq" class="gt_row gt_left">Median : 2.741  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">34</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_pseco_kg</td>
+<td headers="Freq" class="gt_row gt_left">Mean   : 6.965  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">35</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_pseco_kg</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.: 2.822  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">36</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_pseco_kg</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :24.491  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">37</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psum_kg</td>
+<td headers="Freq" class="gt_row gt_left">Min.   : 1.353  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">38</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psum_kg</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.: 1.472  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">39</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psum_kg</td>
+<td headers="Freq" class="gt_row gt_left">Median : 1.523  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">40</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psum_kg</td>
+<td headers="Freq" class="gt_row gt_left">Mean   : 3.872  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">41</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psum_kg</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.: 1.572  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">42</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psum_kg</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :13.620  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">43</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psss_kg</td>
+<td headers="Freq" class="gt_row gt_left">Min.   : 2.446  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">44</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psss_kg</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.: 2.662  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">45</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psss_kg</td>
+<td headers="Freq" class="gt_row gt_left">Median : 2.754  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">46</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psss_kg</td>
+<td headers="Freq" class="gt_row gt_left">Mean   : 7.027  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">47</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psss_kg</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.: 2.833  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">48</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center"> gbs_psss_kg</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :24.707  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">49</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmb</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :2.101  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">50</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmb</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:2.206  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">51</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmb</td>
+<td headers="Freq" class="gt_row gt_left">Median :2.222  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">52</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmb</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :2.220  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">53</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmb</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:2.237  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">54</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   gbs_gmb</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :2.268  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">55</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">gbs_percent_vacios_7_1</td>
+<td headers="Freq" class="gt_row gt_left">Min.   : 5.364  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">56</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">gbs_percent_vacios_7_1</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.: 6.355  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">57</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">gbs_percent_vacios_7_1</td>
+<td headers="Freq" class="gt_row gt_left">Median : 6.757  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">58</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">gbs_percent_vacios_7_1</td>
+<td headers="Freq" class="gt_row gt_left">Mean   : 7.018  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">59</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">gbs_percent_vacios_7_1</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.: 7.495  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">60</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">gbs_percent_vacios_7_1</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :12.366  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">61</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_efectivo_percent</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :4.330  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">62</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_efectivo_percent</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:4.725  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">63</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_efectivo_percent</td>
+<td headers="Freq" class="gt_row gt_left">Median :4.940  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">64</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_efectivo_percent</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :4.907  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">65</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_efectivo_percent</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:5.090  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">66</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_efectivo_percent</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :5.460  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">67</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_sobre_mac_percent</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :5.360  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">68</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_sobre_mac_percent</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:5.588  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">69</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_sobre_mac_percent</td>
+<td headers="Freq" class="gt_row gt_left">Median :5.755  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">70</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_sobre_mac_percent</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :5.764  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">71</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_sobre_mac_percent</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:6.000  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">72</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_asfalto_sobre_mac_percent</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :6.140  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">73</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vacios_pv</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :2.500  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">74</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vacios_pv</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:3.275  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">75</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vacios_pv</td>
+<td headers="Freq" class="gt_row gt_left">Median :3.400  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">76</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vacios_pv</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :3.529  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">77</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vacios_pv</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:3.650  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">78</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vacios_pv</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :4.900  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">79</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   pvm_gbs</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :2.271  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">80</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   pvm_gbs</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:2.295  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">81</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   pvm_gbs</td>
+<td headers="Freq" class="gt_row gt_left">Median :2.303  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">82</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   pvm_gbs</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :2.303  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">83</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   pvm_gbs</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:2.310  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">84</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">   pvm_gbs</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :2.339  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">85</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vma_percent</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :13.10  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">86</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vma_percent</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:14.07  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">87</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vma_percent</td>
+<td headers="Freq" class="gt_row gt_left">Median :14.70  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">88</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vma_percent</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :14.57  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">89</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vma_percent</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:15.03  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">90</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vma_percent</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :15.50  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">91</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vfa_percent</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :68.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">92</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vfa_percent</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:74.75  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">93</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vfa_percent</td>
+<td headers="Freq" class="gt_row gt_left">Median :76.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">94</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vfa_percent</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :75.71  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">95</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vfa_percent</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:78.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">96</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_vfa_percent</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :83.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">97</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_polvo_asfalto</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :0.900  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">98</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_polvo_asfalto</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:1.100  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">99</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_polvo_asfalto</td>
+<td headers="Freq" class="gt_row gt_left">Median :1.100  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">100</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_polvo_asfalto</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :1.108  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">101</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_polvo_asfalto</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:1.200  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">102</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_polvo_asfalto</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :1.300  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">103</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_1_2</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :81.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">104</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_1_2</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:85.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">105</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_1_2</td>
+<td headers="Freq" class="gt_row gt_left">Median :87.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">106</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_1_2</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :87.29  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">107</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_1_2</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:88.50  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">108</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_1_2</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :94.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">109</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_4</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :47.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">110</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_4</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:50.75  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">111</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_4</td>
+<td headers="Freq" class="gt_row gt_left">Median :53.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">112</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_4</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :52.92  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">113</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_4</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:55.25  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">114</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_4</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :60.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">115</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_8</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :32.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">116</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_8</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:35.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">117</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_8</td>
+<td headers="Freq" class="gt_row gt_left">Median :36.50  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">118</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_8</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :36.46  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">119</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_8</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:38.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">120</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_8</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :41.00  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">121</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_200</td>
+<td headers="Freq" class="gt_row gt_left">Min.   :4.700  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">122</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_200</td>
+<td headers="Freq" class="gt_row gt_left">1st Qu.:5.100  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">123</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_200</td>
+<td headers="Freq" class="gt_row gt_left">Median :5.400  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">124</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_200</td>
+<td headers="Freq" class="gt_row gt_left">Mean   :5.412  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">125</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_200</td>
+<td headers="Freq" class="gt_row gt_left">3rd Qu.:5.725  </td></tr>
+    <tr><td headers="estadístico" class="gt_row gt_right">126</td>
+<td headers="valor" class="gt_row gt_center"></td>
+<td headers="Var2" class="gt_row gt_center">pvm_percent_pasando_number_200</td>
+<td headers="Freq" class="gt_row gt_left">Max.   :6.000  </td></tr>
+  </tbody>
+  
+</table>
+</div>
 <pre class="r"><code>datos_obj1_raw |&gt; 
   count(mezcla_n) |&gt; 
   mutate(pct = n / sum(n) * 100)</code></pre>
