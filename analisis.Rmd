@@ -743,17 +743,42 @@ anova_df |>
 **Componentes de varianza (porcentaje de contribución)**
 
 ```{r}
-vc <- as.data.frame(VarCorr(mod_vacios))
-vc
+# Extraer componentes de varianza
+vc_raw <- as.data.frame(VarCorr(mod_vacios))
 
-# calcular aporte porcentual de cada componente
-vc <- vc |>
+# Calcular porcentaje de cada componente
+vc_df <- vc_raw |>
   mutate(
     fuente = grp,
     prop   = vcov / sum(vcov) * 100
+  ) |>
+  select(
+    fuente,
+    vcov,
+    prop
   )
 
-vc[, c("fuente", "vcov", "prop")]
+# Tabla en gt
+vc_df |>
+  gt() |>
+  tab_header(
+    title = "Componentes de Varianza del Modelo Mixto",
+    subtitle = "Contribución porcentual de cada fuente"
+  ) |>
+  fmt_number(
+    columns = c(vcov, prop),
+    decimals = 4
+  ) |>
+  cols_label(
+    fuente = "Fuente",
+    vcov   = "Varianza",
+    prop   = "Aporte (%)"
+  ) |>
+  fmt_percent(
+    columns = prop,
+    scale_values = FALSE,
+    decimals = 2
+  )
 ```
 
 
