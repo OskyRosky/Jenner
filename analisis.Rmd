@@ -1179,18 +1179,24 @@ Además, esta diferenciación entre escenarios no es únicamente una consideraci
 
 
 
-### 4.2 Exploración descriptiva inicial (por escenario)
+### 4.2 Exploración descriptiva inicial según variables a utilizar en la regresión.
 
 Antes de ajustar los modelos predictivos para cada combinación TMN–deformación, es indispensable realizar una exploración gráfica y descriptiva de las variables mecánicas y volumétricas. Esta etapa permite identificar patrones generales, evaluar la presencia de asimetrías marcadas, posibles valores extremos y relaciones preliminares entre las variables que posteriormente entrarán en los modelos de regresión.
 
 A. Distribución de las variables clave (por escenario)
 
 Incluir:
+
 	•	Histograma de ciclos (sin transformar)
+	
 	•	Histograma de ciclos en escala log10
+	
 	•	Histograma de rigidez inicial
+	
 	•	Histograma de rigidez final
+	
 	•	Histograma de energía disipada
+	
 	•	Boxplots de propiedades volumétricas relevantes
 
 👉 Esto te permite ver si hay asimetría, valores extremos y rangos razonables.
