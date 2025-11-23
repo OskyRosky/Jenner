@@ -1227,7 +1227,6 @@ plot_box_pvm <- function(df, titulo = NULL) {
 **Histogramas""
 
 
-
 ```{r}
 # 1. Ciclos (sin transformar)
 ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
@@ -1295,15 +1294,15 @@ df_12_400 %>%
 ```
 
 
-
-
 B. Correlaciones entre propiedades mecánicas y volumétricas
 
 Para cada escenario:
+
 	•	Matriz de correlación solo de variables numéricas
 	•	Representación con corrplot o ggcorrplot
 
 Esto sirve para:
+
 	•	Identificar posibles pares colineales
 	•	Distinguir qué variables parecen relacionadas con ciclos
 
@@ -1379,7 +1378,6 @@ El número de ciclos presenta la típica asimetría a la derecha (cola larga hac
 Esto confirma que la variable no es normal y que la dispersión entre observaciones es muy marcada.
 
 
-
 Al aplicar la transformación \log_{10}:
 
 •	La asimetría se reduce notablemente.
@@ -1403,7 +1401,7 @@ Las variables mecánicas —rigidez inicial, rigidez final y energía disipada�
 
 Finalmente, las matrices de correlación entre propiedades mecánicas y volumétricas permiten identificar patrones acordes con la teoría: la rigidez inicial y final muestran asociaciones altas, y las variables volumétricas relacionadas con vacíos (VMA, VFA, % vacíos, polvo-asfalto, etc.) presentan correlaciones fuertes entre sí. Estos resultados confirman que existe estructura interna en los datos, pero también advierten sobre posibles problemas de colinealidad que deberán controlarse en la fase de regresión (p. ej., mediante selección de variables y revisión de VIF) dentro de cada escenario TMN–deformación.
 
-En conjunto, la exploración descriptiva respalda la calidad de la base de datos y justifica el uso de \log_{10}(\text{ciclos}) como respuesta, estableciendo un punto de partida sólido para la construcción de modelos de regresión específicos para cada combinación de TMN y nivel de deformación.
+En conjunto, la exploración descriptiva respalda la calidad de la base de datos y justifica el uso de la transformación logarítmia como respuesta, estableciendo un punto de partida sólido para la construcción de modelos de regresión específicos para cada combinación de TMN y nivel de deformación.
 
 ### 4.3 Modelado predictivo (regresión lineal para cada escenario)
 
@@ -1412,6 +1410,7 @@ Con los subconjuntos de datos ya definidos y tras revisar la estructura estadís
 El enfoque consiste en modelar el número de ciclos a falla en función de propiedades mecánicas (rigidez, energía disipada) y propiedades volumétricas (VMA, VFA, vacíos, graduación, densidades). Puesto que los ciclos presentan una marcada asimetría positiva, la variable dependiente se transforma mediante \log_{10}, lo que estabiliza la varianza y mejora la interpretación de los coeficientes.
 
 Cada modelo seguirá la misma secuencia metodológica:
+
 (1) definición de variables,
 (2) selección inicial de predictores,
 (3) diagnóstico de colinealidad,
