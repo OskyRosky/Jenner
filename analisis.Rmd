@@ -1977,7 +1977,6 @@ Escenario 19–600 μɛ
 	•	Los demás predictores no aportan señal estadística fuerte, lo cual es razonable considerando el nivel de daño acelerado a 600 μɛ.
 
 
-
 **Conclusión general del Objetivo 2**
 
 🔵 TMN = 12.5 mm (n = 20)
@@ -2089,8 +2088,89 @@ Conclusión: es el escenario donde los supuestos del modelo lineal se cumplen me
 
 **Resumen general**
 
-Los modelos con TMN 12.5 mm tienen tan pocos datos que los residuos nunca cumplirán los supuestos clásicos; por eso no hay significancia.
-Los modelos con TMN 19 mm muestran una estructura más estable y diagnósticos aceptables, especialmente el escenario de 600 με.
+El análisis comparativo de los cuatro escenarios revela diferencias marcadas en la capacidad predictiva y en la estabilidad estadística de los modelos lineales. Estas diferencias no provienen únicamente de la variabilidad inherente de los materiales, sino —principalmente— del tamaño muestral y del comportamiento de los residuos, los cuales determinan la validez del modelo más allá del valor del R².
+
+1. Comportamiento de los modelos con TMN = 12.5 mm (Escenarios D.1 y D.2)
+
+Los modelos ajustados para TMN 12.5 mm comparten las siguientes características:
+
+Limitaciones estadísticas
+	•	R² bajos (0.20–0.40) y R² ajustados negativos o cercanos a cero.
+	•	Ningún predictor muestra significancia estadística consistente.
+	•	Los F-test globales no son significativos (p > 0.50), indicando que el modelo completo no aporta información sobre la respuesta.
+	•	La colinealidad entre variables volumétricas y mecánicas genera coeficientes inestables.
+
+Diagnóstico de residuos
+	•	En ambos escenarios, el Q–Q plot presenta desviaciones importantes respecto a la normalidad.
+	•	Los residuos presentan alta dispersión y heterocedasticidad leve sin estructura clara.
+	•	Existen puntos con alto leverage que dominan el ajuste, situación agravada por el tamaño muestral (n ≈ 20).
+
+Interpretación técnica
+
+La baja confiabilidad de estos modelos no significa necesariamente que las variables mecánicas carezcan de relación con la resistencia a fatiga; más bien, la cantidad de datos es insuficiente para estimar parámetros estables en un modelo múltiple. En mezclas de TMN 12.5 mm, donde la variabilidad natural del material es mayor, el tamaño muestral se vuelve crítico para capturar tendencias reales.
+
+Conclusión para TMN 12.5 mm:
+Los modelos no deben utilizarse con fines predictivos ni interpretativos. El diseño experimental no brinda suficiente potencia estadística para apoyar conclusiones inferenciales.
+
+⸻
+
+2. Comportamiento de los modelos con TMN = 19 mm (Escenarios D.3 y D.4)
+
+Con n ≈ 56–57, estos escenarios permiten una evaluación más robusta.
+
+Escenario D.3 — TMN 19 mm, deformación 400 με
+	•	R² = 0.6385 y R² ajustado = 0.5481 → buena capacidad explicativa.
+	•	El F-test global es altamente significativo (p ≈ 10⁻⁶).
+	•	Algunos predictores destacan:
+	•	pdf_energia_disipada_k_j_m3
+	•	gbs_gmm
+	•	pvm_vma_percent
+	•	pvm_percent_pasando_1_2
+
+Diagnóstico de residuos
+	•	Los residuos cumplen “medianamente” los supuestos.
+	•	El Q–Q plot es razonable, pero mantiene ligeras colas pesadas.
+	•	Algunos puntos influyentes permanecen, pero no dominan el ajuste.
+
+Interpretación
+
+El modelo presenta una estructura estadística coherente y útil para interpretar tendencias, aunque no es perfecto.
+
+⸻
+
+Escenario D.4 — TMN 19 mm, deformación 600 με
+
+Este es el escenario con mejor desempeño estadístico global.
+	•	R² = 0.4009 y R² ajustado = 0.2545 (moderado, pero aceptable).
+	•	Dos predictores clave muestran significancia:
+	•	pdf_rigidez_inicial_m_pa (p ≈ 0.02)
+	•	pdf_energia_disipada_k_j_m3 (p ≈ 0.01)
+
+Diagnóstico de residuos
+	•	Es el modelo con los residuos más limpios:
+	•	mejor linealidad,
+	•	varianza más estable,
+	•	Q–Q plot más cercano a la trayectoria normal,
+	•	menos puntos de alta influencia.
+	•	Esto indica que los supuestos clásicos del modelo lineal se cumplen con mayor fidelidad.
+
+Interpretación técnica
+
+La rigidez inicial y la energía disipada emergen como predictores robustos y físicamente coherentes para explicar la vida a fatiga en mezclas de TMN 19 mm.
+La estructura volumétrica influye, pero con menor peso estadístico.
+
+⸻
+
+Conclusión Integrada
+
+	•	TMN = 12.5 mm:
+Los modelos fallan principalmente por insuficiencia de datos y fuerte colinealidad. No cumplen los supuestos del modelo lineal y no ofrecen resultados confiables.
+
+	•	TMN = 19 mm:
+Los modelos sí logran capturar relaciones estadísticamente relevantes, especialmente en el escenario de 600 με, donde los residuos cumplen mejor los supuestos y emergen patrones sólidos en la rigidez inicial y la energía disipada.
+
+	•	A nivel práctico:
+La regresión lineal múltiple funciona adecuadamente solo cuando la muestra es suficiente y los residuos son consistentes. La calidad del ajuste es determinada más por la estructura del experimento que por la complejidad del modelo.
 
 
 ### 4.5 Síntesis técnica del Objetivo 2.
