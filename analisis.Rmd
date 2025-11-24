@@ -1897,53 +1897,106 @@ coef_19_600 |>
 
 *Ecuación de regresión para el escenario TMN = 19 mm, deformación = 600 μɛ*
 
+\[
+\begin{aligned}
+\widehat{\log_{10}(\text{Ciclos})} \;=\;& -4.3012 \\
+&\quad -\; 0.0002\,\text{pdf\_rigidez\_inicial\_m\_pa} \\
+&\quad +\; 0.6500\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
+&\quad -\; 0.5128\,\text{pvm\_vma\_percent} \\
+&\quad +\; 0.2053\,\text{pvm\_vfa\_percent} \\
+&\quad +\; 1.1466\,\text{pvm\_percent\_vacios} \\
+&\quad -\; 0.4717\,\text{pvm\_polvo\_asfalto} \\
+&\quad -\; 0.0173\,\text{pvm\_percent\_pasando\_1\_2} \\
+&\quad +\; 0.0097\,\text{pvm\_percent\_pasando\_number\_4} \\
+&\quad +\; 0.0119\,\text{pvm\_percent\_pasando\_number\_8} \\
+&\quad -\; 0.4033\,\text{pvm\_percent\_pasando\_number\_200}
+\end{aligned}
+\]
 
-Resultados
 
-```{r}
-summary(mod_12_400_full)
-summary(mod_12_600_full)
-summary(mod_19_400_full)
-summary(mod_19_600_full)
-```
-Escenarios TMN = 12.5 mm (n = 20)
 
-Resultados (400 y 600 με):
-	•	El modelo no encuentra predictores significativos.
-	•	Hay coeficientes no definidos (singularidades → colinealidad alta).
-	•	Los R² son bajos (0.20–0.40) y el R² ajustado es negativo.
-	•	El F-test no es significativo (p > 0.50).
+**Resultados de los 4 escenarios**
 
-Interpretación breve:
-Con n = 20 y variables altamente correlacionadas, los modelos no logran detectar efectos estadísticos, aunque sí puedan existir desde la física del material. La muestra es demasiado pequeña para un modelo múltiple.
+A continuación se presenta un análisis comparativo depurado de los cuatro modelos ajustados (dos para TMN = 12.5 mm y dos para TMN = 19 mm), integrando tamaño muestral, significancia estadística, estabilidad numérica y coherencia ingenieril.
+
+**1. Escenarios con TMN = 12.5 mm (n = 20)**
+
+Escenarios 12.5–400 μɛ y 12.5–600 μɛ
+
+🔍 Resultados estadísticos
+	•	No se identifican predictores significativos en ninguno de los dos escenarios (p > 0.10 para todas las variables).
+	•	Se observan problemas de singularidad en el ajuste (coeficientes inestables o inflados), reflejo de colinealidad alta entre variables volumétricas.
+	•	El R² es bajo (0.20–0.40), y el R² ajustado es negativo, indicando que el modelo no mejora sobre una línea horizontal.
+	•	El F-test global no es significativo (p > 0.50), por lo que no hay evidencia de relación lineal entre predictores y vida a fatiga.
+
+🧩 Interpretación ingenieril
+	•	Con solo n = 20, el ajuste de un modelo múltiple no es viable:
+	•	Hay demasiados predictores para tan pocas observaciones.
+	•	El ruido experimental domina sobre cualquier señal estadística real.
+	•	Aunque existan efectos físicos (como influencia de VMA o energía disipada), la muestra no tiene potencia estadística para detectarlos.
+	•	Los coeficientes no deben interpretarse individualmente debido a la inestabilidad numérica del ajuste.
+
+✅ Conclusión para TMN 12.5 mm
+
+Los modelos de regresión múltiple no son confiables para TMN 12.5 mm.
+La muestra es demasiado pequeña y la colinealidad entre predictores impide obtener estimaciones estables y significativas.
+
+
+**2. Escenarios con TMN = 19 mm (n = 56–57)**
+
+Escenario 19–400 μɛ
+
+🔍 Resultados estadísticos
+	•	El modelo presenta un R² ≈ 0.64, lo que indica que explica una proporción importante de la variabilidad.
+	•	El F-test es altamente significativo (p ≈ 1×10⁻⁶).
+	•	Predictores con significancia moderada:
+	•	pdf_energia_disipada_k_j_m3 (p = 0.038)
+	•	gbs_gmm (p = 0.036)
+	•	pvm_vma_percent (p = 0.044)
+	•	Otros predictores muestran tendencias débiles (p entre 0.05 y 0.10).
+
+🧩 Interpretación ingenieril
+	•	La energía disipada muestra relación directa con la vida útil, coherente con los mecanismos de daño por fatiga.
+	•	El Gmm y el VMA son razonables como predictores volumétricos: valores mayores de vacíos y estructura interna influyen en el inicio de agrietamiento.
+	•	El tamaño muestral permite detectar relaciones que no son observables en TMN 12.5 mm.
 
 ⸻
 
-Escenarios TMN = 19 mm (n = 56–57)
+Escenario 19–600 μɛ
 
-(400 με):
-	•	Varias variables muestran señales débiles (p entre 0.05 y 0.10).
-	•	R² ≈ 0.64 → el modelo explica parte importante de la variabilidad.
-	•	F-test significativo (p ~ 1e−6).
-	•	Algunos predictores relevantes:
-rigidez inicial, energía disipada, vacíos, % pasando 1/2, % pasando #4.
+🔍 Resultados estadísticos
+	•	El modelo presenta un R² ≈ 0.40, aceptable para ensayos de fatiga bajo alta deformación.
+	•	El F-test es significativo (p ≈ 0.008).
+	•	Se identifican dos predictores claramente significativos:
+	•	pdf_rigidez_inicial_m_pa (p = 0.0219)
+	•	pdf_energia_disipada_k_j_m3 (p = 0.0148)
 
-(600 με):
-	•	Dos predictores significativos:
-• rigidez inicial (p = 0.025)
-• energía disipada (p = 0.017)
-	•	R² ≈ 0.40, F-test significativo (p = 0.008).
-	•	El resto de predictores no aporta evidencia fuerte.
+🧩 Interpretación ingenieril
+	•	La rigidez inicial funciona como un descriptor del estado estructural inicial de la viga, lógico como predictor de vida.
+	•	La energía disipada nuevamente aparece como un factor dominante.
+	•	Los demás predictores no aportan señal estadística fuerte, lo cual es razonable considerando el nivel de daño acelerado a 600 μɛ.
 
-Interpretación breve:
-Con mayor tamaño de muestra, los modelos sí muestran relación estadística. La rigidez inicial y la energía disipada aparecen como predictores importantes de la vida a fatiga en TMN 19 mm.
 
-Conclusión general 
-	•	TMN 12.5 mm r (n = 20): los modelos múltiples no son confiables; la muestra es demasiado pequeña y hay colinealidad fuerte.
+
+**Conclusión general del Objetivo 2**
+
+🔵 TMN = 12.5 mm (n = 20)
+
+Los modelos no son estadísticamente confiables. La muestra es demasiado pequeña, la colinealidad es muy fuerte y los coeficientes no son estables. No deben usarse para interpretación ni predicción.
+
+🔵 TMN = 19 mm (n ≈ 57)
+
+Los modelos sí son estadísticamente significativos y coherentes con la física. Las variables claves que explican la vida a fatiga son:
 	
-	•	TMN 19 mm (n ≈ 57): sí se identifican variables relevantes, especialmente rigidez inicial y energía disipada, con modelos estadísticamente significativos.
+	•	Rigidez inicial
+	•	Energía disipada
+	•	(en 400 μɛ) Gmm y VMA
 
-E.  Validación del modelo
+Los modelos son útiles para inferencias y apoyan conclusiones ingenieriles claras sobre el comportamiento de la mezcla.
+
+
+
+**E.  Validación del modelo**
 
 	•	R² y R² ajustado
 	
