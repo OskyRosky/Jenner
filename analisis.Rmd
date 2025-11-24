@@ -1821,20 +1821,34 @@ coef_19_400 |>
 
 \[
 \begin{aligned}
-
+\widehat{\log_{10}(\text{Ciclos})} \;=\;& 48.1222 \\
+&\quad -\; 0.0001\,\text{pdf\_rigidez\_inicial\_m\_pa} \\
+&\quad +\; 1.0231\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
+&\quad -\; 14.8117\,\text{gbs\_gmm} \\
+&\quad -\; 0.0037\,\text{gbs\_percent\_vacios\_7\_1} \\
+&\quad -\; 0.4026\,\text{pvm\_vma\_percent} \\
+&\quad -\; 0.0013\,\text{pvm\_vfa\_percent} \\
+&\quad -\; 0.1508\,\text{pvm\_polvo\_asfalto} \\
+&\quad -\; 0.0314\,\text{pvm\_percent\_pasando\_1\_2} \\
+&\quad +\; 0.0251\,\text{pvm\_percent\_pasando\_number\_4} \\
+&\quad -\; 0.0168\,\text{pvm\_percent\_pasando\_number\_8} \\
+&\quad +\; 0.1154\,\text{pvm\_percent\_pasando\_number\_200}
 \end{aligned}
 \]
+
+
+Nota: 
 
 **D.4 Escenario TMN = 19 mm, deformación = 600 μɛ**
 
 ```{r}
-# Variable respuesta en log10(ciclos) para cada escenario
+# --- D.4 Escenario TMN = 19 mm, deformación = 600 μɛ ---
+
+# 1. Variable respuesta
 df_19_600 <- df_19_600 |>
   mutate(log_ciclos = log10(pdf_numero_de_ciclos))
-```
 
-```{r}
-# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
+# 2. Fórmula de todas las variables permitidas
 formula_full <- log_ciclos ~ 
   pdf_rigidez_inicial_m_pa +
   pdf_energia_disipada_k_j_m3 +
@@ -1847,9 +1861,39 @@ formula_full <- log_ciclos ~
   pvm_percent_pasando_number_8 +
   pvm_percent_pasando_number_200
 
-# D.4 Escenario TMN = 19 mm, deformación = 600 μɛ
+# 3. Ajustar el modelo
 mod_19_600_full <- lm(formula_full, data = df_19_600)
+
+# 4. Tabla con gt()
+coef_19_600 <- summary(mod_19_600_full)$coefficients |>
+  as.data.frame() |>
+  tibble::rownames_to_column("Termino") |>
+  dplyr::rename(
+    Estimado       = Estimate,
+    Error_estandar = `Std. Error`,
+    t_value        = `t value`,
+    p_value        = `Pr(>|t|)`
+  )
+
+coef_19_600 |>
+  gt::gt() |>
+  gt::tab_header(
+    title = "Modelo de regresión — TMN 19 mm, 600 μɛ",
+    subtitle = "Variables mecánicas, GBS y volumétricas permitidas"
+  ) |>
+  gt::fmt_number(
+    columns = c(Estimado, Error_estandar, t_value, p_value),
+    decimals = 4
+  ) |>
+  gt::cols_label(
+    Termino        = "Término",
+    Estimado       = "Estimado",
+    Error_estandar = "Error estándar",
+    t_value        = "t",
+    p_value        = "p-valor"
+  )
 ```
+
 
 *Ecuación de regresión para el escenario TMN = 19 mm, deformación = 600 μɛ*
 
