@@ -1650,16 +1650,17 @@ coef_12_400 |>
 *Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 400 μɛ*
 
 \[
-\widehat{\log_{10}(\text{Ciclos})} \;=\;
-1222.5950
-- 0.0001\,\text{pdf\_rigidez\_inicial\_m\_pa}
-- 0.3369\,\text{pdf\_energia\_disipada\_k\_j\_m3}
-- 586.4602\,\text{gbs\_gmm}
-+ 0.2333\,\text{gbs\_percent\_vacios\_7\_1}
-- 2.4589\,\text{pvm\_vma\_percent}
-- 1.0302\,\text{pvm\_vfa\_percent}
-+ 51.4099\,\text{pvm\_polvo\_asfalto}
-+ 2.5250\,\text{pvm\_percent\_pasando\_1\_2}
+\begin{aligned}
+\widehat{\log_{10}(\text{Ciclos})} \;=\;& 1222.5950 \\
+&\quad -\; 0.0001\,\text{pdf\_rigidez\_inicial\_m\_pa} \\
+&\quad -\; 0.3369\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
+&\quad -\; 586.4602\,\text{gbs\_gmm} \\
+&\quad +\; 0.2333\,\text{gbs\_percent\_vacios\_7\_1} \\
+&\quad -\; 2.4589\,\text{pvm\_vma\_percent} \\
+&\quad -\; 1.0302\,\text{pvm\_vfa\_percent} \\
+&\quad +\; 51.4099\,\text{pvm\_polvo\_asfalto} \\
+&\quad +\; 2.5250\,\text{pvm\_percent\_pasando\_1\_2}
+\end{aligned}
 \]
 
 Nota: ningúna variable resultó ser significativa. 
@@ -1674,55 +1675,155 @@ df_12_600 <- df_12_600 |>
 # D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ
 mod_12_600_full <- lm(formula_full, data = df_12_600)
 
-```
-
-```{r}
-# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
+# Fórmula común para TODOS los escenarios del Objetivo 2
+# (variables permitidas: sin Gmb, sin rigidez final, sin % vacíos PV)
 formula_full <- log_ciclos ~ 
   pdf_rigidez_inicial_m_pa +
   pdf_energia_disipada_k_j_m3 +
+  gbs_gmm +
+  gbs_percent_vacios_7_1 +
   pvm_vma_percent +
   pvm_vfa_percent +
-  pvm_percent_vacios +
   pvm_polvo_asfalto +
   pvm_percent_pasando_1_2 +
   pvm_percent_pasando_number_4 +
   pvm_percent_pasando_number_8 +
   pvm_percent_pasando_number_200
 
+```
+
+```{r}
+
+# D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ
+
+# Crear la respuesta log10(ciclos) para este escenario
+df_12_600 <- df_12_600 |>
+  dplyr::mutate(
+    log_ciclos = log10(pdf_numero_de_ciclos)
+  )
+
+# Ajustar el modelo completo usando la misma fórmula común
+mod_12_600_full <- lm(formula_full, data = df_12_600)
+
+# Extraer coeficientes a un data.frame
+coef_12_600 <- summary(mod_12_600_full)$coefficients |>
+  as.data.frame() |>
+  tibble::rownames_to_column("Termino") |>
+  dplyr::rename(
+    Estimado       = Estimate,
+    Error_estandar = `Std. Error`,
+    t_value        = `t value`,
+    p_value        = `Pr(>|t|)`
+  )
+
+# Presentar la tabla en formato gt
+coef_12_600 |>
+  gt::gt() |>
+  gt::tab_header(
+    title = "Modelo de regresión — TMN 12.5 mm, 600 µɛ",
+    subtitle = "Variables mecánicas, GBS y volumétricas permitidas"
+  ) |>
+  gt::fmt_number(
+    columns = c(Estimado, Error_estandar, t_value, p_value),
+    decimals = 4
+  ) |>
+  gt::cols_label(
+    Termino        = "Término",
+    Estimado       = "Estimado",
+    Error_estandar = "Error estándar",
+    t_value        = "t",
+    p_value        = "p-valor"
+  )
 
 ```
 
 
 *Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 600 μɛ*
 
+\[
+\begin{aligned}
+\widehat{\log_{10}(\text{Ciclos})} \;=\;& -166.6127 \\
+&\quad +\; 0.0002\,\text{pdf\_rigidez\_inicial\_m\_pa} \\
+&\quad +\; 0.1323\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
+&\quad +\; 56.5186\,\text{gbs\_gmm} \\
+&\quad +\; 0.4211\,\text{gbs\_percent\_vacios\_7\_1} \\
+&\quad +\; 1.9571\,\text{pvm\_vma\_percent} \\
+&\quad +\; 0.3335\,\text{pvm\_vfa\_percent} \\
+&\quad -\; 0.8730\,\text{pvm\_polvo\_asfalto} \\
+&\quad -\; 0.2303\,\text{pvm\_percent\_pasando\_1\_2}
+\end{aligned}
+\]
+
+Nota: ningúna variable resultó ser significativa. 
+
 **D.3 Escenario TMN = 19 mm, deformación = 400 μɛ**
 
 ```{r}
 # Variable respuesta en log10(ciclos) para cada escenario
+# 1. Variable respuesta transformada
 df_19_400 <- df_19_400 |>
-  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
-```
+  dplyr::mutate(
+    log_ciclos = log10(pdf_numero_de_ciclos)
+  )
 
-```{r}
-# Fórmula común del modelo completo (todas las variables mecánicas + volumétricas)
-formula_full <- log_ciclos ~ 
+# 2. Fórmula del modelo completo (variables mecánicas + GBS + volumétricas permitidas)
+formula_full_19_400 <- log_ciclos ~ 
   pdf_rigidez_inicial_m_pa +
   pdf_energia_disipada_k_j_m3 +
+  gbs_gmm +
+  gbs_percent_vacios_7_1 +
   pvm_vma_percent +
   pvm_vfa_percent +
-  pvm_percent_vacios +
   pvm_polvo_asfalto +
   pvm_percent_pasando_1_2 +
   pvm_percent_pasando_number_4 +
   pvm_percent_pasando_number_8 +
   pvm_percent_pasando_number_200
 
-# D.3 Escenario TMN = 19 mm, deformación = 400 μɛ
-mod_19_400_full <- lm(formula_full, data = df_19_400)
+```
+
+```{r}
+# 3. Ajuste del modelo
+mod_19_400_full <- lm(formula_full_19_400, data = df_19_400)
+
+# 4. Extraer coeficientes y preparar tabla
+coef_19_400 <- summary(mod_19_400_full)$coefficients |>
+  as.data.frame() |>
+  tibble::rownames_to_column("Termino") |>
+  dplyr::rename(
+    Estimado       = Estimate,
+    Error_estandar = `Std. Error`,
+    t_value        = `t value`,
+    p_value        = `Pr(>|t|)`
+  )
+
+# 5. Mostrar en formato gt
+coef_19_400 |>
+  gt::gt() |>
+  gt::tab_header(
+    title    = "Modelo de regresión — TMN 19 mm, 400 μɛ",
+    subtitle = "Variables mecánicas, GBS y volumétricas permitidas"
+  ) |>
+  gt::fmt_number(
+    columns  = c(Estimado, Error_estandar, t_value, p_value),
+    decimals = 4
+  ) |>
+  gt::cols_label(
+    Termino        = "Término",
+    Estimado       = "Estimado",
+    Error_estandar = "Error estándar",
+    t_value        = "t",
+    p_value        = "p-valor"
+  )
 ```
 
 *Ecuación de regresión para el escenario TMN = 19 mm, deformación = 400 μɛ*
+
+\[
+\begin{aligned}
+
+\end{aligned}
+\]
 
 **D.4 Escenario TMN = 19 mm, deformación = 600 μɛ**
 
