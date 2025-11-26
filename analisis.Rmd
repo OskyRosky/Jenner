@@ -1246,51 +1246,78 @@ plot_box_pvm <- function(df, titulo = NULL) {
 
 
 ```{r}
-# 1. Ciclos (sin transformar)
-ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
-  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+# =========================
+# Histograma 1: Ciclos (sin transformar)
+# =========================
+ggplot(datos_obj2_raw, aes(x = pdf_numero_de_ciclos)) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 20, alpha = 0.6,
+                 fill = "steelblue", color = "white") +
+  geom_density(color = "red", linewidth = 1.1) +
   labs(
-    title = "Ciclos (sin transformar)",
-    x = "Ciclos", y = "Frecuencia"
+    title = "Ciclos (sin transformar) — todos los escenarios",
+    x = "Número de ciclos", y = "Densidad"
   ) +
   theme_bw()
 
-# 2. log10(Ciclos)
-ggplot(df_12_400, aes(x = log10(pdf_numero_de_ciclos))) +
-  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+
+# =========================
+# Histograma 2: log10(Ciclos)
+# =========================
+ggplot(datos_obj2_raw, aes(x = log10(pdf_numero_de_ciclos))) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 20, alpha = 0.6,
+                 fill = "steelblue", color = "white") +
+  geom_density(color = "red", linewidth = 1.1) +
   labs(
-    title = "log10(Ciclos)",
-    x = "log10(ciclos)", y = "Frecuencia"
+    title = "log10(Ciclos) — todos los escenarios",
+    x = "log10(ciclos)", y = "Densidad"
   ) +
   theme_bw()
 
-# 3. Rigidez inicial
-ggplot(df_12_400, aes(x = pdf_rigidez_inicial_m_pa)) +
-  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+
+# =========================
+# Histograma 3: Rigidez inicial
+# =========================
+ggplot(datos_obj2_raw, aes(x = pdf_rigidez_inicial_m_pa)) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 20, alpha = 0.6,
+                 fill = "steelblue", color = "white") +
+  geom_density(color = "red", linewidth = 1.1) +
   labs(
-    title = "Rigidez inicial",
-    x = "Rigidez inicial (MPa)", y = "Frecuencia"
+    title = "Rigidez inicial — todos los escenarios",
+    x = "Rigidez inicial (MPa)", y = "Densidad"
   ) +
   theme_bw()
 
-# 4. Rigidez final
-ggplot(df_12_400, aes(x = pdf_rigidez_final_mpa)) +
-  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+
+# =========================
+# Histograma 4: Rigidez final
+# =========================
+ggplot(datos_obj2_raw, aes(x = pdf_rigidez_final_mpa)) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 20, alpha = 0.6,
+                 fill = "steelblue", color = "white") +
+  geom_density(color = "red", linewidth = 1.1) +
   labs(
-    title = "Rigidez final ",
-    x = "Rigidez final (MPa)", y = "Frecuencia"
+    title = "Rigidez final — todos los escenarios",
+    x = "Rigidez final (MPa)", y = "Densidad"
   ) +
   theme_bw()
 
-# 5. Energía disipada
-ggplot(df_12_400, aes(x = pdf_energia_disipada_k_j_m3)) +
-  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+# =========================
+# Histograma 5: Energía disipada
+# =========================
+ggplot(datos_obj2_raw, aes(x = pdf_energia_disipada_k_j_m3)) +
+  geom_histogram(aes(y = ..density..),
+                 bins = 20, alpha = 0.6,
+                 fill = "steelblue", color = "white") +
+  geom_density(color = "red", linewidth = 1.1) +
   labs(
-    title = "Energía disipada",
-    x = "Energía disipada (kJ/m³)", y = "Frecuencia"
+    title = "Energía disipada — todos los escenarios",
+    x = "Energía disipada (kJ/m³)", y = "Densidad"
   ) +
   theme_bw()
-
 
 ```
 
