@@ -1404,7 +1404,7 @@ ggcorrplot(
 
 C. Evaluación inicial de la variable respuesta
 
-Antes de ajustar los modelos de regresión, es necesario revisar el comportamiento de la variable respuesta (número de ciclos), para cada escenario.  En particular, se verifica si la transformación log10(ciclos) reduce la asimetría, cómo cambia la dispersión entre escenarios y si existen valores atípicos evidentes. En este caso para el primer escenario se puede corroborar, y esto es similar para los otros
+Antes de ajustar los modelos de regresión, es necesario revisar el comportamiento de la variable respuesta (número de ciclos), para cada escenario.  En particular, se verifica si la transformación log10(ciclos)  realmente podría reducir la asimetría, cómo cambia la dispersión entre escenarios y si existen valores atípicos evidentes. Veamos los resultados.
 
 
 
@@ -1500,13 +1500,9 @@ Esto confirma que la variable no es normal y que la dispersión entre observacio
 
 Al aplicar la transformación \log_{10}:
 
-•	La asimetría se reduce notablemente.
+•	La asimetría se reduce notablement con respecto a los datos originales.
 
-•	La distribución se vuelve más simétrica y compacta.
-
-•	Se facilita el ajuste de un modelo lineal y mejora la estabilidad numérica.
-
-Esto valida que log10(ciclos) es una transformación adecuada para el modelo del Objetivo 2.
+•	Se facilita el ajuste de un modelo lineal y mejora la estabilidad numérica. Sin embargo, no en todos los casos es perfecta. 
 
 Ahora, se debe de tomar en cuenta que aún con la transformación, los escenarios con solo una muestre de 20, puedes ser un problema para correctar ecuaciones de regresión. Esto será valorado más adelante.
 
