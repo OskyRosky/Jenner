@@ -694,6 +694,11 @@ mod_vacios <- lmer(
 )
 ```
 
+```{r}
+anova_mod <- anova(mod_vacios, type = 3)
+anova_mod
+```
+
 
 ```{r}
 # ANOVA tipo III (asegura que mod_vacios ya existe en un chunk anterior)
@@ -931,6 +936,12 @@ vif_obj1
 **3. Ajuste del modelo base y selección de variables**
 
 ```{r}
+mod_base_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
+summary(mod_base_obj1)
+```
+
+
+```{r}
 # 1. Ajuste del modelo base con todas las variables candidatas
 mod_base_obj1 <- lm(vacios ~ ., data = datos_reg_obj1)
 
@@ -965,6 +976,13 @@ coef_base |>
   )
 
 ```
+
+
+```{r}
+mod_step_obj1 <- step(mod_base_obj1, direction = "backward", trace = FALSE)
+summary(mod_step_obj1)
+```
+
 
 ```{r}
 # 1. Selección stepwise basada en AIC (backward)
