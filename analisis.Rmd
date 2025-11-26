@@ -1404,17 +1404,92 @@ ggcorrplot(
 
 C. Evaluación inicial de la variable respuesta
 
-Antes de ajustar los modelos de regresión, es necesario revisar el comportamiento de la variable respuesta (número de ciclos). En particular, se verifica si la transformación log10(ciclos) reduce la asimetría, cómo cambia la dispersión entre escenarios y si existen valores atípicos evidentes.
+Antes de ajustar los modelos de regresión, es necesario revisar el comportamiento de la variable respuesta (número de ciclos), para cada escenario.  En particular, se verifica si la transformación log10(ciclos) reduce la asimetría, cómo cambia la dispersión entre escenarios y si existen valores atípicos evidentes. En este caso para el primer escenario se puede corroborar, y esto es similar para los otros
+
+
 
 **Histograma de ciclos en escala original**
 
 ```{r}
 ggplot(df_12_400, aes(x = pdf_numero_de_ciclos)) +
-  geom_histogram(bins = 20, alpha = 0.7, fill = "steelblue") +
+  geom_histogram(
+    aes(y = ..density..),
+    bins = 20,
+    alpha = 0.7,
+    fill = "steelblue",
+    color = "white"
+  ) +
+  geom_density(
+    color = "red",
+    linewidth = 1.1
+  ) +
   labs(
     title = "Ciclos (escala original)",
     x = "Ciclos",
-    y = "Frecuencia"
+    y = "Densidad"
+  ) +
+  theme_bw()
+```
+
+```{r}
+ggplot(df_12_600, aes(x = pdf_numero_de_ciclos)) +
+  geom_histogram(
+    aes(y = ..density..),
+    bins = 20,
+    alpha = 0.7,
+    fill = "steelblue",
+    color = "white"
+  ) +
+  geom_density(
+    color = "red",
+    linewidth = 1.1
+  ) +
+  labs(
+    title = "Ciclos — TMN 12.5 mm, 600 μɛ",
+    x = "Ciclos",
+    y = "Densidad"
+  ) +
+  theme_bw()
+```
+
+```{r}
+ggplot(df_19_400, aes(x = pdf_numero_de_ciclos)) +
+  geom_histogram(
+    aes(y = ..density..),
+    bins = 20,
+    alpha = 0.7,
+    fill = "steelblue",
+    color = "white"
+  ) +
+  geom_density(
+    color = "red",
+    linewidth = 1.1
+  ) +
+  labs(
+    title = "Ciclos — TMN 19 mm, 400 μɛ",
+    x = "Ciclos",
+    y = "Densidad"
+  ) +
+  theme_bw()
+```
+
+```{r}
+ggplot(df_19_600, aes(x = pdf_numero_de_ciclos)) +
+  geom_histogram(
+    aes(y = ..density..),
+    bins = 20,
+    alpha = 0.7,
+    fill = "steelblue",
+    color = "white"
+  ) +
+  geom_density(
+    color = "red",
+    linewidth = 1.1
+  ) +
+  labs(
+    title = "Ciclos — TMN 19 mm, 600 μɛ",
+    x = "Ciclos",
+    y = "Densidad"
   ) +
   theme_bw()
 ```
