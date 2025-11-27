@@ -1327,6 +1327,8 @@ ggplot(datos_obj2_raw, aes(x = pdf_energia_disipada_k_j_m3)) +
 
 ```
 
+Nota: la rigidez final se explora únicamente de forma descriptiva, pero no se incluye en los modelos de regresión ni en el análisis de colinealidad, de acuerdo con los criterios definidos para el Objetivo 2.”
+
 **Boxplot de propiedades volumétricas**
 
 ```{r}
@@ -1572,28 +1574,26 @@ Esto permite reducir la asimetría natural de los datos de fatiga y obtener rela
 
 **B. Selección inicial de variables independientes**
 
-Para cada escenario se consideran como candidatos todos los predictores que, desde la perspectiva mecánica y volumétrica, pueden influir en la resistencia a fatiga. Estos se agrupan en dos categorías:
+Para cada escenario TMN–deformación se consideran inicialmente como candidatos todos los predictores que, desde la perspectiva mecánica, volumétrica y estructural, podrían influir en la resistencia a fatiga. Estos predictores se agrupan en dos categorías:
 
 1. Propiedades mecánicas del ensayo T321
-	•	Rigidez inicial
-	•	Rigidez final
-	•	Energía disipada
-	•	Fuerza o amplitud (si aplica)
+	•	Rigidez inicial (pdf_rigidez_inicial_m_pa)
+	•	Energía disipada (pdf_energia_disipada_k_j_m3)
 
-Estas variables describen la condición mecánica de la viga al inicio y durante el deterioro, y suelen mostrar alta asociación con los ciclos a falla.
+Estas variables describen la condición mecánica de la viga al inicio del ensayo y la energía absorbida durante el proceso de deterioro, factores estrechamente relacionados con la vida a fatiga.
+(Nota: se excluye la rigidez final, pues no forma parte del conjunto depurado definido para los modelos del Objetivo 2.)
 
-2. Propiedades volumétricas y de gradación
-	•	VMA
-	•	VFA
-	•	Vacíos PV
-	•	Gmm
-	•	Gmb
-	•	Relación polvo/asfalto
-	•	% pasando (#4, #8, #200, 1/2”)
+2. Propiedades volumétricas y parámetros GBS
+	•	Gmm de las vigas (gbs_gmm)
+	•	% de vacíos GBS (gbs_percent_vacios_7_1)
+	•	Contenido de asfalto efectivo (pvm_asfalto_efectivo_percent)
+	•	Asfalto sobre MAC (pvm_asfalto_sobre_mac_percent)
+	•	VMA (pvm_vma_percent)
+	•	VFA (pvm_vfa_percent)
+	•	Relación polvo/asfalto (pvm_polvo_asfalto)
+	•	Gradación (% pasando 1/2’’, #4, #8, #200)
 
-Estas propiedades capturan la estructura interna de la mezcla, el empaquetamiento de agregados y la disponibilidad de ligante, factores que afectan directamente el comportamiento a fatiga.
-
-El objetivo en esta etapa es identificar todas las variables numéricas relevantes y dejar el subconjunto listo para el análisis de colinealidad y posterior selección.
+Estas variables caracterizan la estructura interna de la mezcla y describen el empaquetamiento de agregados, la disponibilidad de ligante y la densificación alcanzada, todos factores que influyen directamente en el comportamiento a fatiga.
 
 
 **C. Colinealidad.**
