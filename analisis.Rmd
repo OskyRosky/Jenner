@@ -1583,44 +1583,59 @@ Para la colinealidad se analiza:
 **Matriz de correlación**
 
 ```{r}
-# 1. Crear la variable logarítmica (esto ya funciona)
-df_12_400 <- df_12_400 |>
-  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
 
-# 2. Seleccionar variables que SÍ existen en df_12_400
-corr_data_12_400 <- df_12_400 |> 
-  dplyr::select(
-    log_ciclos,
-    pdf_rigidez_inicial_m_pa,
-    pdf_rigidez_final_mpa,
-    pdf_energia_disipada_k_j_m3,
-    pvm_vma_percent,
-    pvm_vfa_percent,
-    pvm_percent_vacios,
-    pvm_polvo_asfalto,
-    pvm_percent_pasando_1_2,
-    pvm_percent_pasando_number_4,
-    pvm_percent_pasando_number_8,
-    pvm_percent_pasando_number_200,
-    gbs_gmm,
-    gbs_gmb
+# 0) Data frame maestro del Objetivo 2
+# Cambia 'datos_obj1_raw' por el nombre real si es distinto
+datos_obj2_all <- datos_obj1_raw |>
+  dplyr::mutate(
+    log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-```
-
-```{r}
-cor_matrix_12_400 <- cor(corr_data_12_400, use = "pairwise.complete.obs")
-
-ggcorrplot::ggcorrplot(
-  cor_matrix_12_400,
-  hc.order = TRUE,
-  type = "upper",
-  lab = TRUE,
-  lab_size = 2.5,
-  tl.cex = 8,
-  colors = c("steelblue", "white", "firebrick")
+# 1) Variables del Objetivo 2 (ya depuradas)
+vars_obj2 <- c(
+  # Mecánicas
+  "pdf_rigidez_inicial_m_pa",
+  "pdf_energia_disipada_k_j_m3",
+  
+  # GBS (vacíos de las vigas)
+  "gbs_gmm",
+  "gbs_percent_vacios_7_1",
+  
+  # Volumétricas
+  "pvm_asfalto_efectivo_percent",
+  "pvm_asfalto_sobre_mac_percent",
+  "pvm_vma_percent",
+  "pvm_vfa_percent",
+  "pvm_polvo_asfalto",
+  "pvm_percent_pasando_1_2",
+  "pvm_percent_pasando_number_4",
+  "pvm_percent_pasando_number_8",
+  "pvm_percent_pasando_number_200"
 )
+
+# 2) Matriz de datos numéricos GLOBAL (todos los escenarios)
+corr_data_obj2 <- datos_obj2_all |>
+  dplyr::select(
+    log_ciclos,
+    dplyr::all_of(vars_obj2)
+  )
+
+# 3) Matriz de correlación
+corr_mat_obj2 <- cor(corr_data_obj2, use = "pairwise.complete.obs")
+
+# 4) Mapa de calor de correlaciones
+ggcorrplot::ggcorrplot(
+  corr_mat_obj2,
+  hc.order = TRUE,
+  type     = "upper",
+  lab      = TRUE,
+  lab_size = 2.5,
+  tl.cex   = 8,
+  colors   = c("steelblue", "white", "firebrick")
+)
+
 ```
+
 
 La matriz de correlación y los valores VIF muestran dos conclusiones claras de asoación o correlación entre las variables independientes. 
 
@@ -1633,45 +1648,55 @@ Implicación: no pueden incluirse juntas en el modelo. Generarían inestabilidad
 **VIF**
 
 ```{r}
-# Modelo provisional con todos los predictores
-modelo_vif_12_400 <- lm(
-  log_ciclos ~ 
-    pdf_rigidez_inicial_m_pa +
-    pdf_rigidez_final_mpa +
-    pdf_energia_disipada_k_j_m3 +
-    pvm_vma_percent +
-    pvm_vfa_percent +
-    pvm_percent_vacios +
-    pvm_polvo_asfalto +
-    pvm_percent_pasando_1_2 +
-    pvm_percent_pasando_number_4 +
-    pvm_percent_pasando_number_8 +
-    pvm_percent_pasando_number_200 +
-    gbs_gmm +
-    gbs_gmb,
-  data = df_12_400
+
+# Crear variable log_ciclos global
+datos_obj2_all <- datos_obj2_raw |>
+  dplyr::mutate(
+    log_ciclos = log10(pdf_numero_de_ciclos)
+  )
+
+# Lista oficial de variables permitidas (según correcciones)
+vars_obj2 <- c(
+  # Mecánicas
+  "pdf_rigidez_inicial_m_pa",
+  "pdf_energia_disipada_k_j_m3",
+  
+  # GBS
+  "gbs_gmm",
+  "gbs_percent_vacios_7_1",
+  
+  # Volumétricas
+  "pvm_asfalto_efectivo_percent",
+  "pvm_asfalto_sobre_mac_percent",
+  "pvm_vma_percent",
+  "pvm_vfa_percent",
+  "pvm_polvo_asfalto",
+  "pvm_percent_pasando_1_2",
+  "pvm_percent_pasando_number_4",
+  "pvm_percent_pasando_number_8",
+  "pvm_percent_pasando_number_200"
 )
 
-```
+# Selección del data frame solo con variables válidas
+vif_data <- datos_obj2_all |>
+  dplyr::select(
+    log_ciclos,
+    dplyr::all_of(vars_obj2)
+  )
 
-```{r}
-# Modelo reducido solo para evaluar VIF (evita colinealidad perfecta)
-modelo_vif_12_400 <- lm(
-  log_ciclos ~ 
-    pdf_rigidez_inicial_m_pa +
-    pdf_rigidez_final_mpa +
-    pdf_energia_disipada_k_j_m3 +
-    pvm_vma_percent +
-    pvm_percent_vacios +
-    pvm_polvo_asfalto +
-    pvm_percent_pasando_1_2 +
-    pvm_percent_pasando_number_200,
-  data = df_12_400
+# Modelo para VIF (sin transformar nada)
+modelo_vif_obj2 <- lm(
+  log_ciclos ~ .,
+  data = vif_data
 )
 
+# Calcular VIF
 library(car)
-car::vif(modelo_vif_12_400)
+vif(modelo_vif_obj2)
+
 ```
+
+
 Rigidez inicial, rigidez final y energía disipada muestran VIF bajos o moderados, sin colinealidad importante y con relación directa con el daño por fatiga.
 
 Implicación: son los predictores más confiables para este escenario y deben ser la base del modelo.
@@ -1695,44 +1720,33 @@ df_12_400 <- df_12_400 |>
     log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-# Fórmula general utilizada en los modelos del Objetivo 2
-formula_full <- log_ciclos ~ 
-  pdf_rigidez_inicial_m_pa +       # rigidez inicial
-  pdf_energia_disipada_k_j_m3 +    # energía disipada
-  gbs_gmm +                        # Gmm
-  gbs_percent_vacios_7_1 +         # vacíos GBS (7+1)
-  pvm_vma_percent +                # VMA
-  pvm_vfa_percent +                # VFA
-  pvm_polvo_asfalto +              # polvo-asfalto
-  pvm_percent_pasando_1_2          # % pasando 1/2"
+# Ajustar modelo con variables permitidas
+mod_12_400_full <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +        # rigidez inicial
+    pdf_energia_disipada_k_j_m3 +     # energía disipada
+    gbs_gmm +                         # Gmm
+    gbs_percent_vacios_7_1 +          # vacíos Gbs (7+1)
+    pvm_vma_percent +                 # VMA
+    pvm_vfa_percent +                 # VFA
+    pvm_polvo_asfalto +               # polvo-asfalto
+    pvm_percent_pasando_1_2,          # % pasando 1/2
+  data = df_12_400
+)
+
+```
+
+```{r}
+## Resumen clásico del modelo (summary)
+
+summary(mod_12_400_full)
 ```
 
 
 ```{r}
 
-# Escenario TMN = 12.5 mm, deformación = 400 μɛ
+## Tabla de coeficientes con gt
 
-# 1) Definir la respuesta
-df_12_400 <- df_12_400 |>
-  dplyr::mutate(
-    log_ciclos = log10(pdf_numero_de_ciclos)
-  )
-
-# 2) Ajustar el modelo con las variables permitidas
-mod_12_400_full <- lm(
-  log_ciclos ~ 
-    pdf_rigidez_inicial_m_pa +          # rigidez inicial
-    pdf_energia_disipada_k_j_m3 +       # energía disipada
-    gbs_gmm +                           # Gmm
-    gbs_percent_vacios_7_1 +            # vacíos Gbs (7+1)
-    pvm_vma_percent +                   # VMA
-    pvm_vfa_percent +                   # VFA
-    pvm_polvo_asfalto +                 # polvo-asfalto
-    pvm_percent_pasando_1_2,            # % pasando 1/2"
-  data = df_12_400
-)
-
-# 3) Tabla bonita en gt
 coef_12_400 <- summary(mod_12_400_full)$coefficients |>
   as.data.frame() |>
   tibble::rownames_to_column("Termino") |>
@@ -1760,7 +1774,6 @@ coef_12_400 |>
     t_value        = "t",
     p_value        = "p-valor"
   )
-
 ```
 
 *Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 400 μɛ*
@@ -1807,6 +1820,7 @@ formula_full <- log_ciclos ~
   pvm_percent_pasando_number_200
 
 ```
+
 
 ```{r}
 
@@ -1898,6 +1912,7 @@ formula_full_19_400 <- log_ciclos ~
 
 ```
 
+
 ```{r}
 # 3. Ajuste del modelo
 mod_19_400_full <- lm(formula_full_19_400, data = df_19_400)
@@ -1956,6 +1971,7 @@ coef_19_400 |>
 Nota: 
 
 **D.4 Escenario TMN = 19 mm, deformación = 600 μɛ**
+
 
 ```{r}
 # --- D.4 Escenario TMN = 19 mm, deformación = 600 μɛ ---
