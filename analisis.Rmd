@@ -1585,13 +1585,14 @@ Para la colinealidad se analiza:
 ```{r}
 
 # 0) Data frame maestro del Objetivo 2
-# Cambia 'datos_obj1_raw' por el nombre real si es distinto
-datos_obj2_all <- datos_obj1_raw |>
+# Usa SIEMPRE el dataset del objetivo 2 (ajusta el nombre si es otro):
+# aquí asumo que se llama datos_obj2_raw
+datos_obj2_all <- datos_obj2_raw |>
   dplyr::mutate(
     log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-# 1) Variables del Objetivo 2 (ya depuradas)
+# 1) Lista oficial de variables del Objetivo 2 (ya depuradas)
 vars_obj2 <- c(
   # Mecánicas
   "pdf_rigidez_inicial_m_pa",
@@ -1613,25 +1614,25 @@ vars_obj2 <- c(
   "pvm_percent_pasando_number_200"
 )
 
-# 2) Matriz de datos numéricos GLOBAL (todos los escenarios)
-corr_data_obj2 <- datos_obj2_all |>
+# 2) Matriz de datos numéricos SOLO con las variables permitidas
+corr_data_all <- datos_obj2_all |>
   dplyr::select(
     log_ciclos,
     dplyr::all_of(vars_obj2)
   )
 
 # 3) Matriz de correlación
-corr_mat_obj2 <- cor(corr_data_obj2, use = "pairwise.complete.obs")
+corr_mat_all <- cor(corr_data_all, use = "pairwise.complete.obs")
 
-# 4) Mapa de calor de correlaciones
+# 4) Mapa de correlaciones
 ggcorrplot::ggcorrplot(
-  corr_mat_obj2,
+  corr_mat_all,
   hc.order = TRUE,
-  type     = "upper",
-  lab      = TRUE,
+  type = "upper",
+  lab = TRUE,
   lab_size = 2.5,
-  tl.cex   = 8,
-  colors   = c("steelblue", "white", "firebrick")
+  tl.cex = 8,
+  colors = c("steelblue", "white", "firebrick")
 )
 
 ```
@@ -1714,39 +1715,38 @@ Una vez definidas la variable respuesta y la lista inicial de predictores, se pr
 **D.1 Escenario TMN = 12.5 mm, deformación = 400 μɛ **
 
 ```{r}
-# Variable respuesta log10(ciclos) (nombre log_ciclos)
+# D.1 Escenario TMN = 12.5 mm, deformación = 400 μɛ
+
+# (Opcional pero robusto) Si quieres asegurarte de que df_12_400 exista
+# df_12_400 <- datos_obj2_raw |>
+#   dplyr::filter(
+#     gbs_tmn_mm == 12.5,
+#     pdf_deformacion_unitaria == 400
+#   )
+
+# 1) Variable respuesta log10(ciclos)
 df_12_400 <- df_12_400 |>
   dplyr::mutate(
     log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-# Ajustar modelo con variables permitidas
 mod_12_400_full <- lm(
   log_ciclos ~ 
-    pdf_rigidez_inicial_m_pa +        # rigidez inicial
-    pdf_energia_disipada_k_j_m3 +     # energía disipada
-    gbs_gmm +                         # Gmm
-    gbs_percent_vacios_7_1 +          # vacíos Gbs (7+1)
-    pvm_vma_percent +                 # VMA
-    pvm_vfa_percent +                 # VFA
-    pvm_polvo_asfalto +               # polvo-asfalto
-    pvm_percent_pasando_1_2,          # % pasando 1/2
+    pdf_rigidez_inicial_m_pa +
+    pdf_energia_disipada_k_j_m3 +
+    gbs_gmm +
+    gbs_percent_vacios_7_1 +
+    pvm_vma_percent +
+    pvm_vfa_percent +
+    pvm_polvo_asfalto +
+    pvm_percent_pasando_1_2,
   data = df_12_400
 )
 
-```
-
-```{r}
-## Resumen clásico del modelo (summary)
-
+# 3) Resumen clásico (para que quede también en el informe)
 summary(mod_12_400_full)
-```
 
-
-```{r}
-
-## Tabla de coeficientes con gt
-
+# 4) Tabla de coeficientes con gt
 coef_12_400 <- summary(mod_12_400_full)$coefficients |>
   as.data.frame() |>
   tibble::rownames_to_column("Termino") |>
@@ -1774,7 +1774,9 @@ coef_12_400 |>
     t_value        = "t",
     p_value        = "p-valor"
   )
+
 ```
+
 
 *Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 400 μɛ*
 
@@ -1797,45 +1799,40 @@ Nota: ningúna variable resultó ser significativa.
 **D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ**
 
 ```{r}
-# Variable respuesta en log10(ciclos) para cada escenario
-df_12_600 <- df_12_600 |>
-  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
-
-# D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ
-mod_12_600_full <- lm(formula_full, data = df_12_600)
-
-# Fórmula común para TODOS los escenarios del Objetivo 2
-# (variables permitidas: sin Gmb, sin rigidez final, sin % vacíos PV)
-formula_full <- log_ciclos ~ 
-  pdf_rigidez_inicial_m_pa +
-  pdf_energia_disipada_k_j_m3 +
-  gbs_gmm +
-  gbs_percent_vacios_7_1 +
-  pvm_vma_percent +
-  pvm_vfa_percent +
-  pvm_polvo_asfalto +
-  pvm_percent_pasando_1_2 +
-  pvm_percent_pasando_number_4 +
-  pvm_percent_pasando_number_8 +
-  pvm_percent_pasando_number_200
-
-```
-
-
-```{r}
 
 # D.2 Escenario TMN = 12.5 mm, deformación = 600 μɛ
 
-# Crear la respuesta log10(ciclos) para este escenario
+# (Opcional) reconstruir df_12_600 desde el maestro, si hiciera falta
+# df_12_600 <- datos_obj2_raw |>
+#   dplyr::filter(
+#     gbs_tmn_mm == 12.5,
+#     pdf_deformacion_unitaria == 600
+#   )
+
+# 1) Variable respuesta log10(ciclos)
 df_12_600 <- df_12_600 |>
   dplyr::mutate(
     log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-# Ajustar el modelo completo usando la misma fórmula común
-mod_12_600_full <- lm(formula_full, data = df_12_600)
+# 2) Ajustar el modelo con las mismas variables permitidas
+mod_12_600_full <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +       # rigidez inicial
+    pdf_energia_disipada_k_j_m3 +    # energía disipada
+    gbs_gmm +                        # Gmm
+    gbs_percent_vacios_7_1 +         # vacíos Gbs (7+1)
+    pvm_vma_percent +                # VMA
+    pvm_vfa_percent +                # VFA
+    pvm_polvo_asfalto +              # polvo-asfalto
+    pvm_percent_pasando_1_2,         # % pasando 1/2
+  data = df_12_600
+)
 
-# Extraer coeficientes a un data.frame
+# 3) Resumen clásico (para que quede también en el informe)
+summary(mod_12_600_full)
+
+# 4) Tabla de coeficientes con gt
 coef_12_600 <- summary(mod_12_600_full)$coefficients |>
   as.data.frame() |>
   tibble::rownames_to_column("Termino") |>
@@ -1846,15 +1843,14 @@ coef_12_600 <- summary(mod_12_600_full)$coefficients |>
     p_value        = `Pr(>|t|)`
   )
 
-# Presentar la tabla en formato gt
 coef_12_600 |>
   gt::gt() |>
   gt::tab_header(
-    title = "Modelo de regresión — TMN 12.5 mm, 600 µɛ",
+    title    = "Modelo de regresión — TMN 12.5 mm, 600 μɛ",
     subtitle = "Variables mecánicas, GBS y volumétricas permitidas"
   ) |>
   gt::fmt_number(
-    columns = c(Estimado, Error_estandar, t_value, p_value),
+    columns  = c(Estimado, Error_estandar, t_value, p_value),
     decimals = 4
   ) |>
   gt::cols_label(
@@ -1866,6 +1862,8 @@ coef_12_600 |>
   )
 
 ```
+
+
 
 
 *Ecuación de regresión para el escenario TMN = 12.5 mm, deformación = 600 μɛ*
@@ -1889,35 +1887,39 @@ Nota: ningúna variable resultó ser significativa.
 **D.3 Escenario TMN = 19 mm, deformación = 400 μɛ**
 
 ```{r}
-# Variable respuesta en log10(ciclos) para cada escenario
-# 1. Variable respuesta transformada
+# D.3 Escenario TMN = 19 mm, deformación = 400 μɛ
+
+# (Opcional) reconstruir df_19_400 desde el maestro si hiciera falta
+# df_19_400 <- datos_obj2_raw |>
+#   dplyr::filter(
+#     gbs_tmn_mm == 19,
+#     pdf_deformacion_unitaria == 400
+#   )
+
+# 1) Variable respuesta log10(ciclos)
 df_19_400 <- df_19_400 |>
   dplyr::mutate(
     log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-# 2. Fórmula del modelo completo (variables mecánicas + GBS + volumétricas permitidas)
-formula_full_19_400 <- log_ciclos ~ 
-  pdf_rigidez_inicial_m_pa +
-  pdf_energia_disipada_k_j_m3 +
-  gbs_gmm +
-  gbs_percent_vacios_7_1 +
-  pvm_vma_percent +
-  pvm_vfa_percent +
-  pvm_polvo_asfalto +
-  pvm_percent_pasando_1_2 +
-  pvm_percent_pasando_number_4 +
-  pvm_percent_pasando_number_8 +
-  pvm_percent_pasando_number_200
+# 2) Ajustar modelo con variables permitidas
+mod_19_400_full <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +       # rigidez inicial
+    pdf_energia_disipada_k_j_m3 +    # energía disipada
+    gbs_gmm +                        # Gmm
+    gbs_percent_vacios_7_1 +         # vacíos Gbs (7+1)
+    pvm_vma_percent +                # VMA
+    pvm_vfa_percent +                # VFA
+    pvm_polvo_asfalto +              # polvo-asfalto
+    pvm_percent_pasando_1_2,         # % pasando 1/2
+  data = df_19_400
+)
 
-```
+# 3) Resumen clásico
+summary(mod_19_400_full)
 
-
-```{r}
-# 3. Ajuste del modelo
-mod_19_400_full <- lm(formula_full_19_400, data = df_19_400)
-
-# 4. Extraer coeficientes y preparar tabla
+# 4) Tabla de coeficientes con gt
 coef_19_400 <- summary(mod_19_400_full)$coefficients |>
   as.data.frame() |>
   tibble::rownames_to_column("Termino") |>
@@ -1928,7 +1930,6 @@ coef_19_400 <- summary(mod_19_400_full)$coefficients |>
     p_value        = `Pr(>|t|)`
   )
 
-# 5. Mostrar en formato gt
 coef_19_400 |>
   gt::gt() |>
   gt::tab_header(
@@ -1946,24 +1947,23 @@ coef_19_400 |>
     t_value        = "t",
     p_value        = "p-valor"
   )
+
 ```
+
 
 *Ecuación de regresión para el escenario TMN = 19 mm, deformación = 400 μɛ*
 
 \[
 \begin{aligned}
-\widehat{\log_{10}(\text{Ciclos})} \;=\;& 48.1222 \\
+\widehat{\log_{10}(\text{Ciclos})} \;=\;& 56.3276 \\
 &\quad -\; 0.0001\,\text{pdf\_rigidez\_inicial\_m\_pa} \\
-&\quad +\; 1.0231\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
-&\quad -\; 14.8117\,\text{gbs\_gmm} \\
-&\quad -\; 0.0037\,\text{gbs\_percent\_vacios\_7\_1} \\
-&\quad -\; 0.4026\,\text{pvm\_vma\_percent} \\
-&\quad -\; 0.0013\,\text{pvm\_vfa\_percent} \\
-&\quad -\; 0.1508\,\text{pvm\_polvo\_asfalto} \\
-&\quad -\; 0.0314\,\text{pvm\_percent\_pasando\_1\_2} \\
-&\quad +\; 0.0251\,\text{pvm\_percent\_pasando\_number\_4} \\
-&\quad -\; 0.0168\,\text{pvm\_percent\_pasando\_number\_8} \\
-&\quad +\; 0.1154\,\text{pvm\_percent\_pasando\_number\_200}
+&\quad +\; 0.8712\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
+&\quad -\; 17.8439\,\text{gbs\_gmm} \\
+&\quad -\; 0.0034\,\text{gbs\_percent\_vacios\_7\_1} \\
+&\quad -\; 0.4574\,\text{pvm\_vma\_percent} \\
+&\quad -\; 0.0005\,\text{pvm\_vfa\_percent} \\
+&\quad +\; 0.3446\,\text{pvm\_polvo\_asfalto} \\
+&\quad -\; 0.0242\,\text{pvm\_percent\_pasando\_1\_2}
 \end{aligned}
 \]
 
@@ -1974,29 +1974,39 @@ Nota:
 
 
 ```{r}
-# --- D.4 Escenario TMN = 19 mm, deformación = 600 μɛ ---
+# D.4 Escenario TMN = 19 mm, deformación = 600 μɛ
 
-# 1. Variable respuesta
+# (Opcional) reconstruir df_19_600 desde el maestro si hiciera falta
+# df_19_600 <- datos_obj2_raw |>
+#   dplyr::filter(
+#     gbs_tmn_mm == 19,
+#     pdf_deformacion_unitaria == 600
+#   )
+
+# 1) Variable respuesta log10(ciclos)
 df_19_600 <- df_19_600 |>
-  mutate(log_ciclos = log10(pdf_numero_de_ciclos))
+  dplyr::mutate(
+    log_ciclos = log10(pdf_numero_de_ciclos)
+  )
 
-# 2. Fórmula de todas las variables permitidas
-formula_full <- log_ciclos ~ 
-  pdf_rigidez_inicial_m_pa +
-  pdf_energia_disipada_k_j_m3 +
-  pvm_vma_percent +
-  pvm_vfa_percent +
-  pvm_percent_vacios +
-  pvm_polvo_asfalto +
-  pvm_percent_pasando_1_2 +
-  pvm_percent_pasando_number_4 +
-  pvm_percent_pasando_number_8 +
-  pvm_percent_pasando_number_200
+# 2) Ajustar modelo con variables permitidas
+mod_19_600_full <- lm(
+  log_ciclos ~ 
+    pdf_rigidez_inicial_m_pa +       # rigidez inicial
+    pdf_energia_disipada_k_j_m3 +    # energía disipada
+    gbs_gmm +                        # Gmm
+    gbs_percent_vacios_7_1 +         # vacíos Gbs (7+1)
+    pvm_vma_percent +                # VMA
+    pvm_vfa_percent +                # VFA
+    pvm_polvo_asfalto +              # polvo-asfalto
+    pvm_percent_pasando_1_2,         # % pasando 1/2
+  data = df_19_600
+)
 
-# 3. Ajustar el modelo
-mod_19_600_full <- lm(formula_full, data = df_19_600)
+# 3) Resumen clásico
+summary(mod_19_600_full)
 
-# 4. Tabla con gt()
+# 4) Tabla de coeficientes con gt
 coef_19_600 <- summary(mod_19_600_full)$coefficients |>
   as.data.frame() |>
   tibble::rownames_to_column("Termino") |>
@@ -2010,11 +2020,11 @@ coef_19_600 <- summary(mod_19_600_full)$coefficients |>
 coef_19_600 |>
   gt::gt() |>
   gt::tab_header(
-    title = "Modelo de regresión — TMN 19 mm, 600 μɛ",
+    title    = "Modelo de regresión — TMN 19 mm, 600 μɛ",
     subtitle = "Variables mecánicas, GBS y volumétricas permitidas"
   ) |>
   gt::fmt_number(
-    columns = c(Estimado, Error_estandar, t_value, p_value),
+    columns  = c(Estimado, Error_estandar, t_value, p_value),
     decimals = 4
   ) |>
   gt::cols_label(
@@ -2031,17 +2041,15 @@ coef_19_600 |>
 
 \[
 \begin{aligned}
-\widehat{\log_{10}(\text{Ciclos})} \;=\;& -4.3012 \\
+\widehat{\log_{10}(\text{Ciclos})} \;=\;& 15.7046 \\
 &\quad -\; 0.0002\,\text{pdf\_rigidez\_inicial\_m\_pa} \\
-&\quad +\; 0.6500\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
-&\quad -\; 0.5128\,\text{pvm\_vma\_percent} \\
-&\quad +\; 0.2053\,\text{pvm\_vfa\_percent} \\
-&\quad +\; 1.1466\,\text{pvm\_percent\_vacios} \\
-&\quad -\; 0.4717\,\text{pvm\_polvo\_asfalto} \\
-&\quad -\; 0.0173\,\text{pvm\_percent\_pasando\_1\_2} \\
-&\quad +\; 0.0097\,\text{pvm\_percent\_pasando\_number\_4} \\
-&\quad +\; 0.0119\,\text{pvm\_percent\_pasando\_number\_8} \\
-&\quad -\; 0.4033\,\text{pvm\_percent\_pasando\_number\_200}
+&\quad +\; 0.6814\,\text{pdf\_energia\_disipada\_k\_j\_m3} \\
+&\quad -\; 1.3913\,\text{gbs\_gmm} \\
+&\quad +\; 0.0497\,\text{gbs\_percent\_vacios\_7\_1} \\
+&\quad -\; 0.3642\,\text{pvm\_vma\_percent} \\
+&\quad +\; 0.0169\,\text{pvm\_vfa\_percent} \\
+&\quad -\; 1.6469\,\text{pvm\_polvo\_asfalto} \\
+&\quad -\; 0.0273\,\text{pvm\_percent\_pasando\_1\_2}
 \end{aligned}
 \]
 
