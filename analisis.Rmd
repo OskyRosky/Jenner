@@ -1073,24 +1073,30 @@ ggplot(diag_reg_obj1, aes(sample = residuos)) +
   )
 ```
 
-Los resultados del modelo de regresión muestran, en primer lugar, que la variabilidad del porcentaje de vacíos está extraordinariamente bien explicada por las propiedades volumétricas incluidas en el análisis. El modelo seleccionado mediante el procedimiento backward presenta un R^2 y un R^2 ajustado cercanos a 1, lo cual indica que prácticamente toda la variación observada en los vacíos puede reconstruirse de manera precisa utilizando las variables retenidas. Este nivel de ajuste se interpreta como una consecuencia natural de la relación física existente entre los parámetros de densidad (Gmm y Gmb) y el cálculo del porcentaje de vacíos, pues dicha variable se deriva directamente de ellos. Por tanto, el modelo no solo ajusta bien, sino que respeta la estructura mecánica del fenómeno.
+Los resultados del modelo de regresión lineal múltiple muestran que el porcentaje de vacíos medido en las vigas no es una función casi determinística de las propiedades volumétricas consideradas, sino que presenta una variabilidad importante no explicada.
 
-En cuanto a los coeficientes, tanto Gmm como Gmb aparecen como predictores altamente significativos y con signos coherentes con la fórmula fundamental de vacíos: un aumento de Gmm incrementa los vacíos, mientras que un aumento de Gmb los reduce. Además, variables como el asfalto sobre mezcla, los vacíos PV, la relación polvo/asfalto y ciertos porcentajes pasando también muestran asociaciones significativas. Estas variables no intervienen directamente en el cálculo de vacíos, pero sí afectan la compactabilidad y la estructura interna del material, por lo que su presencia en el modelo es consistente desde el punto de vista físico.
+En el modelo base, que incluye todas las variables volumétricas y de gradación candidatas, se obtiene un R² ≈ 0.41 y un R² ajustado ≈ 0.38, lo que indica que alrededor del 40 % de la variación observada en los vacíos puede ser explicada por el conjunto de predictores. Tras aplicar un procedimiento de selección backward, el modelo final mantiene un desempeño muy similar (R² ≈ 0.41, R² ajustado ≈ 0.39), pero con un conjunto más compacto de variables.
 
-Respecto a las variables que fueron eliminadas durante el proceso stepwise, su exclusión no debe interpretarse como irrelevancia técnica, sino como redundancia estadística. Muchas de ellas están fuertemente correlacionadas con Gmm, Gmb o con otras propiedades volumétricas, lo que se reflejó en VIF elevados y relaciones transversales observadas en la matriz de correlación. En un modelo donde las variables de densidad ya capturan la mayor parte de la estructura de los vacíos, estas variables adicionales aportan poca información independiente y, por tanto, el algoritmo las descarta sin afectar la capacidad explicativa del modelo.
+El modelo seleccionado retiene principalmente variables asociadas a la cantidad y distribución del asfalto y de los vacíos en la mezcla, así como a la gradación de los agregados, entre ellas: pvm_asfalto_efectivo_percent, pvm_vacios_pv, pvm_vma_percent, pvm_vfa_percent, pvm_polvo_asfalto, pvm_percent_pasando_number_8 y pvm_percent_pasando_number_200. En general, mayores vacíos PV y relaciones polvo/asfalto más altas se asocian con incrementos en el porcentaje de vacíos medido en las vigas, mientras que valores mayores de VMA, VFA y ciertos porcentajes pasando tienden a reducirlos. Estas relaciones son coherentes con la idea de que la compactabilidad y la estructura interna de la mezcla controlan parcialmente la formación de vacíos.
 
-Finalmente, el diagnóstico de residuos confirma que el ajuste es adecuado: los residuos son pequeños, no muestran patrones sistemáticos y se distribuyen de manera cercana a la normalidad. El Q–Q plot presenta una alineación aceptable, especialmente considerando la escala muy corta de las desviaciones residuales, y la gráfica de residuos frente a valores ajustados no evidencia heterocedasticidad seria ni autocorrelación. Todos estos elementos sugieren que, desde el punto de vista estadístico y físico, el modelo es estable, interpretable y adecuado para describir el comportamiento del porcentaje de vacíos en función de las propiedades volumétricas.
+Las variables que fueron eliminadas durante el proceso stepwise no deben interpretarse como “irrelevantes”, sino como redundantes desde el punto de vista estadístico: muchas presentan colinealidad alta con las que permanecen en el modelo, tal como se observó en la matriz de correlación y en los valores de VIF. Una vez que el modelo incluye las variables más informativas, las demás apenas aportan variación adicional explicable y son descartadas sin afectar de forma significativa el R².
+
+El diagnóstico de residuos del modelo final muestra una dispersión razonablemente aleatoria alrededor de cero, sin patrones claros de tendencia y sin heterocedasticidad severa. El Q–Q plot indica desviaciones moderadas respecto a la normalidad, pero dentro de un rango aceptable para datos experimentales. En conjunto, estos resultados sugieren que el modelo lineal es estadísticamente utilizable, aunque su capacidad explicativa es moderada y deja una fracción importante de la variabilidad asociada a factores de proceso y de medición que no se encuentran explícitamente en el conjunto de predictores.
 
 
 ### 3.4 Síntesis técnica del Objetivo 1
 
-El análisis del Objetivo 1 combinó dos enfoques complementarios: un modelo mixto jerárquico para descomponer la variabilidad del porcentaje de vacíos dentro del proceso mezcla–bloque–viga, y un modelo de regresión lineal múltiple para relacionar los vacíos con las propiedades volumétricas medidas en las vigas.
+El análisis del Objetivo 1 combinó dos enfoques:
 
-En el modelo mixto jerárquico, donde la mezcla se trató como efecto fijo y los factores bloque y viga se modelaron como aleatorios, se observó que la mayor parte de la variabilidad del porcentaje de vacíos proviene del nivel de bloque. Los resultados mostraron que el bloque aporta aproximadamente 10.6 % de la variación total, mientras que el efecto de viga aporta alrededor de 0.4 %, y el error residual concentra cerca de 89 % de la variabilidad. En contraste, el efecto fijo de mezcla no resultó estadísticamente significativo (p > 0.9) en este modelo. Los gráficos de diagnóstico del ajuste mostraron residuos con estructura aceptablemente aleatoria y una distribución cercana a la normalidad, sin patrones sistemáticos relevantes.
+(i) un modelo mixto jerárquico para descomponer la variabilidad del porcentaje de vacíos entre mezcla, bloque y viga; y
 
-En el análisis de regresión lineal múltiple, se utilizaron como predictores todas las propiedades volumétricas y de gradación del material. Tras aplicar un procedimiento de selección backward, el modelo final retuvo la mayoría de las variables incluidas inicialmente, y alcanzó un coeficiente de determinación R² ≈ 0.995, con R² ajustado ≈ 0.994, indicando que el conjunto de predictores explica casi la totalidad de la variabilidad observada en el porcentaje de vacíos. Las variables excluidas en el procedimiento (como el VFA y algunos porcentajes de gradación) presentaban contribuciones marginales una vez que las demás estaban en el modelo. Los gráficos de residuos mostraron patrones cercanos a la aleatoriedad, sin indicios de heterocedasticidad marcada, y el Q–Q plot indicó una aproximación razonable a la normalidad.
+(ii) un modelo de regresión lineal múltiple para relacionar esos vacíos con las propiedades volumétricas medidas en las vigas.
 
-En conjunto, el modelo mixto permitió identificar la magnitud de la variabilidad atribuible a cada nivel del proceso productivo, mientras que la regresión ofreció una ecuación con capacidad explicativa muy elevada respecto al comportamiento del porcentaje de vacíos en función de las propiedades volumétricas del material. Esta sección resume únicamente los resultados de ambos enfoques; las interpretaciones y conclusiones se presentan más adelante.
+El modelo mixto mostró que el efecto fijo de mezcla no es significativo, mientras que la mayor parte de la variación se reparte entre el nivel de bloque y el error residual. Es decir, las diferencias más importantes en vacíos se originan dentro del proceso de fabricación (bloque y variabilidad residual), más que entre diseños de mezcla.
+
+El modelo de regresión lineal múltiple, aplicado sobre las propiedades volumétricas y de gradación, alcanzó un R² ≈ 0.41 (R² ajustado ≈ 0.39). Esto implica que las variables volumétricas consideradas logran explicar una porción moderada de la variación en los vacíos, pero que todavía existe cerca de un 60 % de variabilidad asociada a otros factores (operativos, de compactación, de medición, etc.). El modelo final resalta el papel del asfalto efectivo, los vacíos PV, la relación polvo/asfalto y ciertos porcentajes pasando como variables influyentes, en línea con la comprensión física del proceso de compactación.
+
+En conjunto, ambos enfoques indican que las propiedades volumétricas ayudan a entender el comportamiento de los vacíos, pero no son suficientes por sí solas para describirlo casi por completo. El diseño de mezcla, el bloque de fabricación y la variabilidad intrínseca del proceso siguen jugando un papel importante en la variación observada.
 
 
 
@@ -1324,18 +1330,35 @@ ggplot(datos_obj2_raw, aes(x = pdf_energia_disipada_k_j_m3)) +
 **Boxplot de propiedades volumétricas**
 
 ```{r}
-# 6. Boxplot de propiedades volumétricas
-df_12_400 %>%
-  select(starts_with("pvm_")) %>%
-  pivot_longer(cols = everything(), names_to = "variable", values_to = "valor") %>%
+# Boxplot general de propiedades volumétricas + vacíos GBS (todos los escenarios)
+
+df_boxplot <- datos_obj2_raw %>% 
+  dplyr::select(
+    gbs_percent_vacios_7_1,        # Vacíos correctos GBS
+    dplyr::starts_with("pvm_")     # Todas las PVM
+  ) %>% 
+  # Eliminar CUALQUIER versión de vacíos PVM
+  dplyr::select(
+    -dplyr::any_of(c("pvm_vacios_pv", "pvm_percent_vacios"))
+  )
+
+df_boxplot %>%
+  tidyr::pivot_longer(
+    cols = everything(),
+    names_to = "variable",
+    values_to = "valor"
+  ) %>%
   ggplot(aes(x = variable, y = valor)) +
   geom_boxplot(fill = "darkgreen", alpha = 0.7) +
   labs(
-    title = "Propiedades volumétricas",
-    x = "Propiedad volumétrica", y = "Valor"
+    title = "Propiedades volumétricas y vacíos GBS — Todos los escenarios",
+    x = "Propiedad volumétrica",
+    y = "Valor"
   ) +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+  theme(
+    axis.text.x = element_text(angle = 60, hjust = 1)
+  )
 ```
 
 
@@ -1585,8 +1608,6 @@ Para la colinealidad se analiza:
 ```{r}
 
 # 0) Data frame maestro del Objetivo 2
-# Usa SIEMPRE el dataset del objetivo 2 (ajusta el nombre si es otro):
-# aquí asumo que se llama datos_obj2_raw
 datos_obj2_all <- datos_obj2_raw |>
   dplyr::mutate(
     log_ciclos = log10(pdf_numero_de_ciclos)
@@ -1597,11 +1618,9 @@ vars_obj2 <- c(
   # Mecánicas
   "pdf_rigidez_inicial_m_pa",
   "pdf_energia_disipada_k_j_m3",
-  
-  # GBS (vacíos de las vigas)
+  # GBS
   "gbs_gmm",
   "gbs_percent_vacios_7_1",
-  
   # Volumétricas
   "pvm_asfalto_efectivo_percent",
   "pvm_asfalto_sobre_mac_percent",
@@ -1614,11 +1633,19 @@ vars_obj2 <- c(
   "pvm_percent_pasando_number_200"
 )
 
-# 2) Matriz de datos numéricos SOLO con las variables permitidas
+# 2) Matriz de datos numéricos SOLO con variables permitidas
 corr_data_all <- datos_obj2_all |>
   dplyr::select(
     log_ciclos,
     dplyr::all_of(vars_obj2)
+  ) |>
+  # Cinturón y tirantes: eliminar explícitamente TODAS las variables prohibidas
+  dplyr::select(
+    -dplyr::any_of(c(
+      "gbs_psss_kg", "gbs_psum_kg", "gbs_pseco_kg", "gbs_n_prisma", "gbs_gmb",
+      "pdf_rigidez_final_mpa", "pvm_percent_vacios",
+      "pdf_fecha_ensayo", "pdf_n_viga_fatiga"
+    ))
   )
 
 # 3) Matriz de correlación
@@ -1650,23 +1677,18 @@ Implicación: no pueden incluirse juntas en el modelo. Generarían inestabilidad
 
 ```{r}
 
-# Crear variable log_ciclos global
+# 0) Crear variable log_ciclos global
 datos_obj2_all <- datos_obj2_raw |>
   dplyr::mutate(
     log_ciclos = log10(pdf_numero_de_ciclos)
   )
 
-# Lista oficial de variables permitidas (según correcciones)
+# 1) Misma lista oficial de variables permitidas
 vars_obj2 <- c(
-  # Mecánicas
   "pdf_rigidez_inicial_m_pa",
   "pdf_energia_disipada_k_j_m3",
-  
-  # GBS
   "gbs_gmm",
   "gbs_percent_vacios_7_1",
-  
-  # Volumétricas
   "pvm_asfalto_efectivo_percent",
   "pvm_asfalto_sobre_mac_percent",
   "pvm_vma_percent",
@@ -1678,22 +1700,22 @@ vars_obj2 <- c(
   "pvm_percent_pasando_number_200"
 )
 
-# Selección del data frame solo con variables válidas
+# 2) Data frame solo con predictores válidos
 vif_data <- datos_obj2_all |>
   dplyr::select(
     log_ciclos,
     dplyr::all_of(vars_obj2)
   )
 
-# Modelo para VIF (sin transformar nada)
+# 3) Modelo para VIF
 modelo_vif_obj2 <- lm(
   log_ciclos ~ .,
   data = vif_data
 )
 
-# Calcular VIF
+# 4) VIF
 library(car)
-vif(modelo_vif_obj2)
+car::vif(modelo_vif_obj2)
 
 ```
 
@@ -2392,19 +2414,19 @@ Esta evidencia demuestra que la capacidad del modelo para explicar el comportami
 
 **Objetivo 1**
 
-Los resultados obtenidos para el Objetivo 1 permiten caracterizar el comportamiento del porcentaje de vacíos desde dos ángulos distintos pero complementarios: la estructura de la variabilidad a lo largo del proceso mezcla–bloque–viga y la relación funcional entre los vacíos y las propiedades volumétricas de la mezcla. En conjunto, los análisis sugieren que el sistema de producción está razonablemente bien controlado y que el cálculo del % de vacíos es coherente con la teoría volumétrica de las mezclas asfálticas, aunque no se confirma completamente la expectativa inicial de que el diseño de mezcla fuera la fuente dominante de variación.
+Los resultados obtenidos para el Objetivo 1 permiten caracterizar el comportamiento del porcentaje de vacíos desde dos ángulos complementarios: por un lado, la estructura de la variabilidad a lo largo del proceso mezcla–bloque–viga; por otro, la relación funcional entre los vacíos y las propiedades volumétricas de la mezcla. En conjunto, los análisis sugieren que el sistema de producción está razonablemente controlado y que el cálculo del % de vacíos es coherente con la teoría volumétrica de las mezclas asfálticas, aunque no se confirma completamente la expectativa inicial de que el diseño de mezcla sea la fuente dominante de variación ni que los vacíos puedan explicarse casi por completo con un modelo lineal.
 
-Desde la perspectiva del modelo mixto jerárquico, el efecto fijo de mezcla no resultó estadísticamente significativo sobre el porcentaje de vacíos, mientras que el nivel de bloque aportó una fracción apreciable de la variabilidad total, frente a una contribución prácticamente despreciable del nivel de viga. Esto significa que, dentro del rango de mezclas ensayadas, las diferencias en % de vacíos entre formulaciones no son lo suficientemente grandes, en términos estadísticos, como para destacarse por encima de la variabilidad asociada al proceso de compactación y al error residual. En cambio, sí se observa que el bloque —que representa la compactación en el ASC— introduce variaciones detectables, aunque moderadas, mientras que el proceso de corte y el efecto del operario parecen estar muy bien controlados, al punto de constituir una fuente de variabilidad mínima. Este comportamiento es, en general, positivo: sugiere que el procedimiento de corte es repetible y que las condiciones de compactación, si bien aportan algo de dispersión, no generan inestabilidades graves en el porcentaje de vacíos.
+Desde la perspectiva del modelo mixto jerárquico, el efecto fijo de mezcla no resultó estadísticamente significativo sobre el porcentaje de vacíos, mientras que el nivel de bloque aportó una fracción apreciable de la variabilidad total y el nivel de viga tuvo una contribución prácticamente despreciable. Esto indica que, dentro del rango de mezclas ensayadas, las diferencias en % de vacíos entre formulaciones no son lo suficientemente grandes, en términos estadísticos, como para destacarse por encima de la variabilidad asociada al proceso de compactación y al error residual. En cambio, sí se observa que el bloque —que representa la operación de compactación en el ASC— introduce variaciones detectables, aunque moderadas, mientras que el proceso de corte y el efecto del operario se mantienen como fuentes de variabilidad muy reducida. Este comportamiento es, en general, positivo: sugiere que el procedimiento de corte es repetible y que las condiciones de compactación, aun aportando dispersión, no generan inestabilidades graves en el porcentaje de vacíos.
 
-Ahora bien, el hecho de que el factor mezcla no aparezca como significativo puede interpretarse de varias maneras. Por un lado, es posible que las mezclas se hayan diseñado en un rango relativamente estrecho de porcentajes de vacíos objetivo, de modo que las diferencias entre fórmulas, en cuanto a vacíos, sean pequeñas en comparación con la variabilidad inherente al proceso y a la medición. Por otro lado, el número de observaciones por mezcla, aunque adecuado para un diseño balanceado, puede no ser suficiente para detectar diferencias sutiles cuando el sistema está ajustado alrededor de especificaciones comunes (por ejemplo, 7 ± 1 %). Bajo esta lectura, la “no significancia” no implica que el diseño de mezcla sea irrelevante, sino que las mezclas estudiadas operan en una banda de vacíos donde el control del proceso tiende a homogeneizar el resultado final.
+El hecho de que el factor mezcla no aparezca como significativo puede interpretarse de varias maneras. Por un lado, es probable que las mezclas se hayan diseñado en un rango relativamente estrecho de vacíos objetivo, de modo que las diferencias entre fórmulas sean pequeñas en comparación con la variabilidad inherente al proceso y a la medición. Por otro lado, el número de observaciones por mezcla, si bien adecuado para un diseño operacional, puede no ser suficiente para detectar diferencias sutiles cuando el sistema está ajustado alrededor de especificaciones comunes (por ejemplo, 7 ± 1 % de vacíos). Bajo esta lectura, la “no significancia” no implica que el diseño de mezcla sea irrelevante, sino que las mezclas estudiadas operan en una banda de vacíos donde el control del proceso tiende a homogeneizar el resultado final.
 
-El análisis de regresión lineal múltiple aporta una pieza importante a la discusión. El modelo ajustado, con un R^2 y un R^2 ajustado muy elevados (próximos a 1), muestra que el porcentaje de vacíos puede reconstruirse casi completamente a partir de las variables volumétricas seleccionadas. Esto, lejos de ser un síntoma automático de sobreajuste, resulta coherente con la propia definición del % de vacíos, que se calcula a partir de la densidad máxima teórica (Gmm) y de la densidad aparente (Gmb). El hecho de que estas variables, junto con otras propiedades como VMA, vacíos en la mezcla, polvo/asfalto y gradación, permitan explicar casi toda la variabilidad observada en los vacíos refuerza la idea de que los datos son consistentes con la teoría volumétrica y que no se están introduciendo ruidos arbitrarios en el proceso de medición.
+El análisis de regresión lineal múltiple aporta una segunda pieza de información. El modelo base, que incorpora todas las propiedades volumétricas y de gradación candidatas, y el modelo final seleccionado mediante un procedimiento backward alcanzan valores de R² del orden de 0.41 (R² ajustado ≈ 0.39). Es decir, las variables volumétricas consideradas permiten explicar una fracción moderada de la variación observada en el porcentaje de vacíos, mientras que alrededor del 60 % de la variabilidad queda asociada a factores de proceso y de medición que no están explícitamente modelados. El conjunto de predictores retenidos pone de relieve el papel del asfalto efectivo, los vacíos en la mezcla, el VMA, el VFA, la relación polvo/asfalto y determinados porcentajes pasando (#8 y #200), lo cual resulta consistente con la idea de que la compactabilidad y la estructura interna de la mezcla controlan parcialmente la formación de vacíos.
 
-Las variables que el procedimiento de selección backward descartó del modelo tienden a ser aquellas fuertemente correlacionadas con otros predictores ya presentes, en particular las que guardan relaciones matemáticas o físicas estrechas con Gmm, Gmb y las propiedades volumétricas centrales. Esto indica que el modelo final no “ignora” esas propiedades desde el punto de vista físico, sino que su información ya está contenida en las variables que permanecen en la ecuación. La elevada colinealidad observada en la matriz de correlaciones y en los valores de VIF confirma que muchas de las propiedades volumétricas no aportan información completamente independiente, algo esperable en mezclas asfálticas donde VMA, VFA, vacíos, asfalto efectivo y gradación están fuertemente acoplados.
+Las variables descartadas durante el procedimiento stepwise no deben interpretarse como carentes de importancia técnica, sino como redundantes desde el punto de vista estadístico: muchas de ellas se encuentran fuertemente correlacionadas con las que permanecen en el modelo, tal como se observa en la matriz de correlación y en los valores de VIF. En un contexto donde varias propiedades describen aspectos cercanos de la misma estructura volumétrica, es esperable que la información relevante quede concentrada en un subconjunto de predictores, sin que ello contradiga la relevancia física de las variables excluidas.
 
-En cuanto a la calidad del ajuste, los gráficos de residuos respaldan la validez práctica del modelo de regresión: los residuos son pequeños, no muestran patrones sistemáticos evidentes y siguen aproximadamente una distribución normal. Desde una perspectiva de control de calidad, esto sugiere que no hay grandes grupos de mezclas o bloques que se comporten de manera anómala en términos de vacíos respecto a lo que indican sus propiedades volumétricas. Dicho de otro modo, el sistema “responde” como cabría esperar: cuando cambian Gmm, Gmb y las propiedades asociadas, cambian los vacíos de forma consistente con la teoría y con la experiencia práctica.
+En cuanto a la calidad del ajuste, los gráficos de residuos respaldan la validez práctica del modelo: los residuales se mantienen en magnitudes razonables, no muestran patrones sistemáticos marcados y siguen aproximadamente una distribución normal. Si bien no se observa un ajuste “casi perfecto”, no aparecen grupos claros de mezclas o bloques que se comporten de manera anómala en términos de vacíos respecto a lo que indican sus propiedades volumétricas. En otras palabras, el sistema responde en la dirección esperada: cuando cambian las propiedades volumétricas clave, cambian también los vacíos, aunque con una dispersión que refleja la influencia de otros factores no observados.
 
-En síntesis, los resultados del Objetivo 1 pueden considerarse globalmente satisfactorios desde el punto de vista estadístico y práctico. La variación en % de vacíos se concentra fundamentalmente en niveles asociados al proceso de compactación y al error residual, mientras que el diseño de mezcla no muestra diferencias marcadas dentro del rango estudiado. Al mismo tiempo, la regresión confirma que los vacíos están fuertemente gobernados por las propiedades volumétricas de la mezcla, en línea con la teoría de diseño volumétrico. Las implicaciones más amplias de estos hallazgos —en particular, su impacto sobre el desempeño a fatiga y su relación con los resultados del ensayo AASHTO T321— se discuten con mayor detalle al integrar los resultados del Objetivo 2.
+En síntesis, los resultados del Objetivo 1 pueden considerarse coherentes y útiles, aunque más moderados de lo que sugería la hipótesis inicial. La variación en % de vacíos se concentra principalmente en niveles asociados al proceso de compactación y a la variabilidad residual, mientras que el diseño de mezcla no muestra diferencias estadísticas fuertes dentro del rango estudiado. Al mismo tiempo, la regresión confirma que las propiedades volumétricas y de gradación ejercen una influencia clara, pero no determinística, sobre los vacíos. Las implicaciones de estos hallazgos —en particular, su impacto sobre el desempeño a fatiga y su relación con los resultados del ensayo AASHTO T321— se discuten con mayor detalle al integrar los resultados del Objetivo 2.
 
 **Objetivo 2**
 
